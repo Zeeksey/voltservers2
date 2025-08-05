@@ -45,26 +45,32 @@ export default function ServerManagement() {
     }
   }, []);
 
-  // Fetch WHMCS services/servers
+  // Fetch Wisp servers data
   const { data: servers, isLoading: serversLoading } = useQuery({
-    queryKey: [`/api/whmcs/clients/${loggedInClient?.id}/services`],
+    queryKey: ['/api/wisp/servers'],
     enabled: !!loggedInClient?.id,
     staleTime: 30 * 1000 // 30 seconds
+  });
+
+  // Test Wisp connection
+  const { data: wispStatus } = useQuery({
+    queryKey: ['/api/wisp/test'],
+    enabled: !!loggedInClient?.id
   });
 
   // Server action mutations
   const serverActionMutation = useMutation({
     mutationFn: async ({ serverId, action }: { serverId: string, action: string }) => {
-      // This would normally call WHMCS module actions
-      const response = await fetch(`/api/servers/${serverId}/${action}`, {
+      const response = await fetch(`/api/wisp/servers/${serverId}/power`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
       });
       if (!response.ok) throw new Error('Server action failed');
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/whmcs/clients/${loggedInClient?.id}/services`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/wisp/servers'] });
     }
   });
 
@@ -86,7 +92,7 @@ export default function ServerManagement() {
     );
   }
 
-  const serverList = servers?.products?.product || [];
+  const serverList = servers || [];
 
   return (
     <div className="min-h-screen bg-gaming-black text-gaming-white">

@@ -5,6 +5,7 @@ import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { WHMCSIntegration } from "./whmcs-integration";
+import { wispIntegration } from "./wisp-integration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
@@ -2128,5 +2129,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  // WISP.GG INTEGRATION ENDPOINTS
+  // Test Wisp connection
+  app.get('/api/wisp/test', async (req, res) => {
+    try {
+      const isConnected = await wispIntegration.testConnection();
+      res.json({ 
+        connected: isConnected,
+        message: isConnected ? 'Wisp integration working!' : 'Wisp connection failed'
+      });
+    } catch (error) {
+      console.error('Wisp test error:', error);
+      res.status(500).json({ connected: false, message: 'Wisp connection failed' });
+    }
+  });
+
+  // Get all servers from Wisp
+  app.get('/api/wisp/servers', async (req, res) => {
+    try {
+      const servers = await wispIntegration.getClientServers('');
+      res.json(servers);
+    } catch (error) {
+      console.error('Error fetching Wisp servers:', error);
+      res.status(500).json({ message: 'Failed to fetch servers' });
+    }
+  });
+
+  // Get specific server details from Wisp
+  app.get('/api/wisp/servers/:id', async (req, res) => {
+    try {
+      const server = await wispIntegration.getServerDetails(req.params.id);
+      if (!server) {
+        return res.status(404).json({ message: 'Server not found' });
+      }
+      res.json(server);
+    } catch (error) {
+      console.error('Error fetching server details:', error);
+      res.status(500).json({ message: 'Failed to fetch server details' });
+    }
+  });
+
+  // Server power actions
+  app.post('/api/wisp/servers/:id/power', async (req, res) => {
+    try {
+      const { action } = req.body;
+      if (!['start', 'stop', 'restart'].includes(action)) {
+        return res.status(400).json({ message: 'Invalid action' });
+      }
+
+      const success = await wispIntegration.serverAction(req.params.id, action);
+      res.json({ success, message: success ? `Server ${action} successful` : `Server ${action} failed` });
+    } catch (error) {
+      console.error(`Error performing server action:`, error);
+      res.status(500).json({ message: 'Server action failed' });
+    }
+  });
+
+  // Get server console logs
+  app.get('/api/wisp/servers/:id/logs', async (req, res) => {
+    try {
+      const lines = parseInt(req.query.lines as string) || 50;
+      const logs = await wispIntegration.getServerLogs(req.params.id, lines);
+      res.json({ logs });
+    } catch (error) {
+      console.error('Error fetching server logs:', error);
+      res.status(500).json({ message: 'Failed to fetch logs' });
+    }
+  });
+
   return httpServer;
 }
