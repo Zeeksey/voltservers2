@@ -21,7 +21,9 @@ import {
   HelpCircle,
   ChevronDown,
   Send,
-  MessageSquare
+  MessageSquare,
+  AlertCircle,
+  User
 } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "@/components/navigation";
