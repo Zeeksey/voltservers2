@@ -964,6 +964,16 @@ export class MemStorage implements IStorage {
     return backup;
   }
 
+  async updateMinecraftBackup(id: string, updates: Partial<MinecraftBackup>): Promise<MinecraftBackup> {
+    const existing = this.minecraftBackups.get(id);
+    if (!existing) {
+      throw new Error(`Minecraft backup with id ${id} not found`);
+    }
+    const updated = { ...existing, ...updates };
+    this.minecraftBackups.set(id, updated);
+    return updated;
+  }
+
   async deleteMinecraftBackup(id: string): Promise<void> {
     this.minecraftBackups.delete(id);
   }

@@ -569,6 +569,496 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }, 5 * 60 * 1000); // 5 minutes
 
+  // Advanced Minecraft Server Management API Routes
+  
+  // Minecraft Servers
+  app.get('/api/minecraft/servers', async (req, res) => {
+    try {
+      const userId = req.query.userId as string;
+      const servers = userId 
+        ? await storage.getUserMinecraftServers(userId)
+        : await storage.getAllMinecraftServers();
+      res.json(servers);
+    } catch (error) {
+      console.error('Error fetching Minecraft servers:', error);
+      res.status(500).json({ message: 'Failed to fetch Minecraft servers' });
+    }
+  });
+
+  app.get('/api/minecraft/servers/:id', async (req, res) => {
+    try {
+      const server = await storage.getMinecraftServer(req.params.id);
+      if (!server) {
+        return res.status(404).json({ message: 'Minecraft server not found' });
+      }
+      res.json(server);
+    } catch (error) {
+      console.error('Error fetching Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to fetch Minecraft server' });
+    }
+  });
+
+  app.post('/api/minecraft/servers', requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.createMinecraftServer(req.body);
+      
+      // Create initial log entry
+      await storage.createMinecraftLog({
+        serverId: server.id,
+        logLevel: 'INFO',
+        message: `Minecraft server '${server.serverName}' created`,
+        source: 'System'
+      });
+      
+      res.status(201).json(server);
+    } catch (error) {
+      console.error('Error creating Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to create Minecraft server' });
+    }
+  });
+
+  app.put('/api/minecraft/servers/:id', requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.updateMinecraftServer(req.params.id, req.body);
+      
+      // Log the update
+      await storage.createMinecraftLog({
+        serverId: server.id,
+        logLevel: 'INFO',
+        message: `Server settings updated`,
+        source: 'System'
+      });
+      
+      res.json(server);
+    } catch (error) {
+      console.error('Error updating Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to update Minecraft server' });
+    }
+  });
+
+  app.delete('/api/minecraft/servers/:id', requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteMinecraftServer(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to delete Minecraft server' });
+    }
+  });
+
+  // Server Control Actions
+  app.post('/api/minecraft/servers/:id/start', requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.updateMinecraftServer(req.params.id, { 
+        status: 'starting',
+        lastOnline: new Date()
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: server.id,
+        logLevel: 'INFO',
+        message: 'Server start command issued',
+        source: 'System'
+      });
+      
+      // Simulate server startup delay
+      setTimeout(async () => {
+        await storage.updateMinecraftServer(req.params.id, { status: 'online' });
+        await storage.createMinecraftLog({
+          serverId: req.params.id,
+          logLevel: 'INFO',
+          message: 'Server started successfully',
+          source: 'System'
+        });
+      }, 3000);
+      
+      res.json(server);
+    } catch (error) {
+      console.error('Error starting Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to start Minecraft server' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:id/stop', requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.updateMinecraftServer(req.params.id, { 
+        status: 'stopping' 
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: server.id,
+        logLevel: 'INFO',
+        message: 'Server stop command issued',
+        source: 'System'
+      });
+      
+      // Simulate server shutdown delay
+      setTimeout(async () => {
+        await storage.updateMinecraftServer(req.params.id, { status: 'offline' });
+        await storage.createMinecraftLog({
+          serverId: req.params.id,
+          logLevel: 'INFO',
+          message: 'Server stopped successfully',
+          source: 'System'
+        });
+      }, 2000);
+      
+      res.json(server);
+    } catch (error) {
+      console.error('Error stopping Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to stop Minecraft server' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:id/restart', requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.updateMinecraftServer(req.params.id, { 
+        status: 'stopping' 
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: server.id,
+        logLevel: 'INFO',
+        message: 'Server restart command issued',
+        source: 'System'
+      });
+      
+      // Simulate restart sequence
+      setTimeout(async () => {
+        await storage.updateMinecraftServer(req.params.id, { status: 'starting' });
+        await storage.createMinecraftLog({
+          serverId: req.params.id,
+          logLevel: 'INFO',
+          message: 'Server restarting...',
+          source: 'System'
+        });
+        
+        setTimeout(async () => {
+          await storage.updateMinecraftServer(req.params.id, { 
+            status: 'online',
+            lastOnline: new Date()
+          });
+          await storage.createMinecraftLog({
+            serverId: req.params.id,
+            logLevel: 'INFO',
+            message: 'Server restart completed successfully',
+            source: 'System'
+          });
+        }, 4000);
+      }, 2000);
+      
+      res.json(server);
+    } catch (error) {
+      console.error('Error restarting Minecraft server:', error);
+      res.status(500).json({ message: 'Failed to restart Minecraft server' });
+    }
+  });
+
+  // Minecraft Plugins
+  app.get('/api/minecraft/servers/:serverId/plugins', async (req, res) => {
+    try {
+      const plugins = await storage.getMinecraftPlugins(req.params.serverId);
+      res.json(plugins);
+    } catch (error) {
+      console.error('Error fetching plugins:', error);
+      res.status(500).json({ message: 'Failed to fetch plugins' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:serverId/plugins', requireAdmin, async (req, res) => {
+    try {
+      const plugin = await storage.createMinecraftPlugin({
+        ...req.body,
+        serverId: req.params.serverId
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: req.params.serverId,
+        logLevel: 'INFO',
+        message: `Plugin '${plugin.pluginName}' v${plugin.version} installed`,
+        source: 'Plugin Manager'
+      });
+      
+      res.status(201).json(plugin);
+    } catch (error) {
+      console.error('Error installing plugin:', error);
+      res.status(500).json({ message: 'Failed to install plugin' });
+    }
+  });
+
+  app.put('/api/minecraft/plugins/:id', requireAdmin, async (req, res) => {
+    try {
+      const plugin = await storage.updateMinecraftPlugin(req.params.id, req.body);
+      
+      await storage.createMinecraftLog({
+        serverId: plugin.serverId,
+        logLevel: 'INFO',
+        message: `Plugin '${plugin.pluginName}' ${plugin.isEnabled ? 'enabled' : 'disabled'}`,
+        source: 'Plugin Manager'
+      });
+      
+      res.json(plugin);
+    } catch (error) {
+      console.error('Error updating plugin:', error);
+      res.status(500).json({ message: 'Failed to update plugin' });
+    }
+  });
+
+  app.delete('/api/minecraft/plugins/:id', requireAdmin, async (req, res) => {
+    try {
+      const plugin = await storage.getMinecraftPlugins('');
+      const targetPlugin = plugin.find(p => p.id === req.params.id);
+      
+      if (targetPlugin) {
+        await storage.createMinecraftLog({
+          serverId: targetPlugin.serverId,
+          logLevel: 'INFO',
+          message: `Plugin '${targetPlugin.pluginName}' uninstalled`,
+          source: 'Plugin Manager'
+        });
+      }
+      
+      await storage.deleteMinecraftPlugin(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error uninstalling plugin:', error);
+      res.status(500).json({ message: 'Failed to uninstall plugin' });
+    }
+  });
+
+  // Minecraft Worlds
+  app.get('/api/minecraft/servers/:serverId/worlds', async (req, res) => {
+    try {
+      const worlds = await storage.getMinecraftWorlds(req.params.serverId);
+      res.json(worlds);
+    } catch (error) {
+      console.error('Error fetching worlds:', error);
+      res.status(500).json({ message: 'Failed to fetch worlds' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:serverId/worlds', requireAdmin, async (req, res) => {
+    try {
+      const world = await storage.createMinecraftWorld({
+        ...req.body,
+        serverId: req.params.serverId
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: req.params.serverId,
+        logLevel: 'INFO',
+        message: `World '${world.worldName}' created`,
+        source: 'World Manager'
+      });
+      
+      res.status(201).json(world);
+    } catch (error) {
+      console.error('Error creating world:', error);
+      res.status(500).json({ message: 'Failed to create world' });
+    }
+  });
+
+  app.put('/api/minecraft/worlds/:id', requireAdmin, async (req, res) => {
+    try {
+      const world = await storage.updateMinecraftWorld(req.params.id, req.body);
+      
+      await storage.createMinecraftLog({
+        serverId: world.serverId,
+        logLevel: 'INFO',
+        message: `World '${world.worldName}' settings updated`,
+        source: 'World Manager'
+      });
+      
+      res.json(world);
+    } catch (error) {
+      console.error('Error updating world:', error);
+      res.status(500).json({ message: 'Failed to update world' });
+    }
+  });
+
+  app.delete('/api/minecraft/worlds/:id', requireAdmin, async (req, res) => {
+    try {
+      const worlds = await storage.getMinecraftWorlds('');
+      const targetWorld = worlds.find(w => w.id === req.params.id);
+      
+      if (targetWorld) {
+        await storage.createMinecraftLog({
+          serverId: targetWorld.serverId,
+          logLevel: 'WARN',
+          message: `World '${targetWorld.worldName}' deleted`,
+          source: 'World Manager'
+        });
+      }
+      
+      await storage.deleteMinecraftWorld(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting world:', error);
+      res.status(500).json({ message: 'Failed to delete world' });
+    }
+  });
+
+  // Minecraft Players
+  app.get('/api/minecraft/servers/:serverId/players', async (req, res) => {
+    try {
+      const players = await storage.getMinecraftPlayers(req.params.serverId);
+      res.json(players);
+    } catch (error) {
+      console.error('Error fetching players:', error);
+      res.status(500).json({ message: 'Failed to fetch players' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:serverId/players', requireAdmin, async (req, res) => {
+    try {
+      const player = await storage.createMinecraftPlayer({
+        ...req.body,
+        serverId: req.params.serverId
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: req.params.serverId,
+        logLevel: 'INFO',
+        message: `Player '${player.playerName}' added to server`,
+        source: 'Player Manager'
+      });
+      
+      res.status(201).json(player);
+    } catch (error) {
+      console.error('Error adding player:', error);
+      res.status(500).json({ message: 'Failed to add player' });
+    }
+  });
+
+  app.put('/api/minecraft/players/:id', requireAdmin, async (req, res) => {
+    try {
+      const player = await storage.updateMinecraftPlayer(req.params.id, req.body);
+      
+      const actions = [];
+      if (req.body.isBanned !== undefined) actions.push(req.body.isBanned ? 'banned' : 'unbanned');
+      if (req.body.isWhitelisted !== undefined) actions.push(req.body.isWhitelisted ? 'whitelisted' : 'removed from whitelist');
+      if (req.body.isOp !== undefined) actions.push(req.body.isOp ? 'given operator privileges' : 'removed operator privileges');
+      
+      if (actions.length > 0) {
+        await storage.createMinecraftLog({
+          serverId: player.serverId,
+          logLevel: 'INFO',
+          message: `Player '${player.playerName}' ${actions.join(', ')}`,
+          source: 'Player Manager'
+        });
+      }
+      
+      res.json(player);
+    } catch (error) {
+      console.error('Error updating player:', error);
+      res.status(500).json({ message: 'Failed to update player' });
+    }
+  });
+
+  app.delete('/api/minecraft/players/:id', requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteMinecraftPlayer(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error removing player:', error);
+      res.status(500).json({ message: 'Failed to remove player' });
+    }
+  });
+
+  // Minecraft Backups
+  app.get('/api/minecraft/servers/:serverId/backups', async (req, res) => {
+    try {
+      const backups = await storage.getMinecraftBackups(req.params.serverId);
+      res.json(backups);
+    } catch (error) {
+      console.error('Error fetching backups:', error);
+      res.status(500).json({ message: 'Failed to fetch backups' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:serverId/backups', requireAdmin, async (req, res) => {
+    try {
+      const backup = await storage.createMinecraftBackup({
+        ...req.body,
+        serverId: req.params.serverId,
+        status: 'pending'
+      });
+      
+      await storage.createMinecraftLog({
+        serverId: req.params.serverId,
+        logLevel: 'INFO',
+        message: `Backup '${backup.backupName}' started`,
+        source: 'Backup Manager'
+      });
+      
+      // Simulate backup process
+      setTimeout(async () => {
+        await storage.updateMinecraftBackup(backup.id, { 
+          status: 'completed',
+          sizeBytes: Math.floor(Math.random() * 1000000000) + 100000000 // Random size 100MB-1GB
+        });
+        
+        await storage.createMinecraftLog({
+          serverId: req.params.serverId,
+          logLevel: 'INFO',
+          message: `Backup '${backup.backupName}' completed successfully`,
+          source: 'Backup Manager'
+        });
+      }, 5000);
+      
+      res.status(201).json(backup);
+    } catch (error) {
+      console.error('Error creating backup:', error);
+      res.status(500).json({ message: 'Failed to create backup' });
+    }
+  });
+
+  app.delete('/api/minecraft/backups/:id', requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteMinecraftBackup(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting backup:', error);
+      res.status(500).json({ message: 'Failed to delete backup' });
+    }
+  });
+
+  // Minecraft Logs
+  app.get('/api/minecraft/servers/:serverId/logs', async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const logs = await storage.getMinecraftLogs(req.params.serverId, limit);
+      res.json(logs);
+    } catch (error) {
+      console.error('Error fetching logs:', error);
+      res.status(500).json({ message: 'Failed to fetch logs' });
+    }
+  });
+
+  app.post('/api/minecraft/servers/:serverId/logs', requireAdmin, async (req, res) => {
+    try {
+      const log = await storage.createMinecraftLog({
+        ...req.body,
+        serverId: req.params.serverId
+      });
+      res.status(201).json(log);
+    } catch (error) {
+      console.error('Error creating log entry:', error);
+      res.status(500).json({ message: 'Failed to create log entry' });
+    }
+  });
+
+  app.delete('/api/minecraft/servers/:serverId/logs', requireAdmin, async (req, res) => {
+    try {
+      const days = parseInt(req.query.days as string) || 30;
+      await storage.deleteOldMinecraftLogs(req.params.serverId, days);
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error cleaning up logs:', error);
+      res.status(500).json({ message: 'Failed to clean up logs' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
