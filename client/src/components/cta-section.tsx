@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Clock, Shield } from "lucide-react";
+import { Link } from "wouter";
 
 export default function CtaSection() {
   return (
@@ -23,20 +24,24 @@ export default function CtaSection() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button 
-              className="bg-gradient-green text-gaming-black px-8 py-4 text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow"
-              size="lg"
-            >
-              <Rocket className="mr-2" />
-              Start Your Server Now
-            </Button>
-            <Button 
-              variant="outline"
-              className="border-2 border-gaming-green text-gaming-green px-8 py-4 text-lg font-bold hover:bg-gaming-green hover:text-gaming-black"
-              size="lg"
-            >
-              View Live Demo
-            </Button>
+            <Link href="/games">
+              <Button 
+                className="bg-gradient-green text-gaming-black px-8 py-4 text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow"
+                size="lg"
+              >
+                <Rocket className="mr-2" />
+                Get Started Today
+              </Button>
+            </Link>
+            <Link href="/minecraft-tools">
+              <Button 
+                variant="outline"
+                className="border-2 border-gaming-green text-gaming-green px-8 py-4 text-lg font-bold hover:bg-gaming-green hover:text-gaming-black"
+                size="lg"
+              >
+                View Live Demo
+              </Button>
+            </Link>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gaming-gray">

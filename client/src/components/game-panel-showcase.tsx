@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Link } from 'wouter';
 import { 
   Play, 
   Pause, 
@@ -390,9 +391,11 @@ export default function GamePanelShowcase() {
                 <h3 className="text-xl font-bold text-gaming-white mb-1">Ready to get started?</h3>
                 <p className="text-gaming-gray">Deploy your own server with this exact control panel in under 60 seconds.</p>
               </div>
-              <Button className="bg-gaming-green text-gaming-black hover:bg-gaming-green-dark font-semibold">
-                Deploy Now
-              </Button>
+              <Link href="/games">
+                <Button className="bg-gaming-green text-gaming-black hover:bg-gaming-green-dark font-semibold">
+                  Get Started Today
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

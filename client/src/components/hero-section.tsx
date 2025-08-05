@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Play, Shield, Clock, Headphones } from "lucide-react";
+import { Link } from "wouter";
 
 export default function HeroSection() {
   return (

@@ -85,9 +85,9 @@ export default function ProfessionalHero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/pricing">
+              <Link href="/games">
                 <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black text-lg px-8 py-4 h-auto group">
-                  Start Your Server Now
+                  Get Started Today
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>

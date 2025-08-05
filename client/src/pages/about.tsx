@@ -70,7 +70,7 @@ export default function AboutPage() {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl font-bold text-gaming-white mb-6">
-              About <span className="text-gaming-green">GameHost Pro</span>
+              About <span className="text-gaming-green">VoltServers</span>
             </h1>
             <p className="text-xl text-gaming-gray mb-8">
               Leading player-owned game server hosting provider since 2020, delivering premium services at unbeatable prices.
@@ -86,7 +86,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-4xl font-bold text-gaming-white mb-6">Our Company</h2>
               <p className="text-gaming-gray text-lg mb-6">
-                GameHost Pro offers <strong className="text-gaming-green">premium services at unbeatable prices</strong>. 
+                VoltServers offers <strong className="text-gaming-green">premium services at unbeatable prices</strong>. 
                 Founded in 2020, we've quickly become one of the most trusted game server hosting providers in the industry.
               </p>
               <p className="text-gaming-gray text-lg mb-6">
@@ -107,7 +107,7 @@ export default function AboutPage() {
             <div className="flex justify-center">
               <img 
                 src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-                alt="GameHost Pro Team"
+                alt="VoltServers Team"
                 className="rounded-lg shadow-2xl max-w-full h-auto"
               />
             </div>
