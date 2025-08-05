@@ -25,6 +25,7 @@ export default function Home() {
       <TrustIndicators />
       <GameCards />
       <GamePanelShowcase />
+      <DemoGamesSection />
       <FeaturesSection />
       <PricingSection />
       <TestimonialsSection />
