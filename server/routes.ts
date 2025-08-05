@@ -1024,17 +1024,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get theme settings error:", error);
-      // Return fallback theme settings
-      res.json({
-        primaryColor: "#22c55e",
-        backgroundColor: "#0a0a0a",
-        accentColor: "#34d399",
-        textColor: "#ffffff",
-        cardColor: "#1a1a1a",
-        logo: null,
-        siteName: "GameHost Pro",
-        tagline: "Professional Game Server Hosting"
-      });
+      // Use shared memory storage fallback instead of hardcoded fallback
+      try {
+        const fallbackSettings = await memStorage.getThemeSettings();
+        res.json(fallbackSettings);
+      } catch (memError) {
+        // Ultimate fallback with all theme fields
+        res.json({
+          primaryColor: "#22c55e",
+          backgroundColor: "#0a0a0a",
+          accentColor: "#34d399",
+          textColor: "#ffffff",
+          cardColor: "#1a1a1a",
+          siteName: "VoltServers",
+          siteTagline: "Premium Game Server Hosting",
+          siteDescription: "Professional game server hosting with 24/7 support and premium hardware",
+          heroTitle: "Deploy Your Game Server in Minutes",
+          heroSubtitle: "Experience lightning-fast deployment with our premium game server hosting platform",
+          heroDescription: "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
+          heroButtonText: "Get Started",
+          heroButtonUrl: "/pricing",
+          logoUrl: null,
+          faviconUrl: null,
+          footerText: null,
+          fontFamily: "Inter",
+          borderRadius: "0.5rem",
+          holidayTheme: "none"
+        });
+      }
     }
   });
 
