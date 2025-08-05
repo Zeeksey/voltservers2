@@ -143,6 +143,65 @@ export class WHMCSIntegration {
     }
   }
 
+  // Get client by email address
+  async getClientByEmail(email: string): Promise<WHMCSUser | null> {
+    try {
+      // Try different search approaches
+      console.log('Searching for client with email:', email);
+      
+      // First try: search by email in GetClients
+      let response = await this.makeAPICall('GetClients', {
+        search: email,
+        limitnum: 10
+      });
+
+      console.log('GetClients search response:', JSON.stringify(response, null, 2));
+
+      if (response.clients && response.clients.client) {
+        const clients = Array.isArray(response.clients.client) ? response.clients.client : [response.clients.client];
+        const client = clients.find((c: any) => c.email && c.email.toLowerCase() === email.toLowerCase());
+        
+        if (client) {
+          return {
+            userid: client.id,
+            firstname: client.firstname,
+            lastname: client.lastname,
+            email: client.email,
+            status: client.status,
+            groupid: client.groupid
+          };
+        }
+      }
+
+      // Second try: get all clients and search manually
+      response = await this.makeAPICall('GetClients', {
+        limitnum: 100
+      });
+
+      if (response.clients && response.clients.client) {
+        const clients = Array.isArray(response.clients.client) ? response.clients.client : [response.clients.client];
+        const client = clients.find((c: any) => c.email && c.email.toLowerCase() === email.toLowerCase());
+        
+        if (client) {
+          return {
+            userid: client.id,
+            firstname: client.firstname,
+            lastname: client.lastname,
+            email: client.email,
+            status: client.status,
+            groupid: client.groupid
+          };
+        }
+      }
+
+      console.log('Client not found with email:', email);
+      return null;
+    } catch (error) {
+      console.error('Error finding client by email:', error);
+      return null;
+    }
+  }
+
   // Get all clients
   async getClients(limitstart?: number, limitnum?: number): Promise<any> {
     try {

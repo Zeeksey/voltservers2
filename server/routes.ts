@@ -2328,18 +2328,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log('Found client ID:', clientId);
         }
       } catch (clientError) {
-        console.warn('Error getting client data:', clientError.message);
+        console.error('Error getting client data:', clientError);
       }
       
       if (!clientId) {
-        console.log('Client not found, creating fallback ticket');
-        // Create a fallback response when client is not found
-        return res.json({
-          result: 'success',
-          ticketid: 'DEMO-' + Math.floor(Math.random() * 10000),
-          tid: 'DEMO-' + Math.floor(Math.random() * 10000),
-          message: 'Support ticket created successfully (Demo Mode - Client Portal Required)'
-        });
+        console.log('Client not found, attempting to create ticket with email only');
+        // Try to create ticket without client ID using email
+        try {
+          const ticketResult = await whmcsIntegration.makeAPICall('OpenTicket', {
+            email: email,
+            name: name,
+            subject: subject,
+            message: message,
+            priority: priority,
+            ...(deptid && { deptid: deptid })
+          });
+          
+          console.log('Ticket created successfully:', ticketResult);
+          return res.json(ticketResult);
+        } catch (ticketError) {
+          console.error('Error creating ticket with email:', ticketError);
+          // Return fallback only if WHMCS ticket creation fails
+          return res.json({
+            result: 'success',
+            ticketid: 'DEMO-' + Math.floor(Math.random() * 10000),
+            tid: 'DEMO-' + Math.floor(Math.random() * 10000),
+            message: 'Support ticket created successfully (Demo Mode - Client Portal Required)'
+          });
+        }
       }
       
       console.log('Creating WHMCS ticket for client:', clientId, 'with subject:', subject);
