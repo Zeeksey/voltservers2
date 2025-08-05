@@ -3,7 +3,8 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
+import HolidayEffects from "@/components/holiday-effects";
 
 // Critical pages loaded immediately
 import NotFound from "@/pages/not-found";
@@ -74,17 +75,24 @@ function Router() {
 }
 
 function App() {
+  const [holidayTheme, setHolidayTheme] = useState<'none' | 'snow' | 'halloween' | 'easter' | 'christmas'>('none');
+
   useEffect(() => {
     // Remove initial loader when React app is ready
     const loader = document.getElementById('initial-loader');
     if (loader) {
       loader.remove();
     }
+
+    // Check for stored holiday theme
+    const storedTheme = localStorage.getItem('holidayTheme') as typeof holidayTheme || 'none';
+    setHolidayTheme(storedTheme);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        <HolidayEffects theme={holidayTheme} />
         <Toaster />
         <Router />
       </TooltipProvider>

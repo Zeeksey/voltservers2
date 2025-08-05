@@ -25,7 +25,17 @@ import {
   Users,
   Layout,
   MapPin,
-  Server
+  Server,
+  Palette,
+  Image as ImageIcon,
+  Type,
+  Snowflake,
+  Skull,
+  Egg,
+  TreePine,
+  Upload,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -78,6 +88,28 @@ export default function AdminDashboard() {
     ipAddress: "",
     status: "online" as "online" | "offline" | "maintenance"
   });
+  
+  // Theme customization state
+  const [themeForm, setThemeForm] = useState({
+    siteName: "VoltServers",
+    siteTagline: "Premium Game Server Hosting",
+    primaryColor: "#00ff88",
+    secondaryColor: "#1a1a1a",
+    accentColor: "#00cc6a",
+    backgroundColor: "#0a0a0a",
+    textColor: "#ffffff",
+    logoUrl: "",
+    faviconUrl: "",
+    footerText: "",
+    fontFamily: "Inter",
+    borderRadius: "0.5rem",
+    holidayTheme: "none",
+    customCss: ""
+  });
+  
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [faviconFile, setFaviconFile] = useState<File | null>(null);
+  const [previewMode, setPreviewMode] = useState(false);
 
   const [locationPings, setLocationPings] = useState<Map<string, number>>(new Map());
   const [editingLocation, setEditingLocation] = useState<any>(null);
@@ -340,6 +372,50 @@ export default function AdminDashboard() {
     },
   });
 
+  // Theme management mutations
+  const updateThemeMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("/api/admin/theme-settings", { method: "PUT", body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/theme-settings"] });
+      toast({ title: "Theme settings updated successfully!" });
+      // Apply theme changes immediately
+      applyThemeToDocument();
+    },
+    onError: (error: Error) => {
+      toast({ title: "Failed to update theme settings", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const uploadImageMutation = useMutation({
+    mutationFn: async ({ file, type }: { file: File; type: 'logo' | 'favicon' }) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('type', type);
+      
+      const response = await fetch('/api/admin/upload-image', {
+        method: 'POST',
+        headers: {
+          "Authorization": `Bearer ${localStorage.getItem("adminToken")}`,
+        },
+        body: formData,
+      });
+      
+      if (!response.ok) throw new Error('Upload failed');
+      return response.json();
+    },
+    onSuccess: (data, variables) => {
+      if (variables.type === 'logo') {
+        setThemeForm(prev => ({ ...prev, logoUrl: data.url }));
+      } else {
+        setThemeForm(prev => ({ ...prev, faviconUrl: data.url }));
+      }
+      toast({ title: `${variables.type === 'logo' ? 'Logo' : 'Favicon'} uploaded successfully!` });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+    },
+  });
+
   // Delete server location mutation
   const deleteLocationMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/admin/server-locations/${id}`, {
@@ -458,6 +534,112 @@ export default function AdminDashboard() {
     updatePromoMutation.mutate(promoForm);
   };
 
+  // Theme helper functions
+  const applyThemeToDocument = () => {
+    if (previewMode) {
+      const root = document.documentElement;
+      root.style.setProperty('--gaming-green', themeForm.primaryColor);
+      root.style.setProperty('--gaming-green-dark', themeForm.accentColor);
+      root.style.setProperty('--gaming-black', themeForm.backgroundColor);
+      root.style.setProperty('--gaming-black-light', themeForm.secondaryColor);
+      root.style.setProperty('--gaming-white', themeForm.textColor);
+      
+      // Apply holiday theme
+      if (themeForm.holidayTheme !== 'none') {
+        applyHolidayTheme(themeForm.holidayTheme);
+      } else {
+        removeHolidayTheme();
+      }
+    }
+  };
+
+  const applyHolidayTheme = (theme: string) => {
+    removeHolidayTheme(); // Clear existing themes first
+    
+    switch (theme) {
+      case 'snow':
+        createSnowEffect();
+        break;
+      case 'halloween':
+        document.body.classList.add('halloween-theme');
+        createSpookyEffect();
+        break;
+      case 'easter':
+        createEasterEffect();
+        break;
+      case 'christmas':
+        createChristmasEffect();
+        break;
+    }
+  };
+
+  const removeHolidayTheme = () => {
+    document.body.classList.remove('halloween-theme');
+    document.querySelectorAll('.snow-particle, .spooky-element, .easter-egg, .christmas-light').forEach(el => el.remove());
+  };
+
+  const createSnowEffect = () => {
+    for (let i = 0; i < 50; i++) {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snow-particle';
+      snowflake.innerHTML = '❄';
+      snowflake.style.left = Math.random() * 100 + 'vw';
+      snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+      snowflake.style.opacity = Math.random().toString();
+      document.body.appendChild(snowflake);
+    }
+  };
+
+  const createSpookyEffect = () => {
+    const elements = document.querySelectorAll('.bg-gaming-green');
+    elements.forEach(el => el.classList.add('halloween-glow'));
+  };
+
+  const createEasterEffect = () => {
+    for (let i = 0; i < 10; i++) {
+      const egg = document.createElement('div');
+      egg.className = 'easter-egg';
+      egg.innerHTML = '🥚';
+      egg.style.position = 'fixed';
+      egg.style.right = Math.random() * 100 + 'px';
+      egg.style.bottom = Math.random() * 100 + 'px';
+      egg.style.fontSize = '2rem';
+      egg.style.zIndex = '1000';
+      document.body.appendChild(egg);
+    }
+  };
+
+  const createChristmasEffect = () => {
+    for (let i = 0; i < 20; i++) {
+      const light = document.createElement('div');
+      light.className = 'christmas-light';
+      light.innerHTML = '🔴🟢🔵🟡'[i % 4];
+      light.style.position = 'fixed';
+      light.style.top = '0';
+      light.style.left = (i * 5) + '%';
+      light.style.fontSize = '1.5rem';
+      light.style.zIndex = '1000';
+      document.body.appendChild(light);
+    }
+  };
+
+  const handleThemeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateThemeMutation.mutate(themeForm);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (type === 'logo') {
+        setLogoFile(file);
+      } else {
+        setFaviconFile(file);
+      }
+      uploadImageMutation.mutate({ file, type });
+    }
+  };
+
   if (!adminUser) {
     return null;
   }
@@ -512,6 +694,10 @@ export default function AdminDashboard() {
               <Server className="w-4 h-4 mr-2" />
               Demo Servers
             </TabsTrigger>
+            <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
+              <Palette className="w-4 h-4 mr-2" />
+              Theme
+            </TabsTrigger>
           </TabsList>
 
           {/* Games Management */}
@@ -532,7 +718,7 @@ export default function AdminDashboard() {
                         <Input
                           value={gameForm.name}
                           onChange={(e) => setGameForm({...gameForm, name: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -541,7 +727,7 @@ export default function AdminDashboard() {
                         <Input
                           value={gameForm.slug}
                           onChange={(e) => setGameForm({...gameForm, slug: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -551,7 +737,7 @@ export default function AdminDashboard() {
                       <Textarea
                         value={gameForm.description}
                         onChange={(e) => setGameForm({...gameForm, description: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         required
                       />
                     </div>
@@ -560,7 +746,7 @@ export default function AdminDashboard() {
                       <Input
                         value={gameForm.imageUrl}
                         onChange={(e) => setGameForm({...gameForm, imageUrl: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         required
                       />
                     </div>
@@ -570,7 +756,7 @@ export default function AdminDashboard() {
                         <Input
                           value={gameForm.basePrice}
                           onChange={(e) => setGameForm({...gameForm, basePrice: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -580,7 +766,7 @@ export default function AdminDashboard() {
                           type="number"
                           value={gameForm.playerCount}
                           onChange={(e) => setGameForm({...gameForm, playerCount: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -699,7 +885,7 @@ export default function AdminDashboard() {
                         <Input
                           value={blogForm.title}
                           onChange={(e) => setBlogForm({...blogForm, title: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -708,7 +894,7 @@ export default function AdminDashboard() {
                         <Input
                           value={blogForm.slug}
                           onChange={(e) => setBlogForm({...blogForm, slug: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -718,7 +904,7 @@ export default function AdminDashboard() {
                       <Textarea
                         value={blogForm.excerpt}
                         onChange={(e) => setBlogForm({...blogForm, excerpt: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         required
                       />
                     </div>
@@ -736,7 +922,7 @@ export default function AdminDashboard() {
                       <Input
                         value={blogForm.imageUrl}
                         onChange={(e) => setBlogForm({...blogForm, imageUrl: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         required
                       />
                     </div>
@@ -746,7 +932,7 @@ export default function AdminDashboard() {
                         <Input
                           value={blogForm.author}
                           onChange={(e) => setBlogForm({...blogForm, author: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           required
                         />
                       </div>
@@ -755,7 +941,7 @@ export default function AdminDashboard() {
                         <Input
                           value={blogForm.tags}
                           onChange={(e) => setBlogForm({...blogForm, tags: e.target.value})}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                          className="admin-input"
                           placeholder="minecraft, server, tutorial"
                         />
                       </div>
@@ -863,7 +1049,7 @@ export default function AdminDashboard() {
                     <Textarea
                       value={promoForm.message}
                       onChange={(e) => setPromoForm({...promoForm, message: e.target.value})}
-                      className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                      className="admin-input"
                       placeholder="🎮 Special offer message here..."
                       required
                     />
@@ -875,7 +1061,7 @@ export default function AdminDashboard() {
                       <Input
                         value={promoForm.linkText}
                         onChange={(e) => setPromoForm({...promoForm, linkText: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         placeholder="Get Started"
                       />
                     </div>
@@ -884,7 +1070,7 @@ export default function AdminDashboard() {
                       <Input
                         value={promoForm.linkUrl}
                         onChange={(e) => setPromoForm({...promoForm, linkUrl: e.target.value})}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-white"
+                        className="admin-input"
                         placeholder="#pricing"
                       />
                     </div>
@@ -1237,6 +1423,435 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Theme Customization Tab */}
+          <TabsContent value="theme" className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Theme Settings Form */}
+              <Card className="bg-gaming-dark border-gaming-green/20">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green flex items-center gap-2">
+                    <Palette className="w-5 h-5" />
+                    Theme Customization
+                  </CardTitle>
+                  <div className="flex items-center space-x-2 mt-2">
+                    <Switch 
+                      checked={previewMode}
+                      onCheckedChange={setPreviewMode}
+                      id="preview-mode"
+                    />
+                    <Label htmlFor="preview-mode" className="text-gray-300">
+                      {previewMode ? <Eye className="w-4 h-4 inline mr-1" /> : <EyeOff className="w-4 h-4 inline mr-1" />}
+                      Preview Mode
+                    </Label>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleThemeSubmit} className="space-y-6">
+                    {/* Site Identity */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Type className="w-4 h-4" />
+                        Site Identity
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Website Name</Label>
+                          <Input
+                            value={themeForm.siteName}
+                            onChange={(e) => setThemeForm({...themeForm, siteName: e.target.value})}
+                            className="admin-input"
+                            placeholder="VoltServers"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Tagline</Label>
+                          <Input
+                            value={themeForm.siteTagline}
+                            onChange={(e) => setThemeForm({...themeForm, siteTagline: e.target.value})}
+                            className="admin-input"
+                            placeholder="Premium Game Server Hosting"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Footer Text</Label>
+                          <Textarea
+                            value={themeForm.footerText}
+                            onChange={(e) => setThemeForm({...themeForm, footerText: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="© 2025 VoltServers. All rights reserved."
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Logo Upload */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4" />
+                        Brand Assets
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Logo</Label>
+                          <div className="flex items-center space-x-4">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(e, 'logo')}
+                              className="admin-input"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            >
+                              <Upload className="w-4 h-4 mr-2" />
+                              Upload
+                            </Button>
+                          </div>
+                          {themeForm.logoUrl && (
+                            <img src={themeForm.logoUrl} alt="Logo preview" className="mt-2 max-h-16 rounded border border-gaming-green/20" />
+                          )}
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Favicon</Label>
+                          <div className="flex items-center space-x-4">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleFileUpload(e, 'favicon')}
+                              className="admin-input"
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            >
+                              <Upload className="w-4 h-4 mr-2" />
+                              Upload
+                            </Button>
+                          </div>
+                          {themeForm.faviconUrl && (
+                            <img src={themeForm.faviconUrl} alt="Favicon preview" className="mt-2 w-8 h-8 rounded border border-gaming-green/20" />
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Color Customization */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Palette className="w-4 h-4" />
+                        Color Scheme
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Primary Color</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              type="color"
+                              value={themeForm.primaryColor}
+                              onChange={(e) => {
+                                setThemeForm({...themeForm, primaryColor: e.target.value});
+                                if (previewMode) applyThemeToDocument();
+                              }}
+                              className="w-12 h-10 rounded border-gaming-green/30"
+                            />
+                            <Input
+                              value={themeForm.primaryColor}
+                              onChange={(e) => setThemeForm({...themeForm, primaryColor: e.target.value})}
+                              className="admin-input flex-1"
+                              placeholder="#00ff88"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Secondary Color</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              type="color"
+                              value={themeForm.secondaryColor}
+                              onChange={(e) => {
+                                setThemeForm({...themeForm, secondaryColor: e.target.value});
+                                if (previewMode) applyThemeToDocument();
+                              }}
+                              className="w-12 h-10 rounded border-gaming-green/30"
+                            />
+                            <Input
+                              value={themeForm.secondaryColor}
+                              onChange={(e) => setThemeForm({...themeForm, secondaryColor: e.target.value})}
+                              className="admin-input flex-1"
+                              placeholder="#1a1a1a"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Accent Color</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              type="color"
+                              value={themeForm.accentColor}
+                              onChange={(e) => {
+                                setThemeForm({...themeForm, accentColor: e.target.value});
+                                if (previewMode) applyThemeToDocument();
+                              }}
+                              className="w-12 h-10 rounded border-gaming-green/30"
+                            />
+                            <Input
+                              value={themeForm.accentColor}
+                              onChange={(e) => setThemeForm({...themeForm, accentColor: e.target.value})}
+                              className="admin-input flex-1"
+                              placeholder="#00cc6a"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Background Color</Label>
+                          <div className="flex items-center space-x-2">
+                            <Input
+                              type="color"
+                              value={themeForm.backgroundColor}
+                              onChange={(e) => {
+                                setThemeForm({...themeForm, backgroundColor: e.target.value});
+                                if (previewMode) applyThemeToDocument();
+                              }}
+                              className="w-12 h-10 rounded border-gaming-green/30"
+                            />
+                            <Input
+                              value={themeForm.backgroundColor}
+                              onChange={(e) => setThemeForm({...themeForm, backgroundColor: e.target.value})}
+                              className="admin-input flex-1"
+                              placeholder="#0a0a0a"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Holiday Themes */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Snowflake className="w-4 h-4" />
+                        Holiday Themes
+                      </h3>
+                      <div>
+                        <Label className="text-gray-300">Special Theme</Label>
+                        <Select value={themeForm.holidayTheme} onValueChange={(value) => {
+                          setThemeForm({...themeForm, holidayTheme: value});
+                          if (previewMode) applyThemeToDocument();
+                        }}>
+                          <SelectTrigger className="admin-select">
+                            <SelectValue placeholder="Select holiday theme" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gaming-black border-gaming-green/20">
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="snow">
+                              <div className="flex items-center gap-2">
+                                <Snowflake className="w-4 h-4" />
+                                Snow Theme
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="halloween">
+                              <div className="flex items-center gap-2">
+                                <Skull className="w-4 h-4" />
+                                Halloween Theme
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="easter">
+                              <div className="flex items-center gap-2">
+                                <Egg className="w-4 h-4" />
+                                Easter Theme
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="christmas">
+                              <div className="flex items-center gap-2">
+                                <TreePine className="w-4 h-4" />
+                                Christmas Theme
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {themeForm.holidayTheme !== 'none' && (
+                          <div className="mt-2 p-3 bg-gaming-green/10 border border-gaming-green/20 rounded">
+                            <p className="text-gaming-green text-sm">
+                              {themeForm.holidayTheme === 'snow' && '❄️ Adds animated snowflakes across the site'}
+                              {themeForm.holidayTheme === 'halloween' && '🎃 Adds spooky orange glows and effects'}
+                              {themeForm.holidayTheme === 'easter' && '🥚 Adds bouncing easter eggs around the site'}
+                              {themeForm.holidayTheme === 'christmas' && '🎄 Adds festive lights and decorations'}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Typography */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold">Typography & Layout</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Font Family</Label>
+                          <Select value={themeForm.fontFamily} onValueChange={(value) => setThemeForm({...themeForm, fontFamily: value})}>
+                            <SelectTrigger className="admin-select">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gaming-black border-gaming-green/20">
+                              <SelectItem value="Inter">Inter</SelectItem>
+                              <SelectItem value="Roboto">Roboto</SelectItem>
+                              <SelectItem value="Open Sans">Open Sans</SelectItem>
+                              <SelectItem value="Poppins">Poppins</SelectItem>
+                              <SelectItem value="Orbitron">Orbitron (Gaming)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Border Radius</Label>
+                          <Select value={themeForm.borderRadius} onValueChange={(value) => setThemeForm({...themeForm, borderRadius: value})}>
+                            <SelectTrigger className="admin-select">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="bg-gaming-black border-gaming-green/20">
+                              <SelectItem value="0">Sharp (0px)</SelectItem>
+                              <SelectItem value="0.25rem">Small (4px)</SelectItem>
+                              <SelectItem value="0.5rem">Medium (8px)</SelectItem>
+                              <SelectItem value="1rem">Large (16px)</SelectItem>
+                              <SelectItem value="1.5rem">Extra Large (24px)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Custom CSS */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold">Advanced Customization</h3>
+                      <div>
+                        <Label className="text-gray-300">Custom CSS</Label>
+                        <Textarea
+                          value={themeForm.customCss}
+                          onChange={(e) => setThemeForm({...themeForm, customCss: e.target.value})}
+                          className="admin-textarea font-mono text-sm"
+                          rows={6}
+                          placeholder="/* Add your custom CSS here */
+.custom-class {
+  background: linear-gradient(45deg, #00ff88, #00cc6a);
+}"
+                        />
+                        <p className="text-gray-400 text-xs mt-1">
+                          Add custom CSS to override default styles. Use with caution.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex space-x-4">
+                      <Button 
+                        type="submit" 
+                        className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black"
+                        disabled={updateThemeMutation.isPending}
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        {updateThemeMutation.isPending ? 'Saving...' : 'Save Theme Settings'}
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                        onClick={() => {
+                          if (previewMode) {
+                            removeHolidayTheme();
+                            location.reload();
+                          }
+                        }}
+                      >
+                        Reset Preview
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Theme Preview */}
+              <Card className="bg-gaming-dark border-gaming-green/20">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green">Live Preview</CardTitle>
+                  <p className="text-gray-400 text-sm">Enable preview mode to see changes in real-time</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Preview cards showing theme changes */}
+                  <div className="space-y-4">
+                    <div 
+                      className="p-4 rounded border-2"
+                      style={{
+                        backgroundColor: previewMode ? themeForm.backgroundColor : '#1a1a1a',
+                        borderColor: previewMode ? themeForm.primaryColor : '#00ff88',
+                        color: previewMode ? themeForm.textColor : '#ffffff'
+                      }}
+                    >
+                      <h4 className="font-bold mb-2" style={{ color: previewMode ? themeForm.primaryColor : '#00ff88' }}>
+                        {themeForm.siteName}
+                      </h4>
+                      <p className="text-sm opacity-75">{themeForm.siteTagline}</p>
+                      <div className="mt-3 flex space-x-2">
+                        <div 
+                          className="px-3 py-1 rounded text-sm"
+                          style={{
+                            backgroundColor: previewMode ? themeForm.primaryColor : '#00ff88',
+                            color: previewMode ? themeForm.backgroundColor : '#0a0a0a'
+                          }}
+                        >
+                          Primary Button
+                        </div>
+                        <div 
+                          className="px-3 py-1 rounded text-sm border"
+                          style={{
+                            borderColor: previewMode ? themeForm.accentColor : '#00cc6a',
+                            color: previewMode ? themeForm.accentColor : '#00cc6a'
+                          }}
+                        >
+                          Secondary Button
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Holiday theme preview */}
+                    {themeForm.holidayTheme !== 'none' && (
+                      <div className="p-4 bg-gaming-black-lighter border border-gaming-green/20 rounded">
+                        <h4 className="text-gaming-green font-semibold mb-2">Holiday Theme Preview</h4>
+                        <div className="text-center py-8 relative overflow-hidden rounded">
+                          {themeForm.holidayTheme === 'snow' && (
+                            <div className="text-4xl">❄️ ❄️ ❄️</div>
+                          )}
+                          {themeForm.holidayTheme === 'halloween' && (
+                            <div className="text-4xl text-orange-500">🎃 👻 🦇</div>
+                          )}
+                          {themeForm.holidayTheme === 'easter' && (
+                            <div className="text-4xl">🥚 🐰 🌸</div>
+                          )}
+                          {themeForm.holidayTheme === 'christmas' && (
+                            <div className="text-4xl">🎄 🎁 ⭐</div>
+                          )}
+                          <p className="text-gray-400 text-sm mt-2">
+                            {themeForm.holidayTheme.charAt(0).toUpperCase() + themeForm.holidayTheme.slice(1)} theme activated
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Font preview */}
+                    <div 
+                      className="p-4 bg-gaming-black-lighter border border-gaming-green/20 rounded"
+                      style={{ fontFamily: themeForm.fontFamily }}
+                    >
+                      <h4 className="text-gaming-green font-semibold mb-2">Font Preview</h4>
+                      <p className="text-lg font-bold">The quick brown fox jumps over the lazy dog</p>
+                      <p className="text-sm text-gray-400 mt-1">Font: {themeForm.fontFamily}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

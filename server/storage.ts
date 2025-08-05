@@ -78,6 +78,10 @@ export interface IStorage {
   getPromoSettings(): Promise<PromoSetting | undefined>;
   updatePromoSettings(settings: InsertPromoSetting): Promise<PromoSetting>;
 
+  // Theme settings methods
+  getThemeSettings(): Promise<any>;
+  updateThemeSettings(settings: any): Promise<any>;
+
   // Game page customization methods
   getGamePageSections(gameId: string): Promise<GamePageSection[]>;
   createGamePageSection(section: InsertGamePageSection): Promise<GamePageSection>;

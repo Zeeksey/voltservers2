@@ -466,6 +466,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Theme Settings Routes
+  app.get("/api/admin/theme-settings", requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.getThemeSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Get theme settings error:", error);
+      res.status(500).json({ message: "Failed to get theme settings" });
+    }
+  });
+
+  app.put("/api/admin/theme-settings", requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.updateThemeSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error("Update theme settings error:", error);
+      res.status(500).json({ message: "Failed to update theme settings" });
+    }
+  });
+
+  app.post("/api/admin/upload-image", requireAdmin, async (req, res) => {
+    try {
+      // In a real implementation, you'd upload to a cloud service like AWS S3 or Cloudinary
+      // For now, we'll return a mock URL
+      const imageUrl = `/uploads/${Date.now()}-${req.file?.originalname || 'image.png'}`;
+      res.json({ url: imageUrl });
+    } catch (error) {
+      console.error("Upload image error:", error);
+      res.status(500).json({ message: "Failed to upload image" });
+    }
+  });
+
   // Admin Promo Settings Routes
   app.get("/api/admin/promo-settings", requireAdmin, async (req, res) => {
     try {

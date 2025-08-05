@@ -439,6 +439,8 @@ export const whmcsSettings = pgTable("whmcs_settings", {
 // Theme Customization Settings
 export const themeSettings = pgTable("theme_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siteName: varchar("site_name").notNull().default("VoltServers"),
+  siteTagline: varchar("site_tagline").notNull().default("Premium Game Server Hosting"),
   primaryColor: varchar("primary_color").notNull().default("#00ff88"),
   secondaryColor: varchar("secondary_color").notNull().default("#1a1a1a"),
   accentColor: varchar("accent_color").notNull().default("#00cc6a"),
@@ -446,8 +448,11 @@ export const themeSettings = pgTable("theme_settings", {
   textColor: varchar("text_color").notNull().default("#ffffff"),
   logoUrl: varchar("logo_url"),
   faviconUrl: varchar("favicon_url"),
+  footerText: text("footer_text"),
   fontFamily: varchar("font_family").notNull().default("Inter"),
   borderRadius: varchar("border_radius").notNull().default("0.5rem"),
+  holidayTheme: varchar("holiday_theme").default("none"), // none, snow, halloween, easter, christmas
+  customCss: text("custom_css"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
