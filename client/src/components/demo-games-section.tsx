@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
 import { 
   Users, 
   Copy,
@@ -12,27 +13,94 @@ import {
   Monitor,
   Tv,
   Zap,
-  Clock
+  Clock,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
+import type { DemoServer } from '@shared/schema';
 
-interface DemoServer {
-  id: string;
-  name: string;
-  game: string;
-  ip: string;
-  port: string;
-  version: string;
+interface ServerStatus {
+  online: boolean;
   players: {
-    online: number;
+    current: number;
     max: number;
   };
-  status: 'online' | 'offline' | 'maintenance';
-  platform: 'PC' | 'Console' | 'Crossplay';
-  gameMode: string;
-  description: string;
+  version: string;
+  motd: string;
+  ping: number;
+  hostname: string;
+  port: number;
+  software: string;
 }
 
-const demoServers: DemoServer[] = [
+export default function DemoGamesSection() {
+  const [copiedServer, setCopiedServer] = useState<string | null>(null);
+  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
+
+  // Fetch demo servers from API
+  const { data: demoServers = [], isLoading } = useQuery<DemoServer[]>({
+    queryKey: ['/api/demo-servers'],
+  });
+
+  // Query each server's live status
+  useEffect(() => {
+    if (!demoServers || demoServers.length === 0) return;
+
+    const queryAllServers = async () => {
+      const statusPromises = demoServers.map(async (server) => {
+        try {
+          const response = await fetch(`/api/query-server/${server.serverIp}/${server.serverPort}`);
+          if (response.ok) {
+            const status = await response.json();
+            return { serverId: server.id, status };
+          }
+        } catch (error) {
+          console.error(`Failed to query server ${server.serverIp}:${server.serverPort}`, error);
+        }
+        return { 
+          serverId: server.id, 
+          status: { 
+            online: false, 
+            players: { current: 0, max: server.maxPlayers },
+            version: "Unknown",
+            motd: "Server offline",
+            ping: 0,
+            hostname: server.serverIp,
+            port: server.serverPort,
+            software: "Unknown"
+          } 
+        };
+      });
+
+      const results = await Promise.all(statusPromises);
+      const statusMap = new Map();
+      results.forEach(({ serverId, status }) => {
+        statusMap.set(serverId, status);
+      });
+      setServerStatuses(statusMap);
+    };
+
+    queryAllServers();
+    
+    // Refresh every 60 seconds to reduce server load
+    const interval = setInterval(queryAllServers, 60000);
+    return () => clearInterval(interval);
+  }, [demoServers]);
+
+  if (isLoading) {
+    return (
+      <section className="py-20 bg-gaming-black">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-gaming-green">Loading demo servers...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Fallback demo servers if API fails
+  const fallbackServers = [
   {
     id: '1',
     name: 'VoltServers Creative Hub',
@@ -87,18 +155,20 @@ const demoServers: DemoServer[] = [
   }
 ];
 
-export default function DemoGamesSection() {
-  const [copiedIp, setCopiedIp] = useState<string | null>(null);
+  // Use database demo servers or fallback
+  const serversToDisplay = demoServers.length > 0 ? demoServers : fallbackServers;
 
   const copyToClipboard = async (text: string, serverId: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopiedIp(serverId);
-      setTimeout(() => setCopiedIp(null), 2000);
+      setCopiedServer(serverId);
+      setTimeout(() => setCopiedServer(null), 2000);
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
   };
+
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -154,26 +224,39 @@ export default function DemoGamesSection() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {demoServers.map((server) => (
+          {serversToDisplay.map((server) => {
+            const status = serverStatuses.get(server.id);
+            const serverIp = server.serverIp || server.ip;
+            const serverPort = server.serverPort || server.port;
+            const serverName = server.serverName || server.name;
+            const gameType = server.gameType || server.game;
+            const isOnline = status?.online ?? (server.status === 'online');
+            const currentPlayers = status?.players?.current ?? server.players?.online ?? 0;
+            const maxPlayers = status?.players?.max ?? server.maxPlayers ?? server.players?.max ?? 100;
+            
+            return (
             <Card key={server.id} className="bg-gaming-black border-gaming-green/20 hover:border-gaming-green/50 transition-all duration-300">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between mb-2">
-                  <CardTitle className="text-gaming-white text-lg">{server.game}</CardTitle>
+                  <CardTitle className="text-gaming-white text-lg">{gameType}</CardTitle>
                   <div className="flex items-center gap-1">
-                    {getStatusIcon(server.status)}
-                    <span className={`text-sm font-medium ${getStatusColor(server.status)}`}>
-                      {server.status.charAt(0).toUpperCase() + server.status.slice(1)}
+                    {isOnline ? 
+                      <Wifi className="w-4 h-4 text-green-500" /> :
+                      <WifiOff className="w-4 h-4 text-red-500" />
+                    }
+                    <span className={`text-sm font-medium ${isOnline ? 'text-green-500' : 'text-red-500'}`}>
+                      {isOnline ? 'Online' : 'Offline'}
                     </span>
                   </div>
                 </div>
-                <h3 className="text-gaming-gray text-sm font-medium">{server.name}</h3>
+                <h3 className="text-gaming-gray text-sm font-medium">{serverName}</h3>
                 <div className="flex items-center gap-2 mt-2">
                   <Badge className={`${getPlatformColor(server.platform)} flex items-center gap-1 text-xs`}>
                     {getPlatformIcon(server.platform)}
                     {server.platform}
                   </Badge>
                   <Badge variant="outline" className="text-xs border-gaming-green/30 text-gaming-gray">
-                    {server.gameMode}
+                    {server.gameMode || 'Standard'}
                   </Badge>
                 </div>
               </CardHeader>
@@ -189,10 +272,10 @@ export default function DemoGamesSection() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => copyToClipboard(server.ip, server.id)}
+                        onClick={() => copyToClipboard(`${serverIp}:${serverPort}`, server.id)}
                         className="h-6 w-6 p-0 hover:bg-gaming-green/20"
                       >
-                        {copiedIp === server.id ? (
+                        {copiedServer === server.id ? (
                           <CheckCircle className="w-3 h-3 text-gaming-green" />
                         ) : (
                           <Copy className="w-3 h-3 text-gaming-gray hover:text-gaming-green" />
@@ -200,18 +283,18 @@ export default function DemoGamesSection() {
                       </Button>
                     </div>
                     <div className="font-mono text-gaming-white text-sm break-all">
-                      {server.ip}
+                      {serverIp}
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div>
                       <span className="text-gaming-gray">Port:</span>
-                      <div className="font-mono text-gaming-white">{server.port}</div>
+                      <div className="font-mono text-gaming-white">{serverPort}</div>
                     </div>
                     <div>
                       <span className="text-gaming-gray">Version:</span>
-                      <div className="font-mono text-gaming-white">{server.version}</div>
+                      <div className="font-mono text-gaming-white">{server.version || status?.version || 'Unknown'}</div>
                     </div>
                   </div>
                 </div>
@@ -221,19 +304,20 @@ export default function DemoGamesSection() {
                   <div className="flex items-center gap-2 text-sm">
                     <Users className="w-4 h-4 text-gaming-green" />
                     <span className="text-gaming-white font-medium">
-                      {server.players.online}/{server.players.max}
+                      {currentPlayers}/{maxPlayers}
                     </span>
                     <span className="text-gaming-gray">players</span>
                   </div>
                   <div className="text-right">
                     <div className="text-gaming-green text-xs font-medium">
-                      {Math.round((server.players.online / server.players.max) * 100)}% full
+                      {Math.round((currentPlayers / maxPlayers) * 100)}% full
                     </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
+            );
+          })}
         </div>
 
         {/* Connection Instructions */}

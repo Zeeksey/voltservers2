@@ -55,6 +55,13 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User>;
   
+  // Demo server methods
+  getAllDemoServers(): Promise<DemoServer[]>;
+  getDemoServer(id: string): Promise<DemoServer | undefined>;
+  createDemoServer(server: InsertDemoServer): Promise<DemoServer>;
+  updateDemoServer(id: string, updates: Partial<DemoServer>): Promise<DemoServer>;
+  deleteDemoServer(id: string): Promise<void>;
+  
   // Admin session methods
   createAdminSession(session: InsertAdminSession): Promise<AdminSession>;
   getAdminSession(token: string): Promise<AdminSession | undefined>;

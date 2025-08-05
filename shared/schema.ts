@@ -123,6 +123,25 @@ export const serverStatus = pgTable("server_status", {
   status: text("status").notNull(), // "operational", "degraded", "down"
   responseTime: integer("response_time"), // in milliseconds
   uptime: decimal("uptime", { precision: 5, scale: 2 }), // percentage
+  lastChecked: timestamp("last_checked").notNull().defaultNow(),
+});
+
+// Demo servers for the demo section
+export const demoServers = pgTable("demo_servers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverName: text("server_name").notNull(),
+  gameType: text("game_type").notNull(), // "minecraft", "cs2", "rust", etc.
+  serverIp: text("server_ip").notNull(),
+  serverPort: integer("server_port").notNull(),
+  maxPlayers: integer("max_players").notNull().default(100),
+  description: text("description").notNull(),
+  version: text("version"),
+  gameMode: text("game_mode"),
+  platform: text("platform").default("PC"), // "PC", "Console", "Crossplay"
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
   lastUpdated: timestamp("last_updated").notNull().defaultNow(),
 });
 
@@ -261,17 +280,7 @@ export const gamePages = pgTable("game_pages", {
   lastUpdated: timestamp("last_updated").defaultNow(),
 });
 
-export const demoServers = pgTable("demo_servers", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  gameId: varchar("game_id").notNull(),
-  serverName: text("server_name").notNull(),
-  serverIp: text("server_ip").notNull(),
-  serverPort: integer("server_port").notNull(),
-  maxPlayers: integer("max_players").notNull(),
-  description: text("description").notNull(),
-  isActive: boolean("is_active").notNull().default(true),
-  playtime: integer("playtime").notNull().default(0), // in minutes
-});
+
 
 export const pricingDetails = pgTable("pricing_details", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -333,9 +342,7 @@ export const insertGamePageSchema = createInsertSchema(gamePages).omit({
   id: true,
 });
 
-export const insertDemoServerSchema = createInsertSchema(demoServers).omit({
-  id: true,
-});
+
 
 export const insertPricingDetailSchema = createInsertSchema(pricingDetails).omit({
   id: true,
@@ -403,6 +410,15 @@ export type MinecraftTool = typeof minecraftTools.$inferSelect;
 
 export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
 export type BlogPost = typeof blogPosts.$inferSelect;
+
+// Demo servers
+export const insertDemoServerSchema = createInsertSchema(demoServers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+export type InsertDemoServer = z.infer<typeof insertDemoServerSchema>;
+export type DemoServer = typeof demoServers.$inferSelect;
 
 export type InsertGamePage = z.infer<typeof insertGamePageSchema>;
 export type GamePage = typeof gamePages.$inferSelect;

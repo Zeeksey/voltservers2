@@ -77,6 +77,34 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updatedUser;
   }
+  
+  // Demo server methods
+  async getAllDemoServers(): Promise<DemoServer[]> {
+    return await db.select().from(demoServers).orderBy(demoServers.sortOrder);
+  }
+
+  async getDemoServer(id: string): Promise<DemoServer | undefined> {
+    const [server] = await db.select().from(demoServers).where(eq(demoServers.id, id));
+    return server;
+  }
+
+  async createDemoServer(server: InsertDemoServer): Promise<DemoServer> {
+    const [newServer] = await db.insert(demoServers).values(server).returning();
+    return newServer;
+  }
+
+  async updateDemoServer(id: string, updates: Partial<DemoServer>): Promise<DemoServer> {
+    const [updatedServer] = await db
+      .update(demoServers)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(demoServers.id, id))
+      .returning();
+    return updatedServer;
+  }
+
+  async deleteDemoServer(id: string): Promise<void> {
+    await db.delete(demoServers).where(eq(demoServers.id, id));
+  }
 
   // Admin session methods
   async createAdminSession(session: InsertAdminSession): Promise<AdminSession> {

@@ -155,34 +155,43 @@ export async function initializeDatabase() {
       
       const sampleDemoServers = [
         {
-          serverName: "SkyBlock Paradise",
-          gameId: minecraftGameId,
-          serverIp: "demo1.gamehost.pro",
+          serverName: "VoltServers Creative Hub",
+          gameType: "minecraft",
+          serverIp: "demo.voltservers.com",
           serverPort: 25565,
-          maxPlayers: 500,
-          description: "Custom SkyBlock server with economy, ranks, and unique challenges. Join our active community!",
-          isActive: true,
-          playtime: 15420
+          maxPlayers: 100,
+          description: "Build anything you can imagine in our creative showcase server",
+          version: "1.21.4",
+          gameMode: "Creative",
+          platform: "Crossplay",
+          isEnabled: true,
+          sortOrder: 1
         },
         {
-          serverName: "Survival Nations",
-          gameId: minecraftGameId, 
-          serverIp: "demo2.gamehost.pro",
-          serverPort: 25565,
-          maxPlayers: 300,
-          description: "Pure survival experience with claims, economy, and player-run nations. Build your empire!",
-          isActive: true,
-          playtime: 12680
+          serverName: "VoltServers Deathmatch",
+          gameType: "cs2",
+          serverIp: "cs2-demo.voltservers.com",
+          serverPort: 27015,
+          maxPlayers: 32,
+          description: "Fast-paced deathmatch with custom maps and weapons",
+          version: "2.1.9",
+          gameMode: "Deathmatch", 
+          platform: "PC",
+          isEnabled: true,
+          sortOrder: 2
         },
         {
-          serverName: "Creative Build",
-          gameId: minecraftGameId,
-          serverIp: "demo3.gamehost.pro", 
-          serverPort: 25565,
+          serverName: "VoltServers Survival",
+          gameType: "rust",
+          serverIp: "rust-demo.voltservers.com",
+          serverPort: 28015,
           maxPlayers: 200,
-          description: "Unlimited creative building with WorldEdit, custom plots, and showcases. Let your imagination run wild!",
-          isActive: true,
-          playtime: 8950
+          description: "Classic Rust survival experience on a fresh-wiped server",
+          version: "2024.12.10",
+          gameMode: "Vanilla",
+          platform: "PC", 
+          isEnabled: true,
+          sortOrder: 3
         }
       ];
 

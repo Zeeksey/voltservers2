@@ -363,6 +363,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   };
 
+  // Admin CRUD Routes for Demo Servers
+  app.get("/api/admin/demo-servers", requireAdmin, async (req, res) => {
+    try {
+      const servers = await storage.getAllDemoServers();
+      res.json(servers);
+    } catch (error) {
+      console.error("Get demo servers error:", error);
+      res.status(500).json({ message: "Failed to get demo servers" });
+    }
+  });
+
+  app.post("/api/admin/demo-servers", requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.createDemoServer(req.body);
+      res.json(server);
+    } catch (error) {
+      console.error("Create demo server error:", error);
+      res.status(500).json({ message: "Failed to create demo server" });
+    }
+  });
+
+  app.put("/api/admin/demo-servers/:id", requireAdmin, async (req, res) => {
+    try {
+      const server = await storage.updateDemoServer(req.params.id, req.body);
+      res.json(server);
+    } catch (error) {
+      console.error("Update demo server error:", error);
+      res.status(500).json({ message: "Failed to update demo server" });
+    }
+  });
+
+  app.delete("/api/admin/demo-servers/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteDemoServer(req.params.id);
+      res.json({ message: "Demo server deleted successfully" });
+    } catch (error) {
+      console.error("Delete demo server error:", error);
+      res.status(500).json({ message: "Failed to delete demo server" });
+    }
+  });
+
   // Admin CRUD Routes for Games
   app.post("/api/admin/games", requireAdmin, async (req, res) => {
     try {
