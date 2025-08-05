@@ -351,10 +351,13 @@ export default function BillingManagement() {
                           {/* Service Info */}
                           <div>
                             <h4 className="text-gaming-white font-semibold">
-                              {service.serverDetails?.gameType || service.productname}
+                              {service.name} (#{service.id})
                             </h4>
                             <p className="text-gaming-gray text-sm">
-                              {service.domain || service.serverDetails?.ip}
+                              {service.groupname}
+                            </p>
+                            <p className="text-gaming-blue text-sm font-mono">
+                              {service.dedicatedip || `${service.serverhostname}:25565`}
                             </p>
                           </div>
 
@@ -379,12 +382,15 @@ export default function BillingManagement() {
                           {/* Status */}
                           <div className="text-center">
                             <Badge className={`${
-                              service.domainstatus === 'Active' 
+                              service.status === 'Active' 
                                 ? 'bg-green-500/20 text-green-400' 
                                 : 'bg-red-500/20 text-red-400'
                             }`}>
-                              {service.domainstatus}
+                              {service.status}
                             </Badge>
+                            <div className="text-xs text-gaming-gray mt-1">
+                              Order #{service.ordernumber}
+                            </div>
                           </div>
                         </div>
                       </div>
