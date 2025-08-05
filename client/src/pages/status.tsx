@@ -11,7 +11,9 @@ import {
   Wifi,
   Activity,
   MapPin,
-  RefreshCw
+  RefreshCw,
+  Eye,
+  EyeOff
 } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
@@ -19,6 +21,7 @@ import Footer from "@/components/footer";
 
 export default function StatusPage() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [hideIPs, setHideIPs] = useState(false);
 
   const overallStatus = "operational"; // operational, degraded, down
 
