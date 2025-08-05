@@ -117,12 +117,7 @@ export default function ProfessionalHero() {
             {/* Main Dashboard Preview */}
             <Card className="bg-gaming-dark/80 backdrop-blur-sm border-gaming-green/20 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  </div>
+                <div className="flex items-center justify-end mb-4">
                   <Badge className="bg-green-500/20 text-green-400">Online</Badge>
                 </div>
                 
