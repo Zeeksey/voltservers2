@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, decimal, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, decimal, boolean, timestamp, jsonb, index, bigint } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -97,6 +97,95 @@ export const minecraftTools = pgTable("minecraft_tools", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   icon: text("icon").notNull(),
+});
+
+// Advanced Minecraft server management tables
+export const minecraftServers = pgTable("minecraft_servers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  serverName: text("server_name").notNull(),
+  serverType: text("server_type").notNull(), // vanilla, spigot, paper, forge, fabric
+  version: text("version").notNull(),
+  ipAddress: text("ip_address"),
+  port: integer("port").default(25565),
+  maxPlayers: integer("max_players").default(20),
+  currentPlayers: integer("current_players").default(0),
+  status: text("status").notNull().default("offline"), // online, offline, starting, stopping
+  motd: text("motd"),
+  difficulty: text("difficulty").default("normal"), // peaceful, easy, normal, hard
+  gamemode: text("gamemode").default("survival"), // survival, creative, adventure, spectator
+  pvpEnabled: boolean("pvp_enabled").default(true),
+  allowFlight: boolean("allow_flight").default(false),
+  enableWhitelist: boolean("enable_whitelist").default(false),
+  lastOnline: timestamp("last_online"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const minecraftPlugins = pgTable("minecraft_plugins", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverId: varchar("server_id").notNull(),
+  pluginName: text("plugin_name").notNull(),
+  version: text("version").notNull(),
+  description: text("description"),
+  author: text("author"),
+  isEnabled: boolean("is_enabled").default(true),
+  downloadUrl: text("download_url"),
+  configData: jsonb("config_data"),
+  installedAt: timestamp("installed_at").defaultNow(),
+});
+
+export const minecraftWorlds = pgTable("minecraft_worlds", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverId: varchar("server_id").notNull(),
+  worldName: text("world_name").notNull(),
+  worldType: text("world_type").default("default"), // default, flat, amplified, buffet
+  seed: text("seed"),
+  difficulty: text("difficulty").default("normal"),
+  gamemode: text("gamemode").default("survival"),
+  generateStructures: boolean("generate_structures").default(true),
+  allowNether: boolean("allow_nether").default(true),
+  allowEnd: boolean("allow_end").default(true),
+  spawnProtection: integer("spawn_protection").default(16),
+  viewDistance: integer("view_distance").default(10),
+  sizeBytes: bigint("size_bytes", { mode: "number" }),
+  lastBackup: timestamp("last_backup"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const minecraftPlayers = pgTable("minecraft_players", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverId: varchar("server_id").notNull(),
+  playerName: text("player_name").notNull(),
+  uuid: text("uuid").notNull(),
+  isWhitelisted: boolean("is_whitelisted").default(false),
+  isBanned: boolean("is_banned").default(false),
+  isOp: boolean("is_op").default(false),
+  lastSeen: timestamp("last_seen"),
+  playtime: integer("playtime").default(0), // in minutes
+  joinCount: integer("join_count").default(0),
+  firstJoin: timestamp("first_join").defaultNow(),
+});
+
+export const minecraftBackups = pgTable("minecraft_backups", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverId: varchar("server_id").notNull(),
+  worldId: varchar("world_id"),
+  backupName: text("backup_name").notNull(),
+  backupType: text("backup_type").notNull(), // full, world, config
+  sizeBytes: bigint("size_bytes", { mode: "number" }),
+  filePath: text("file_path"),
+  status: text("status").default("completed"), // pending, in_progress, completed, failed
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const minecraftLogs = pgTable("minecraft_logs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  serverId: varchar("server_id").notNull(),
+  logLevel: text("log_level").notNull(), // INFO, WARN, ERROR, DEBUG
+  message: text("message").notNull(),
+  source: text("source"), // plugin name or system component
+  timestamp: timestamp("timestamp").defaultNow(),
 });
 
 export const blogPosts = pgTable("blog_posts", {
@@ -206,6 +295,38 @@ export const insertPricingDetailSchema = createInsertSchema(pricingDetails).omit
   id: true,
 });
 
+// Minecraft management schemas
+export const insertMinecraftServerSchema = createInsertSchema(minecraftServers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMinecraftPluginSchema = createInsertSchema(minecraftPlugins).omit({
+  id: true,
+  installedAt: true,
+});
+
+export const insertMinecraftWorldSchema = createInsertSchema(minecraftWorlds).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMinecraftPlayerSchema = createInsertSchema(minecraftPlayers).omit({
+  id: true,
+  firstJoin: true,
+});
+
+export const insertMinecraftBackupSchema = createInsertSchema(minecraftBackups).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMinecraftLogSchema = createInsertSchema(minecraftLogs).omit({
+  id: true,
+  timestamp: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -245,3 +366,22 @@ export type DemoServer = typeof demoServers.$inferSelect;
 
 export type InsertPricingDetail = z.infer<typeof insertPricingDetailSchema>;
 export type PricingDetail = typeof pricingDetails.$inferSelect;
+
+// Minecraft management types
+export type InsertMinecraftServer = z.infer<typeof insertMinecraftServerSchema>;
+export type MinecraftServer = typeof minecraftServers.$inferSelect;
+
+export type InsertMinecraftPlugin = z.infer<typeof insertMinecraftPluginSchema>;
+export type MinecraftPlugin = typeof minecraftPlugins.$inferSelect;
+
+export type InsertMinecraftWorld = z.infer<typeof insertMinecraftWorldSchema>;
+export type MinecraftWorld = typeof minecraftWorlds.$inferSelect;
+
+export type InsertMinecraftPlayer = z.infer<typeof insertMinecraftPlayerSchema>;
+export type MinecraftPlayer = typeof minecraftPlayers.$inferSelect;
+
+export type InsertMinecraftBackup = z.infer<typeof insertMinecraftBackupSchema>;
+export type MinecraftBackup = typeof minecraftBackups.$inferSelect;
+
+export type InsertMinecraftLog = z.infer<typeof insertMinecraftLogSchema>;
+export type MinecraftLog = typeof minecraftLogs.$inferSelect;

@@ -109,6 +109,131 @@ export async function initializeDatabase() {
       console.log("Created sample blog posts");
     }
 
+    // Create sample pricing plans if none exist
+    const existingPlans = await storage.getAllPricingPlans();
+    if (existingPlans.length === 0) {
+      const samplePlans = [
+        {
+          name: "Starter",
+          price: "2.99",
+          ram: "2GB RAM",
+          storage: "25GB SSD",
+          maxPlayers: 20,
+          features: ["DDoS Protection", "Automatic Backups", "24/7 Support", "Custom Control Panel"],
+          isPopular: false
+        },
+        {
+          name: "Pro",
+          price: "5.99",
+          ram: "4GB RAM", 
+          storage: "50GB SSD",
+          maxPlayers: 50,
+          features: ["DDoS Protection", "Automatic Backups", "24/7 Support", "Custom Control Panel", "Plugin Manager", "FTP Access"],
+          isPopular: true
+        },
+        {
+          name: "Enterprise", 
+          price: "12.99",
+          ram: "8GB RAM",
+          storage: "100GB SSD",
+          maxPlayers: 999999,
+          features: ["DDoS Protection", "Automatic Backups", "24/7 Support", "Custom Control Panel", "Plugin Manager", "FTP Access", "Database Access", "Priority Support"],
+          isPopular: false
+        }
+      ];
+
+      for (const plan of samplePlans) {
+        await storage.createPricingPlan(plan);
+      }
+      console.log("Created sample pricing plans");
+    }
+
+    // Create sample demo servers if none exist
+    const existingDemoServers = await storage.getAllDemoServers();
+    if (existingDemoServers.length === 0) {
+      const minecraftGameId = existingGames.find(g => g.slug === "minecraft")?.id || existingGames[0]?.id;
+      
+      const sampleDemoServers = [
+        {
+          serverName: "SkyBlock Paradise",
+          gameId: minecraftGameId,
+          serverIp: "demo1.gamehost.pro",
+          serverPort: 25565,
+          maxPlayers: 500,
+          description: "Custom SkyBlock server with economy, ranks, and unique challenges. Join our active community!",
+          isActive: true,
+          playtime: 15420
+        },
+        {
+          serverName: "Survival Nations",
+          gameId: minecraftGameId, 
+          serverIp: "demo2.gamehost.pro",
+          serverPort: 25565,
+          maxPlayers: 300,
+          description: "Pure survival experience with claims, economy, and player-run nations. Build your empire!",
+          isActive: true,
+          playtime: 12680
+        },
+        {
+          serverName: "Creative Build",
+          gameId: minecraftGameId,
+          serverIp: "demo3.gamehost.pro", 
+          serverPort: 25565,
+          maxPlayers: 200,
+          description: "Unlimited creative building with WorldEdit, custom plots, and showcases. Let your imagination run wild!",
+          isActive: true,
+          playtime: 8950
+        }
+      ];
+
+      for (const server of sampleDemoServers) {
+        await storage.createDemoServer(server);
+      }
+      console.log("Created sample demo servers");
+    }
+
+    // Create sample server status data if none exist
+    const existingServerStatus = await storage.getAllServerStatus();
+    if (existingServerStatus.length === 0) {
+      const sampleServerStatus = [
+        {
+          service: "Web Panel",
+          status: "operational",
+          responseTime: 156,
+          uptime: "99.98"
+        },
+        {
+          service: "Game Servers",
+          status: "operational", 
+          responseTime: 23,
+          uptime: "99.94"
+        },
+        {
+          service: "Database",
+          status: "operational",
+          responseTime: 12,
+          uptime: "99.99"
+        },
+        {
+          service: "File Manager",
+          status: "operational",
+          responseTime: 89,
+          uptime: "99.96"
+        },
+        {
+          service: "Support System",
+          status: "operational",
+          responseTime: 203,
+          uptime: "99.92"
+        }
+      ];
+
+      for (const status of sampleServerStatus) {
+        await storage.createServerStatus(status);
+      }
+      console.log("Created sample server status data");
+    }
+
     console.log("Database initialization complete");
   } catch (error) {
     console.error("Database initialization failed:", error);

@@ -115,6 +115,42 @@ export interface IStorage {
   getPricingDetailsByPlanId(planId: string): Promise<PricingDetail[]>;
   getPricingDetailsByGameId(gameId: string): Promise<PricingDetail[]>;
   createPricingDetail(detail: InsertPricingDetail): Promise<PricingDetail>;
+  
+  // Minecraft server management methods
+  getAllMinecraftServers(): Promise<MinecraftServer[]>;
+  getMinecraftServer(id: string): Promise<MinecraftServer | undefined>;
+  getUserMinecraftServers(userId: string): Promise<MinecraftServer[]>;
+  createMinecraftServer(server: InsertMinecraftServer): Promise<MinecraftServer>;
+  updateMinecraftServer(id: string, updates: Partial<MinecraftServer>): Promise<MinecraftServer>;
+  deleteMinecraftServer(id: string): Promise<void>;
+  
+  // Minecraft plugin methods
+  getMinecraftPlugins(serverId: string): Promise<MinecraftPlugin[]>;
+  createMinecraftPlugin(plugin: InsertMinecraftPlugin): Promise<MinecraftPlugin>;
+  updateMinecraftPlugin(id: string, updates: Partial<MinecraftPlugin>): Promise<MinecraftPlugin>;
+  deleteMinecraftPlugin(id: string): Promise<void>;
+  
+  // Minecraft world methods
+  getMinecraftWorlds(serverId: string): Promise<MinecraftWorld[]>;
+  createMinecraftWorld(world: InsertMinecraftWorld): Promise<MinecraftWorld>;
+  updateMinecraftWorld(id: string, updates: Partial<MinecraftWorld>): Promise<MinecraftWorld>;
+  deleteMinecraftWorld(id: string): Promise<void>;
+  
+  // Minecraft player methods
+  getMinecraftPlayers(serverId: string): Promise<MinecraftPlayer[]>;
+  createMinecraftPlayer(player: InsertMinecraftPlayer): Promise<MinecraftPlayer>;
+  updateMinecraftPlayer(id: string, updates: Partial<MinecraftPlayer>): Promise<MinecraftPlayer>;
+  deleteMinecraftPlayer(id: string): Promise<void>;
+  
+  // Minecraft backup methods
+  getMinecraftBackups(serverId: string): Promise<MinecraftBackup[]>;
+  createMinecraftBackup(backup: InsertMinecraftBackup): Promise<MinecraftBackup>;
+  deleteMinecraftBackup(id: string): Promise<void>;
+  
+  // Minecraft log methods
+  getMinecraftLogs(serverId: string, limit?: number): Promise<MinecraftLog[]>;
+  createMinecraftLog(log: InsertMinecraftLog): Promise<MinecraftLog>;
+  deleteOldMinecraftLogs(serverId: string, olderThanDays: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
