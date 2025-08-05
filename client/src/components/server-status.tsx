@@ -1,10 +1,19 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Globe, Globe2 } from "lucide-react";
+import { Globe, Globe2, Server, Activity, RefreshCw, CheckCircle, AlertCircle, Clock } from "lucide-react";
 import type { ServerStatus as ServerStatusType, ServerLocation } from "@shared/schema";
 
 export default function ServerStatus() {
+  const [customServer, setCustomServer] = useState("");
+  const [customPort, setCustomPort] = useState("25565");
+  const [pingResults, setPingResults] = useState<any[]>([]);
+  const [isPinging, setIsPinging] = useState(false);
+
   const { data: statusData, isLoading: statusLoading } = useQuery<ServerStatusType[]>({
     queryKey: ['/api/server-status'],
   });
@@ -12,6 +21,45 @@ export default function ServerStatus() {
   const { data: locations, isLoading: locationsLoading } = useQuery<ServerLocation[]>({
     queryKey: ['/api/server-locations'],
   });
+
+  const pingServer = async (address: string, port: string = "25565") => {
+    setIsPinging(true);
+    try {
+      const startTime = Date.now();
+      const response = await fetch(`/api/query-server/${address}/${port}`);
+      const endTime = Date.now();
+      const data = await response.json();
+      
+      const pingResult = {
+        address: `${address}:${port}`,
+        online: data.online,
+        ping: endTime - startTime,
+        players: data.players,
+        version: data.version,
+        motd: data.motd,
+        timestamp: new Date().toLocaleTimeString()
+      };
+      
+      setPingResults(prev => [pingResult, ...prev.slice(0, 4)]); // Keep last 5 results
+    } catch (error) {
+      const pingResult = {
+        address: `${address}:${port}`,
+        online: false,
+        ping: null,
+        timestamp: new Date().toLocaleTimeString(),
+        error: "Failed to connect"
+      };
+      setPingResults(prev => [pingResult, ...prev.slice(0, 4)]);
+    } finally {
+      setIsPinging(false);
+    }
+  };
+
+  const handlePingCustomServer = () => {
+    if (customServer) {
+      pingServer(customServer, customPort);
+    }
+  };
 
   if (statusLoading || locationsLoading) {
     return (
@@ -62,7 +110,7 @@ export default function ServerStatus() {
           </p>
         </div>
         
-        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
           {/* Overall Status */}
           <Card className="bg-gaming-black-lighter border-gaming-black-lighter">
             <CardContent className="p-6">
@@ -125,6 +173,95 @@ export default function ServerStatus() {
                   </div>
                   <Progress value={98} className="h-2" />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Server Ping Tool */}
+          <Card className="bg-gaming-black-lighter border-gaming-black-lighter">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5 text-gaming-green" />
+                Server Ping Tool
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="server-address">Server Address</Label>
+                  <Input
+                    id="server-address"
+                    placeholder="mc.hypixel.net"
+                    value={customServer}
+                    onChange={(e) => setCustomServer(e.target.value)}
+                    className="bg-gaming-black border-gaming-black text-gaming-white"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="server-port">Port</Label>
+                  <Input
+                    id="server-port"
+                    placeholder="25565"
+                    value={customPort}
+                    onChange={(e) => setCustomPort(e.target.value)}
+                    className="bg-gaming-black border-gaming-black text-gaming-white"
+                  />
+                </div>
+                <Button 
+                  onClick={handlePingCustomServer}
+                  disabled={isPinging || !customServer}
+                  className="w-full bg-gaming-green text-gaming-black hover:shadow-lg"
+                >
+                  {isPinging ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Pinging...
+                    </>
+                  ) : (
+                    <>
+                      <Server className="h-4 w-4 mr-2" />
+                      Ping Server
+                    </>
+                  )}
+                </Button>
+                
+                {pingResults.length > 0 && (
+                  <div className="space-y-2 max-h-48 overflow-y-auto">
+                    <h4 className="text-sm font-semibold text-gaming-gray">Recent Pings</h4>
+                    {pingResults.map((result, index) => (
+                      <div key={index} className="bg-gaming-black p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-gaming-white text-sm font-mono">{result.address}</span>
+                          <div className="flex items-center gap-2">
+                            {result.online ? (
+                              <CheckCircle className="h-3 w-3 text-gaming-green" />
+                            ) : (
+                              <AlertCircle className="h-3 w-3 text-red-500" />
+                            )}
+                            <span className="text-xs text-gaming-gray">{result.timestamp}</span>
+                          </div>
+                        </div>
+                        {result.online ? (
+                          <div className="text-xs text-gaming-gray space-y-1">
+                            {result.ping && (
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                <span>Ping: {result.ping}ms</span>
+                              </div>
+                            )}
+                            {result.players && (
+                              <div>Players: {result.players.current}/{result.players.max}</div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-xs text-red-500">
+                            {result.error || "Server offline"}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
