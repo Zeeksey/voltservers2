@@ -872,10 +872,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get promo settings error:", error);
-      // Return memory storage fallback instead of hardcoded fallback
+      // Use shared memory storage fallback instead of hardcoded fallback
       try {
-        const { MemStorage } = await import("./storage");
-        const memStorage = new MemStorage();
         const fallbackSettings = await memStorage.getPromoSettings();
         res.json(fallbackSettings || {
           id: "fallback-promo",
@@ -899,10 +897,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Update promo settings error:", error);
-      // Use memory storage fallback instead of hardcoded fallback
+      // Use shared memory storage fallback instead of hardcoded fallback
       try {
-        const { MemStorage } = await import("./storage");
-        const memStorage = new MemStorage();
         const updatedSettings = await memStorage.updatePromoSettings(req.body);
         res.json(updatedSettings);
       } catch (memError) {
@@ -939,10 +935,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get public promo settings error:", error);
-      // Use memory storage fallback instead of hardcoded fallback
+      // Use shared memory storage fallback instead of hardcoded fallback
       try {
-        const { MemStorage } = await import("./storage");
-        const memStorage = new MemStorage();
         const fallbackSettings = await memStorage.getPromoSettings();
         res.json(fallbackSettings || {
           id: "fallback-promo",

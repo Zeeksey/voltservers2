@@ -1456,7 +1456,9 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Use DatabaseStorage for persistence, with memory fallback
-const memStorageInstance = new MemStorage();
+// Create a shared singleton memory storage instance for persistence across requests
+const sharedMemStorage = new MemStorage();
+
+// Use DatabaseStorage for persistence, with shared memory fallback
 export const storage = new DatabaseStorage();
-export const memStorage = memStorageInstance;
+export const memStorage = sharedMemStorage;
