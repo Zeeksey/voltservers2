@@ -365,6 +365,102 @@ export class MemStorage implements IStorage {
     ];
 
     sampleDemoServers.forEach(server => this.demoServers.set(server.id, server));
+
+    // Initialize minecraft tools
+    const sampleTools: MinecraftTool[] = [
+      {
+        id: randomUUID(),
+        name: "Server Query Tool",
+        description: "Check any Minecraft server's status, player count, version, and MOTD. Perfect for monitoring server health and performance.",
+        category: "Server Management",
+        url: "https://mcsrvstat.us/",
+        features: [
+          "Real-time server status checking",
+          "Player count and max slots",
+          "Server version detection",
+          "MOTD and ping information",
+          "Historical data tracking"
+        ],
+        isPremium: false
+      },
+      {
+        id: randomUUID(),
+        name: "Skin Viewer & Editor",
+        description: "View, download, and edit Minecraft player skins. Supports both Steve and Alex models with 3D preview.",
+        category: "Player Tools",
+        url: "https://namemc.com/",
+        features: [
+          "3D skin preview",
+          "High-resolution downloads",
+          "Skin history tracking",
+          "Custom skin upload",
+          "Cape support"
+        ],
+        isPremium: false
+      },
+      {
+        id: randomUUID(),
+        name: "UUID Converter",
+        description: "Convert between Minecraft usernames and UUIDs. Essential for server administration and player management.",
+        category: "Utilities",
+        url: "https://mcuuid.net/",
+        features: [
+          "Username to UUID conversion",
+          "UUID to username lookup",
+          "Bulk conversion support",
+          "API integration",
+          "Historical username data"
+        ],
+        isPremium: false
+      },
+      {
+        id: randomUUID(),
+        name: "Color Code Generator",
+        description: "Generate Minecraft color codes for chat messages, signs, and books. Supports all formatting codes and hex colors.",
+        category: "Design",
+        url: "https://www.digminecraft.com/generators/color_text.php",
+        features: [
+          "All color codes supported",
+          "Formatting codes (bold, italic)",
+          "Hex color support (1.16+)",
+          "Live preview",
+          "Copy to clipboard"
+        ],
+        isPremium: false
+      },
+      {
+        id: randomUUID(),
+        name: "NBT Editor",
+        description: "Advanced NBT data editor for items, entities, and world data. Professional tool for server administrators.",
+        category: "Server Management",
+        url: "https://www.nbteditor.com/",
+        features: [
+          "Full NBT editing capabilities",
+          "Item modifier",
+          "Entity data editing",
+          "World data manipulation",
+          "JSON export/import"
+        ],
+        isPremium: true
+      },
+      {
+        id: randomUUID(),
+        name: "Banner Designer",
+        description: "Design custom Minecraft banners with our visual editor. Create unique banners for your server builds.",
+        category: "Design",
+        url: "https://www.needcoolshoes.com/banner",
+        features: [
+          "Visual banner editor",
+          "Pattern library",
+          "Color combinations",
+          "Give command generator",
+          "Banner gallery"
+        ],
+        isPremium: false
+      }
+    ];
+
+    sampleTools.forEach(tool => this.minecraftTools.set(tool.id, tool));
   }
 
   // User methods
