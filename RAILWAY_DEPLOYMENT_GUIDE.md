@@ -38,12 +38,19 @@ Railway will automatically:
 - Start with `npm start`
 - Assign a public URL
 
-## Step 3: Add PostgreSQL Database
+## Step 3: Add PostgreSQL Database (CRITICAL - Do This First!)
 
-1. In your Railway project dashboard:
+⚠️ **IMPORTANT**: Add the database BEFORE the first deployment to avoid "DATABASE_URL must be set" errors.
+
+1. **In your Railway project dashboard**:
    - Click **"+ New"** → **"Database"** → **"Add PostgreSQL"**
    - Railway creates the database instantly
-   - Connection string is automatically added to your environment
+   - Connection string is automatically added to your environment as `DATABASE_URL`
+
+2. **Verify Database Connection**:
+   - Go to **Variables** tab
+   - Confirm `DATABASE_URL` is listed (starts with `postgresql://`)
+   - If missing, redeploy your service after adding the database
 
 ## Step 4: Configure Environment Variables
 
@@ -149,6 +156,12 @@ Railway dashboard provides:
 - Check **Deploy Logs** in Railway dashboard
 - Verify all dependencies are in `package.json`
 - Ensure `npm run build` works locally
+
+### "DATABASE_URL must be set" Error:
+- **Add PostgreSQL database** in Railway dashboard first
+- Go to **Variables** tab and verify `DATABASE_URL` exists
+- **Redeploy** your service after adding the database
+- The database must be added BEFORE deployment, not after
 
 ### Database Connection Issues:
 - Railway automatically provides `DATABASE_URL`
