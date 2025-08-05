@@ -228,7 +228,7 @@ export default function GamePage() {
       name: product.name,
       price: calculatePrice(product.monthlyPrice.toString(), pricingMultipliers[billingPeriod]),
       originalPrice: product.monthlyPrice.toString(),
-      players: "Variable", // WHMCS products may not have player limits defined
+      players: null, // Don't show player count for WHMCS products
       features: product.features || [],
       popular: product.popular || false,
       whmcsProductId: product.whmcsProductId
@@ -409,6 +409,11 @@ export default function GamePage() {
                     {plan.ram && plan.storage && (
                       <span className="block text-sm">
                         {plan.ram} RAM • {plan.storage} Storage
+                      </span>
+                    )}
+                    {plan.whmcsProductId && (
+                      <span className="block text-sm text-gaming-green">
+                        WHMCS Product ID: {plan.whmcsProductId}
                       </span>
                     )}
                   </p>
