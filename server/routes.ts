@@ -483,6 +483,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin server locations routes
+  app.post("/api/admin/server-locations", requireAdmin, async (req, res) => {
+    try {
+      const location = await storage.createServerLocation(req.body);
+      res.json(location);
+    } catch (error) {
+      console.error("Error creating server location:", error);
+      res.status(500).json({ message: "Failed to create server location" });
+    }
+  });
+
+  app.delete("/api/admin/server-locations/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteServerLocation(req.params.id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error deleting server location:", error);
+      res.status(500).json({ message: "Failed to delete server location" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

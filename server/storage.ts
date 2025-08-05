@@ -597,6 +597,10 @@ export class MemStorage implements IStorage {
     return location;
   }
 
+  async deleteServerLocation(id: string): Promise<void> {
+    this.serverLocations.delete(id);
+  }
+
   // Minecraft tools methods
   async getAllMinecraftTools(): Promise<MinecraftTool[]> {
     return Array.from(this.minecraftTools.values());

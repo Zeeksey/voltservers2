@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Shield, 
   LogOut, 
@@ -22,7 +23,9 @@ import {
   BookOpen,
   Megaphone,
   Users,
-  Layout
+  Layout,
+  MapPin,
+  Server
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -67,6 +70,16 @@ export default function AdminDashboard() {
     backgroundColor: "#22c55e",
     textColor: "#ffffff"
   });
+  const [locationForm, setLocationForm] = useState({
+    city: "",
+    country: "",
+    region: "",
+    provider: "",
+    ipAddress: "",
+    status: "online" as "online" | "offline" | "maintenance",
+    ping: "0"
+  });
+  const [editingLocation, setEditingLocation] = useState<any>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -128,6 +141,11 @@ export default function AdminDashboard() {
   const { data: promoSettings } = useQuery({
     queryKey: ["/api/admin/promo-settings"],
     queryFn: () => apiRequest("/api/admin/promo-settings"),
+  });
+
+  const { data: serverLocations = [] } = useQuery({
+    queryKey: ["/api/server-locations"],
+    queryFn: () => apiRequest("/api/server-locations"),
   });
 
   // Update promo form when data loads
@@ -225,6 +243,44 @@ export default function AdminDashboard() {
     },
     onError: (error: Error) => {
       toast({ title: "Failed to update promo settings", description: error.message, variant: "destructive" });
+    },
+  });
+
+  // Create server location mutation
+  const createLocationMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("/api/admin/server-locations", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/server-locations"] });
+      setLocationForm({
+        city: "",
+        country: "",
+        region: "",
+        provider: "",
+        ipAddress: "",
+        status: "online",
+        ping: "0"
+      });
+      toast({ title: "Success", description: "Server location created successfully" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    },
+  });
+
+  // Delete server location mutation
+  const deleteLocationMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/admin/server-locations/${id}`, {
+      method: "DELETE",
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/server-locations"] });
+      toast({ title: "Success", description: "Server location deleted successfully" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     },
   });
 
@@ -377,6 +433,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="promo" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
               <Megaphone className="w-4 h-4 mr-2" />
               Promo Banner
+            </TabsTrigger>
+            <TabsTrigger value="locations" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
+              <MapPin className="w-4 h-4 mr-2" />
+              Server Locations
             </TabsTrigger>
           </TabsList>
 
@@ -812,6 +872,169 @@ export default function AdminDashboard() {
                     Update Promo Settings
                   </Button>
                 </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Server Locations Tab */}
+          <TabsContent value="locations" className="space-y-6">
+            <Card className="bg-gaming-black-lighter border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-gaming-white">
+                  <MapPin className="w-5 h-5 text-gaming-green" />
+                  Add New Server Location
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">City</Label>
+                    <Input
+                      value={locationForm.city}
+                      onChange={(e) => setLocationForm({...locationForm, city: e.target.value})}
+                      placeholder="e.g., Virginia Beach"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">Country</Label>
+                    <Input
+                      value={locationForm.country}
+                      onChange={(e) => setLocationForm({...locationForm, country: e.target.value})}
+                      placeholder="e.g., United States"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">Region/State</Label>
+                    <Input
+                      value={locationForm.region}
+                      onChange={(e) => setLocationForm({...locationForm, region: e.target.value})}
+                      placeholder="e.g., Virginia"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">Provider</Label>
+                    <Input
+                      value={locationForm.provider}
+                      onChange={(e) => setLocationForm({...locationForm, provider: e.target.value})}
+                      placeholder="e.g., VINTHILL"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">IP Address</Label>
+                    <Input
+                      value={locationForm.ipAddress}
+                      onChange={(e) => setLocationForm({...locationForm, ipAddress: e.target.value})}
+                      placeholder="e.g., 135.148.137.158"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-gaming-white">Ping (ms)</Label>
+                    <Input
+                      type="number"
+                      value={locationForm.ping}
+                      onChange={(e) => setLocationForm({...locationForm, ping: e.target.value})}
+                      placeholder="0"
+                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-gaming-white">Status</Label>
+                  <Select 
+                    value={locationForm.status} 
+                    onValueChange={(value: "online" | "offline" | "maintenance") => 
+                      setLocationForm({...locationForm, status: value})
+                    }
+                  >
+                    <SelectTrigger className="bg-gaming-black border-gaming-black-light text-gaming-white">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gaming-black border-gaming-black-light">
+                      <SelectItem value="online">Online</SelectItem>
+                      <SelectItem value="offline">Offline</SelectItem>
+                      <SelectItem value="maintenance">Maintenance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button 
+                  onClick={() => {
+                    createLocationMutation.mutate({
+                      ...locationForm,
+                      ping: parseInt(locationForm.ping) || 0
+                    });
+                  }}
+                  disabled={createLocationMutation.isPending}
+                  className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Location
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gaming-black-lighter border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-gaming-white">
+                  <Server className="w-5 h-5 text-gaming-green" />
+                  Server Locations ({serverLocations.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {serverLocations.map((location: any) => (
+                    <div key={location.id} className="flex items-center justify-between p-4 bg-gaming-black border border-gaming-black-light rounded-lg">
+                      <div className="flex items-center gap-4">
+                        <MapPin className="w-5 h-5 text-gaming-green" />
+                        <div>
+                          <h3 className="text-gaming-white font-semibold">
+                            {location.city}, {location.country}
+                          </h3>
+                          <p className="text-gaming-gray text-sm">
+                            {location.region} • {location.provider}
+                          </p>
+                          {location.ipAddress && (
+                            <code className="text-gaming-green text-xs bg-gaming-black-lighter px-2 py-1 rounded">
+                              {location.ipAddress}
+                            </code>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Badge 
+                          className={
+                            location.status === 'online' 
+                              ? 'bg-green-500/20 text-green-400 border-green-500/30' 
+                              : location.status === 'offline'
+                              ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                              : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                          }
+                        >
+                          {location.status}
+                        </Badge>
+                        <span className="text-gaming-green text-sm">{location.ping}ms</span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteLocationMutation.mutate(location.id)}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                  {serverLocations.length === 0 && (
+                    <div className="text-center py-8">
+                      <Server className="w-12 h-12 text-gaming-gray mx-auto mb-2" />
+                      <p className="text-gaming-gray">No server locations configured yet.</p>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
