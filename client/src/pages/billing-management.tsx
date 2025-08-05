@@ -76,9 +76,11 @@ export default function BillingManagement() {
   }
 
   const invoiceList = invoices?.invoices?.invoice || [];
-  const serviceList = services?.products?.product || [];
+  // Filter to show ONLY ACTIVE services instead of all 9
+  const allServices = services?.products?.product || [];
+  const serviceList = allServices.filter((service: any) => service.status === 'Active');
   
-  // Calculate billing statistics from real WHMCS data only
+  // Calculate billing statistics from ACTIVE WHMCS services only
   const totalMonthly = serviceList.reduce((sum: number, service: any) => {
     const amount = parseFloat(service.amount || service.recurringamount || '0');
     return sum + amount;

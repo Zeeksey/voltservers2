@@ -66,10 +66,21 @@ export default function ServerManagement() {
     );
   }
 
-  // Filter and convert WHMCS services to server format - ONLY ACTIVE services
-  const serverList = whmcsServices?.products?.product?.filter((service: any) => 
+  // Filter and convert WHMCS services to server format - ONLY ACTIVE services, deduplicated
+  const allActiveServices = whmcsServices?.products?.product?.filter((service: any) => 
     service.status === 'Active'
-  ).map((service: any) => ({
+  ) || [];
+
+  // Remove duplicates based on name and dedicatedip to show each unique server once
+  const uniqueServices = allActiveServices.reduce((unique: any[], service: any) => {
+    const key = `${service.name}-${service.dedicatedip || service.serverhostname}`;
+    if (!unique.find(s => `${s.name}-${s.dedicatedip || s.serverhostname}` === key)) {
+      unique.push(service);
+    }
+    return unique;
+  }, []);
+
+  const serverList = uniqueServices.map((service: any) => ({
     id: service.id,
     name: service.name, // Use exact product name from WHMCS
     game: service.groupname, // Use exact group name from WHMCS
@@ -80,11 +91,9 @@ export default function ServerManagement() {
     billingCycle: service.billingcycle,
     nextDueDate: service.nextduedate,
     recurringAmount: service.recurringamount,
-    servername: service.servername,
-    serverhostname: service.serverhostname,
     orderNumber: service.ordernumber,
     regDate: service.regdate
-  })) || [];
+  }));
 
   console.log('Logged in client data:', loggedInClient);
   console.log('Services data:', whmcsServices);
@@ -125,31 +134,6 @@ export default function ServerManagement() {
           </Card>
         ) : (
           <div className="space-y-6">
-            {/* Wisp Connection Status */}
-            <Card className="bg-gaming-dark border-gaming-green/20">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  {wispStatus?.connected ? (
-                    <>
-                      <CheckCircle className="w-6 h-6 text-gaming-green" />
-                      <div>
-                        <h3 className="text-gaming-white font-semibold">Wisp.gg Integration Active</h3>
-                        <p className="text-gaming-gray text-sm">All server data is live from your game panel</p>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <AlertTriangle className="w-6 h-6 text-yellow-400" />
-                      <div>
-                        <h3 className="text-gaming-white font-semibold">Connection Issue</h3>
-                        <p className="text-gaming-gray text-sm">Unable to connect to Wisp.gg panel</p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Server Overview Cards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {serverList.map((server: any) => (
@@ -187,7 +171,7 @@ export default function ServerManagement() {
                       <div className="flex items-center gap-2">
                         <Network className="w-4 h-4 text-gaming-yellow" />
                         <span className="text-sm text-gaming-gray">
-                          {server.servername}
+                          {server.game} Server
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
