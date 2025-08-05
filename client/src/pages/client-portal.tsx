@@ -243,12 +243,32 @@ export default function ClientPortal() {
                               <div className="flex items-start justify-between mb-4">
                                 <div>
                                   <h4 className="text-gaming-white font-bold text-lg">
-                                    {service.name || service.productname || 'Game Server'}
+                                    {(() => {
+                                      // Look for custom server name in custom fields
+                                      const customFields = service.customfields?.customfield || [];
+                                      const serverNameField = customFields.find((field: any) => 
+                                        field.name?.toLowerCase().includes('name of the server') || 
+                                        field.translated_name?.toLowerCase().includes('name of the server')
+                                      );
+                                      return serverNameField?.value || service.name || service.productname || 'Game Server';
+                                    })()}
                                   </h4>
                                   <p className="text-gaming-gray text-sm">
                                     {service.groupname || service.translated_groupname || 'Game Server'} • 
                                     {service.domain || service.dedicatedip || 'Server Domain'}
                                   </p>
+                                  {/* Show additional custom field info if available */}
+                                  {service.customfields?.customfield && service.customfields.customfield.length > 0 && (
+                                    <div className="mt-2 text-xs text-gaming-gray">
+                                      {service.customfields.customfield.map((field: any, idx: number) => (
+                                        field.name?.toLowerCase().includes('cluster') && (
+                                          <span key={idx} className="block">
+                                            {field.name}: {field.value}
+                                          </span>
+                                        )
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <div className={`w-3 h-3 rounded-full ${service.status === 'Active' ? 'bg-green-500' : service.status === 'Suspended' ? 'bg-yellow-500' : 'bg-red-500'}`} />
