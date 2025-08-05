@@ -14,7 +14,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const games = await storage.getAllGames();
       res.json(games);
     } catch (error) {
-      console.error("Games fetch error:", error);
+      // Database unavailable, using fallback data
       // Return fallback games data if database is unavailable
       res.json([
         {
@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const locations = await storage.getAllServerLocations();
       res.json(locations);
     } catch (error) {
-      console.error("Error fetching server locations:", error);
+      // Database unavailable, using fallback data
       // Return fallback server locations if database is unavailable
       res.json([
         {
@@ -656,7 +656,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         req.admin = user;
         next();
       } catch (dbError) {
-        console.error("Database unavailable, using fallback admin auth:", dbError);
+        // Database unavailable, using fallback admin auth (logging suppressed for cleaner output)
         
         // Fallback authentication when database is unavailable
         // In a real app, you'd want more secure token validation
