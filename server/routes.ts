@@ -18,6 +18,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/games/:slug", async (req, res) => {
+    try {
+      const game = await storage.getGameBySlug(req.params.slug);
+      if (!game) {
+        return res.status(404).json({ message: "Game not found" });
+      }
+      res.json(game);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch game" });
+    }
+  });
+
   app.get("/api/games/:id", async (req, res) => {
     try {
       const game = await storage.getGame(req.params.id);

@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, ArrowRight } from "lucide-react";
+import { Link } from "wouter";
 import type { Game } from "@shared/schema";
 
 export default function GameCards() {
@@ -50,47 +51,49 @@ export default function GameCards() {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {games?.map((game) => (
-            <Card key={game.id} className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
-              <div className="relative">
-                <img 
-                  src={game.imageUrl} 
-                  alt={`${game.name} server interface`} 
-                  className="w-full h-48 object-cover" 
-                />
-                {game.isPopular && (
-                  <Badge className="absolute top-4 right-4 bg-gaming-green text-gaming-black">
-                    Popular
-                  </Badge>
-                )}
-                {game.isNew && (
-                  <Badge className="absolute top-4 right-4 bg-red-500 text-white">
-                    New
-                  </Badge>
-                )}
-                {game.isTrending && (
-                  <Badge className="absolute top-4 right-4 bg-yellow-500 text-gaming-black">
-                    Trending
-                  </Badge>
-                )}
-                <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
-              </div>
-              <CardContent className="p-6 flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gaming-white">{game.name}</h3>
-                  <span className="text-gaming-green font-semibold">From ${game.basePrice}/mo</span>
+            <Link key={game.id} href={`/games/${game.slug}`}>
+              <Card className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full cursor-pointer">
+                <div className="relative">
+                  <img 
+                    src={game.imageUrl} 
+                    alt={`${game.name} server interface`} 
+                    className="w-full h-48 object-cover" 
+                  />
+                  {game.isPopular && (
+                    <Badge className="absolute top-4 right-4 bg-gaming-green text-gaming-black">
+                      Popular
+                    </Badge>
+                  )}
+                  {game.isNew && (
+                    <Badge className="absolute top-4 right-4 bg-red-500 text-white">
+                      New
+                    </Badge>
+                  )}
+                  {game.isTrending && (
+                    <Badge className="absolute top-4 right-4 bg-yellow-500 text-gaming-black">
+                      Trending
+                    </Badge>
+                  )}
+                  <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
                 </div>
-                <p className="text-gaming-gray mb-4 flex-1">{game.description}</p>
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex items-center space-x-1">
-                    <span className="w-2 h-2 bg-gaming-green rounded-full server-online" />
-                    <span className="text-sm text-gaming-gray">{game.playerCount.toLocaleString()} players</span>
+                <CardContent className="p-6 flex-1 flex flex-col">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xl font-bold text-gaming-white">{game.name}</h3>
+                    <span className="text-gaming-green font-semibold">From ${game.basePrice}/mo</span>
                   </div>
-                  <Button className="bg-gaming-green text-gaming-black hover:bg-gaming-green-dark">
-                    Select
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  <p className="text-gaming-gray mb-4 flex-1">{game.description}</p>
+                  <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center space-x-1">
+                      <span className="w-2 h-2 bg-gaming-green rounded-full server-online" />
+                      <span className="text-sm text-gaming-gray">{game.playerCount.toLocaleString()} players</span>
+                    </div>
+                    <Button className="bg-gaming-green text-gaming-black hover:bg-gaming-green-dark">
+                      View Details
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
           
           {/* More Games Card */}

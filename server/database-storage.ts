@@ -149,6 +149,11 @@ export class DatabaseStorage implements IStorage {
     return game;
   }
 
+  async getGameBySlug(slug: string): Promise<Game | undefined> {
+    const [game] = await db.select().from(games).where(eq(games.slug, slug));
+    return game;
+  }
+
   async createGame(game: InsertGame): Promise<Game> {
     const [newGame] = await db.insert(games).values(game).returning();
     return newGame;

@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, decimal, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, decimal, boolean, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -48,6 +48,15 @@ export const games = pgTable("games", {
   isPopular: boolean("is_popular").notNull().default(false),
   isNew: boolean("is_new").notNull().default(false),
   isTrending: boolean("is_trending").notNull().default(false),
+  // Game page content
+  heroTitle: text("hero_title"),
+  heroSubtitle: text("hero_subtitle"),
+  heroImageUrl: text("hero_image_url"),
+  features: text("features").array().default(sql`'{}'::text[]`),
+  pricingPlans: jsonb("pricing_plans").default(sql`'[]'::jsonb`),
+  detailedDescription: text("detailed_description"),
+  systemRequirements: text("system_requirements"),
+  supportInfo: text("support_info"),
 });
 
 export const pricingPlans = pgTable("pricing_plans", {

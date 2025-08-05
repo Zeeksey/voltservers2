@@ -8,12 +8,14 @@ import Home from "@/pages/home";
 import ClientPortal from "@/pages/client-portal";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
+import GamePage from "@/pages/game-page";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/client-portal" component={ClientPortal} />
+      <Route path="/games/:slug" component={GamePage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />

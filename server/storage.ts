@@ -56,6 +56,7 @@ export interface IStorage {
   // Game methods
   getAllGames(): Promise<Game[]>;
   getGame(id: string): Promise<Game | undefined>;
+  getGameBySlug(slug: string): Promise<Game | undefined>;
   createGame(game: InsertGame): Promise<Game>;
   updateGame(id: string, updates: Partial<InsertGame>): Promise<Game>;
   deleteGame(id: string): Promise<void>;
