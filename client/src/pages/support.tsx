@@ -118,7 +118,15 @@ export default function SupportPage() {
 
   // Get user's support tickets
   const { data: userTickets } = useQuery({
-    queryKey: [`/api/whmcs/support/tickets/${loggedInClient?.email}`],
+    queryKey: [`/api/whmcs/support/tickets/${loggedInClient?.email}`, loggedInClient?.email],
+    queryFn: async () => {
+      if (!loggedInClient?.email) return null;
+      const response = await fetch(`/api/whmcs/support/tickets/${encodeURIComponent(loggedInClient.email)}?requestorEmail=${encodeURIComponent(loggedInClient.email)}`);
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${await response.text()}`);
+      }
+      return response.json();
+    },
     enabled: !!loggedInClient?.email,
     staleTime: 60 * 1000
   });

@@ -60,7 +60,14 @@ export default function TicketDetails() {
   const userEmail = clientData?.email || '';
 
   const { data: ticketDetails, isLoading, error } = useQuery({
-    queryKey: ['/api/whmcs/support/ticket', ticketId],
+    queryKey: ['/api/whmcs/support/ticket', ticketId, userEmail],
+    queryFn: async () => {
+      const response = await fetch(`/api/whmcs/support/ticket/${ticketId}?email=${encodeURIComponent(userEmail)}`);
+      if (!response.ok) {
+        throw new Error(`${response.status}: ${await response.text()}`);
+      }
+      return response.json();
+    },
     enabled: !!ticketId && !!userEmail,
     refetchInterval: 30000, // Refresh every 30 seconds for new replies
   });

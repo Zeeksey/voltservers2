@@ -4,7 +4,7 @@ import { storage, memStorage, MemStorage } from "./storage";
 import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
-import { WHMCSIntegration } from "./whmcs-integration";
+import { WHMCSIntegration, createWHMCSAuthMiddleware } from "./whmcs-integration";
 import { wispIntegration } from "./wisp-integration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -2387,6 +2387,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user tickets (with simple session authorization)
   app.get('/api/whmcs/support/tickets/:clientEmail', async (req, res) => {
     if (!whmcsIntegration) {
       return res.status(503).json({ error: 'WHMCS integration not configured' });
@@ -2394,6 +2395,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { clientEmail } = req.params;
+      const { requestorEmail } = req.query;
+      
+      console.log('Getting tickets for email:', clientEmail, 'requested by:', requestorEmail);
+      
+      // Verify the requesting user can only access their own tickets
+      if (requestorEmail && requestorEmail !== clientEmail) {
+        console.log('Authorization failed: user cannot access tickets for different email');
+        return res.status(403).json({ error: 'Access denied: You can only view your own tickets' });
+      }
       
       // Convert email to client ID first
       const clientData = await whmcsIntegration.getClientByEmail(clientEmail);
@@ -2423,7 +2433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get ticket details by ID
+  // Get ticket details by ID (with simple session authorization)
   app.get('/api/whmcs/support/ticket/:ticketId', async (req, res) => {
     if (!whmcsIntegration) {
       return res.status(503).json({ error: 'WHMCS integration not configured' });
@@ -2431,13 +2441,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const { ticketId } = req.params;
-      console.log('Getting ticket details for ID:', ticketId);
+      const { email } = req.query;
       
+      if (!email) {
+        return res.status(400).json({ error: 'User email is required for authorization' });
+      }
+      
+      console.log('Getting ticket details for ID:', ticketId, 'requested by email:', email);
+      
+      // First get the ticket details
       const ticketDetails = await whmcsIntegration.getTicketDetails(ticketId);
       if (!ticketDetails || ticketDetails.result !== 'success') {
         return res.status(404).json({ error: 'Ticket not found' });
       }
 
+      console.log('Ticket belongs to email:', ticketDetails.email, 'Requested by:', email);
+      
+      // Verify the ticket belongs to the requesting user
+      if (ticketDetails.email !== email) {
+        console.log('Authorization failed: ticket email does not match requested email');
+        return res.status(403).json({ error: 'Access denied: You can only view your own tickets' });
+      }
+      
+      console.log('Authorization successful: user can access this ticket');
       res.json(ticketDetails);
     } catch (error) {
       console.error('Error fetching ticket details:', error);
@@ -2445,7 +2471,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reply to a ticket
+  // Reply to a ticket (with simple session authorization)
   app.post('/api/whmcs/support/ticket/:ticketId/reply', async (req, res) => {
     if (!whmcsIntegration) {
       return res.status(503).json({ error: 'WHMCS integration not configured' });
@@ -2465,6 +2491,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const client = await whmcsIntegration.getClientByEmail(email);
       if (!client) {
         return res.status(404).json({ error: 'Client not found' });
+      }
+
+      // Verify the ticket belongs to this user before allowing reply
+      const ticketDetails = await whmcsIntegration.getTicketDetails(ticketId);
+      if (!ticketDetails || ticketDetails.result !== 'success') {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+      
+      if (ticketDetails.email !== email) {
+        return res.status(403).json({ error: 'Access denied: You can only reply to your own tickets' });
       }
 
       const replyResult = await whmcsIntegration.replyToTicket(ticketId, message, client.userid);
