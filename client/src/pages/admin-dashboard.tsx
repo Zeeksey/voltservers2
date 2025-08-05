@@ -93,6 +93,22 @@ export default function AdminDashboard() {
     ipAddress: "",
     status: "online" as "online" | "offline" | "maintenance"
   });
+
+  const [demoServerForm, setDemoServerForm] = useState({
+    serverName: "",
+    gameId: "",
+    host: "",
+    port: "",
+    playerCount: "0",
+    maxPlayers: "100",
+    isOnline: true,
+    version: "",
+    description: "",
+    location: "",
+    playtime: ""
+  });
+
+  const [editingDemoServer, setEditingDemoServer] = useState<any>(null);
   
   // Theme customization state
   const [themeForm, setThemeForm] = useState({
@@ -216,6 +232,11 @@ export default function AdminDashboard() {
   const { data: serverLocations = [] } = useQuery({
     queryKey: ['/api/server-locations'],
     queryFn: () => apiRequest("/api/server-locations"),
+  });
+
+  const { data: demoServers = [] } = useQuery({
+    queryKey: ['/api/demo-servers'],
+    queryFn: () => apiRequest("/api/demo-servers"),
   });
 
   // Initialize server location pings with static data
@@ -434,6 +455,43 @@ export default function AdminDashboard() {
     },
   });
 
+  // Demo server mutations
+  const createDemoServerMutation = useMutation({
+    mutationFn: (data: any) => apiRequest("/api/admin/demo-servers", { method: "POST", body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/demo-servers"] });
+      resetDemoServerForm();
+      toast({ title: "Demo server created successfully!" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Failed to create demo server", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const updateDemoServerMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: any }) => 
+      apiRequest(`/api/admin/demo-servers/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/demo-servers"] });
+      resetDemoServerForm();
+      toast({ title: "Demo server updated successfully!" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Failed to update demo server", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const deleteDemoServerMutation = useMutation({
+    mutationFn: (id: string) => apiRequest(`/api/admin/demo-servers/${id}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/demo-servers"] });
+      toast({ title: "Demo server deleted successfully!" });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Failed to delete demo server", description: error.message, variant: "destructive" });
+    },
+  });
+
   const handleLogout = async () => {
     try {
       await apiRequest("/api/admin/logout", { method: "POST" });
@@ -475,6 +533,23 @@ export default function AdminDashboard() {
     setEditingBlog(null);
   };
 
+  const resetDemoServerForm = () => {
+    setDemoServerForm({
+      serverName: "",
+      gameId: "",
+      host: "",
+      port: "",
+      playerCount: "0",
+      maxPlayers: "100",
+      isOnline: true,
+      version: "",
+      description: "",
+      location: "",
+      playtime: ""
+    });
+    setEditingDemoServer(null);
+  };
+
   const handleEditGame = (game: Game) => {
     setGameForm({
       name: game.name,
@@ -504,6 +579,23 @@ export default function AdminDashboard() {
     setEditingBlog(blog);
   };
 
+  const handleEditDemoServer = (server: any) => {
+    setDemoServerForm({
+      serverName: server.name || server.serverName || "",
+      gameId: server.gameId || "",
+      host: server.host || server.serverIp || "",
+      port: server.port?.toString() || server.serverPort?.toString() || "",
+      playerCount: server.playerCount?.toString() || "0",
+      maxPlayers: server.maxPlayers?.toString() || "100",
+      isOnline: server.isOnline ?? true,
+      version: server.version || "",
+      description: server.description || "",
+      location: server.location || "",
+      playtime: server.playtime?.toString() || ""
+    });
+    setEditingDemoServer(server);
+  };
+
   const handleGameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
@@ -530,6 +622,29 @@ export default function AdminDashboard() {
       updateBlogMutation.mutate({ id: editingBlog.id, data });
     } else {
       createBlogMutation.mutate(data);
+    }
+  };
+
+  const handleDemoServerSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = {
+      serverName: demoServerForm.serverName,
+      gameId: demoServerForm.gameId,
+      serverIp: demoServerForm.host,
+      serverPort: parseInt(demoServerForm.port),
+      playerCount: parseInt(demoServerForm.playerCount),
+      maxPlayers: parseInt(demoServerForm.maxPlayers),
+      isOnline: demoServerForm.isOnline,
+      version: demoServerForm.version,
+      description: demoServerForm.description,
+      location: demoServerForm.location,
+      playtime: demoServerForm.playtime ? parseInt(demoServerForm.playtime) : null
+    };
+
+    if (editingDemoServer) {
+      updateDemoServerMutation.mutate({ id: editingDemoServer.id, data });
+    } else {
+      createDemoServerMutation.mutate(data);
     }
   };
 
@@ -1313,6 +1428,271 @@ export default function AdminDashboard() {
 
           {/* Demo Servers Tab */}
           <TabsContent value="demo-servers" className="space-y-6">
+            <Card className="bg-gaming-black-lighter border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-gaming-white">
+                  <Server className="w-5 h-5 text-gaming-green" />
+                  {editingDemoServer ? 'Edit Demo Server' : 'Add New Demo Server'}
+                </CardTitle>
+                <CardDescription className="text-gaming-gray">
+                  Manage demo servers that appear on the main page for visitors to try
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleDemoServerSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="serverName" className="text-gaming-white">Server Name</Label>
+                      <Input
+                        id="serverName"
+                        value={demoServerForm.serverName}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, serverName: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="Minecraft Survival"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="gameId" className="text-gaming-white">Game</Label>
+                      <Select value={demoServerForm.gameId} onValueChange={(value) => setDemoServerForm({...demoServerForm, gameId: value})}>
+                        <SelectTrigger className="bg-gaming-black text-gaming-white border-gaming-green/30">
+                          <SelectValue placeholder="Select a game" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gaming-black border-gaming-green/20">
+                          {games.map(game => (
+                            <SelectItem key={game.id} value={game.id}>
+                              {game.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="host" className="text-gaming-white">Server IP/Host</Label>
+                      <Input
+                        id="host"
+                        value={demoServerForm.host}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, host: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="mc.demo.gamehost.pro"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="port" className="text-gaming-white">Port</Label>
+                      <Input
+                        id="port"
+                        type="number"
+                        value={demoServerForm.port}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, port: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="25565"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="playerCount" className="text-gaming-white">Current Players</Label>
+                      <Input
+                        id="playerCount"
+                        type="number"
+                        value={demoServerForm.playerCount}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, playerCount: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="maxPlayers" className="text-gaming-white">Max Players</Label>
+                      <Input
+                        id="maxPlayers"
+                        type="number"
+                        value={demoServerForm.maxPlayers}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, maxPlayers: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        min="1"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="playtime" className="text-gaming-white">Demo Time Limit (minutes)</Label>
+                      <Input
+                        id="playtime"
+                        type="number"
+                        value={demoServerForm.playtime}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, playtime: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="30"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="version" className="text-gaming-white">Server Version</Label>
+                      <Input
+                        id="version"
+                        value={demoServerForm.version}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, version: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="1.20.4"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="location" className="text-gaming-white">Location</Label>
+                      <Input
+                        id="location"
+                        value={demoServerForm.location}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, location: e.target.value})}
+                        className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                        placeholder="US East"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="description" className="text-gaming-white">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={demoServerForm.description}
+                      onChange={(e) => setDemoServerForm({...demoServerForm, description: e.target.value})}
+                      className="bg-gaming-black text-gaming-white border-gaming-green/30"
+                      placeholder="A friendly survival server with amazing community builds"
+                      rows={3}
+                      required
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={demoServerForm.isOnline}
+                      onCheckedChange={(checked) => setDemoServerForm({...demoServerForm, isOnline: checked})}
+                    />
+                    <Label className="text-gaming-white">Server Online</Label>
+                  </div>
+
+                  <div className="flex space-x-4">
+                    <Button 
+                      type="submit" 
+                      className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black"
+                      disabled={createDemoServerMutation.isPending || updateDemoServerMutation.isPending}
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {editingDemoServer ? 'Update Server' : 'Create Server'}
+                    </Button>
+                    {editingDemoServer && (
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                        onClick={resetDemoServerForm}
+                      >
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* Demo Servers List */}
+            <Card className="bg-gaming-black-lighter border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white">Demo Servers</CardTitle>
+                <CardDescription className="text-gaming-gray">
+                  Manage all demo servers visible to visitors
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {demoServers.length === 0 ? (
+                    <div className="text-center py-8 text-gaming-gray">
+                      <Server className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No demo servers configured yet.</p>
+                      <p className="text-sm">Create your first demo server above.</p>
+                    </div>
+                  ) : (
+                    demoServers.map((server: any) => (
+                      <div key={server.id} className="bg-gaming-black p-6 rounded-lg border border-gaming-green/20">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="text-lg font-semibold text-gaming-white">
+                                {server.serverName || server.name}
+                              </h3>
+                              <Badge className={server.isOnline ? "bg-gaming-green text-gaming-black" : "bg-red-500 text-white"}>
+                                {server.isOnline ? "Online" : "Offline"}
+                              </Badge>
+                            </div>
+                            <p className="text-gaming-gray mb-2">{server.description}</p>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <span className="text-gaming-gray">Game:</span>
+                                <span className="text-gaming-white ml-1">
+                                  {games.find(g => g.id === server.gameId)?.name || server.gameId}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-gaming-gray">Address:</span>
+                                <span className="text-gaming-white ml-1 font-mono">
+                                  {server.host || server.serverIp}:{server.port || server.serverPort}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-gaming-gray">Players:</span>
+                                <span className="text-gaming-white ml-1">
+                                  {server.playerCount}/{server.maxPlayers}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-gaming-gray">Location:</span>
+                                <span className="text-gaming-white ml-1">{server.location}</span>
+                              </div>
+                            </div>
+                            {server.version && (
+                              <div className="mt-2 text-sm">
+                                <span className="text-gaming-gray">Version:</span>
+                                <span className="text-gaming-white ml-1">{server.version}</span>
+                              </div>
+                            )}
+                            {server.playtime && (
+                              <div className="mt-1 text-sm">
+                                <span className="text-gaming-gray">Demo Time:</span>
+                                <span className="text-gaming-white ml-1">{server.playtime} minutes</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex space-x-2 ml-4">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditDemoServer(server)}
+                              className="text-gaming-green hover:text-gaming-green-dark hover:bg-gaming-green/10"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteDemoServerMutation.mutate(server.id)}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                              disabled={deleteDemoServerMutation.isPending}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
             <Card className="bg-gaming-black-lighter border-gaming-green/20">
               <CardHeader>
                 <CardTitle className="text-gaming-white">Add Demo Server</CardTitle>
