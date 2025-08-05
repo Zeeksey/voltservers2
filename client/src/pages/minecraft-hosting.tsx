@@ -478,6 +478,11 @@ export default function MinecraftHostingPage() {
             <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold px-8">
               Start Your Server Now
             </Button>
+            <Link href="/minecraft-tools">
+              <Button size="lg" variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black">
+                Minecraft Tools
+              </Button>
+            </Link>
             <Link href="/games">
               <Button size="lg" variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black">
                 View All Games

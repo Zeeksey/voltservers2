@@ -9,6 +9,8 @@ import ClientPortal from "@/pages/client-portal";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import AdminGameCustomization from "@/pages/admin-game-customization";
+import MinecraftToolPage from "@/pages/minecraft-tool-page";
+import MinecraftToolsPage from "@/pages/minecraft-tools";
 import MinecraftHosting from "@/pages/minecraft-hosting";
 import GamePage from "@/pages/game-page";
 import BlogPostPage from "@/pages/blog-post";
@@ -46,6 +48,8 @@ function Router() {
       <Route path="/admin/games/:gameId/customize" component={AdminGameCustomization} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/minecraft" component={MinecraftHosting} />
+      <Route path="/minecraft-tool/:toolSlug" component={MinecraftToolPage} />
+      <Route path="/minecraft-tools" component={MinecraftToolsPage} />
       <Route component={NotFound} />
     </Switch>
   );
