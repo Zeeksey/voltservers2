@@ -41,7 +41,8 @@ import {
   BarChart3,
   Code,
   Cookie,
-  Zap
+  Zap,
+  HelpCircle
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -57,6 +58,23 @@ export default function AdminDashboard() {
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [editingGame, setEditingGame] = useState<Game | null>(null);
   const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
+  const [editingFaqCategory, setEditingFaqCategory] = useState<any>(null);
+  const [editingFaqItem, setEditingFaqItem] = useState<any>(null);
+  const [faqCategoryForm, setFaqCategoryForm] = useState({
+    title: "",
+    slug: "",
+    description: "",
+    sortOrder: "0",
+    isVisible: true
+  });
+  const [faqItemForm, setFaqItemForm] = useState({
+    categoryId: "",
+    question: "",
+    answer: "",
+    sortOrder: "0",
+    isVisible: true,
+    tags: ""
+  });
   const [gameForm, setGameForm] = useState({
     name: "",
     slug: "",
@@ -175,6 +193,95 @@ export default function AdminDashboard() {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // FAQ queries
+  const { data: faqCategories = [] } = useQuery({
+    queryKey: ["/api/faqs"],
+  });
+
+  const faqCategoryMutation = useMutation({
+    mutationFn: async (faqCategory: any) => {
+      const url = editingFaqCategory 
+        ? `/api/admin/faq-categories/${editingFaqCategory.id}`
+        : '/api/admin/faq-categories';
+      const method = editingFaqCategory ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(faqCategory),
+      });
+      
+      if (!response.ok) throw new Error('Failed to save FAQ category');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/faqs"] });
+      setFaqCategoryForm({
+        title: "",
+        slug: "",
+        description: "",
+        sortOrder: "0",
+        isVisible: true
+      });
+      setEditingFaqCategory(null);
+      toast({
+        title: "Success",
+        description: `FAQ category ${editingFaqCategory ? 'updated' : 'created'} successfully`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to ${editingFaqCategory ? 'update' : 'create'} FAQ category`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const faqItemMutation = useMutation({
+    mutationFn: async (faqItem: any) => {
+      const url = editingFaqItem 
+        ? `/api/admin/faq-items/${editingFaqItem.id}`
+        : '/api/admin/faq-items';
+      const method = editingFaqItem ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...faqItem,
+          tags: faqItem.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean)
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to save FAQ item');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/faqs"] });
+      setFaqItemForm({
+        categoryId: "",
+        question: "",
+        answer: "",
+        sortOrder: "0",
+        isVisible: true,
+        tags: ""
+      });
+      setEditingFaqItem(null);
+      toast({
+        title: "Success",
+        description: `FAQ item ${editingFaqItem ? 'updated' : 'created'} successfully`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to ${editingFaqItem ? 'update' : 'create'} FAQ item`,
+        variant: "destructive",
+      });
+    },
+  });
 
   useEffect(() => {
     // Check authentication
@@ -408,6 +515,7 @@ export default function AdminDashboard() {
     mutationFn: (data: any) => apiRequest("/api/admin/theme-settings", { method: "PUT", body: JSON.stringify(data) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/theme-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/theme-settings"] }); // Invalidate public endpoint too
       toast({ title: "Theme settings updated successfully!" });
       // Apply theme changes immediately
       applyThemeToDocument();
@@ -753,6 +861,45 @@ export default function AdminDashboard() {
     updateThemeMutation.mutate(themeForm);
   };
 
+  const handleFaqCategorySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    faqCategoryMutation.mutate({
+      ...faqCategoryForm,
+      sortOrder: parseInt(faqCategoryForm.sortOrder)
+    });
+  };
+
+  const handleFaqItemSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    faqItemMutation.mutate({
+      ...faqItemForm,
+      sortOrder: parseInt(faqItemForm.sortOrder)
+    });
+  };
+
+  const handleEditFaqCategory = (category: any) => {
+    setEditingFaqCategory(category);
+    setFaqCategoryForm({
+      title: category.title,
+      slug: category.slug,
+      description: category.description || "",
+      sortOrder: category.sortOrder.toString(),
+      isVisible: category.isVisible
+    });
+  };
+
+  const handleEditFaqItem = (item: any) => {
+    setEditingFaqItem(item);
+    setFaqItemForm({
+      categoryId: item.categoryId,
+      question: item.question,
+      answer: item.answer,
+      sortOrder: item.sortOrder.toString(),
+      isVisible: item.isVisible,
+      tags: (item.tags || []).join(', ')
+    });
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, type: 'logo' | 'favicon') => {
     const file = e.target.files?.[0];
     if (file) {
@@ -819,6 +966,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="demo-servers" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
               <Server className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Servers</span>
+            </TabsTrigger>
+            <TabsTrigger value="faq" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">FAQ</span>
             </TabsTrigger>
             <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
               <Palette className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
@@ -2590,6 +2741,227 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* FAQ Management */}
+          <TabsContent value="faq" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+              {/* FAQ Category Form */}
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green">
+                    {editingFaqCategory ? "Edit FAQ Category" : "Add New FAQ Category"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleFaqCategorySubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Title</Label>
+                        <Input
+                          value={faqCategoryForm.title}
+                          onChange={(e) => setFaqCategoryForm({...faqCategoryForm, title: e.target.value})}
+                          className="admin-input"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Slug</Label>
+                        <Input
+                          value={faqCategoryForm.slug}
+                          onChange={(e) => setFaqCategoryForm({...faqCategoryForm, slug: e.target.value})}
+                          className="admin-input"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Description</Label>
+                      <Textarea
+                        value={faqCategoryForm.description}
+                        onChange={(e) => setFaqCategoryForm({...faqCategoryForm, description: e.target.value})}
+                        className="admin-input"
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Sort Order</Label>
+                        <Input
+                          type="number"
+                          value={faqCategoryForm.sortOrder}
+                          onChange={(e) => setFaqCategoryForm({...faqCategoryForm, sortOrder: e.target.value})}
+                          className="admin-input"
+                        />
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={faqCategoryForm.isVisible}
+                          onCheckedChange={(checked) => setFaqCategoryForm({...faqCategoryForm, isVisible: checked})}
+                        />
+                        <Label className="text-gray-300">Visible</Label>
+                      </div>
+                    </div>
+                    <Button type="submit" className="bg-gaming-green text-gaming-black hover:bg-gaming-green/80">
+                      <Save className="w-4 h-4 mr-2" />
+                      {editingFaqCategory ? "Update Category" : "Add Category"}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* FAQ Item Form */}
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green">
+                    {editingFaqItem ? "Edit FAQ Item" : "Add New FAQ Item"}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleFaqItemSubmit} className="space-y-4">
+                    <div>
+                      <Label className="text-gray-300">Category</Label>
+                      <Select value={faqItemForm.categoryId} onValueChange={(value) => setFaqItemForm({...faqItemForm, categoryId: value})}>
+                        <SelectTrigger className="admin-input">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {faqCategories.map((category: any) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Question</Label>
+                      <Input
+                        value={faqItemForm.question}
+                        onChange={(e) => setFaqItemForm({...faqItemForm, question: e.target.value})}
+                        className="admin-input"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gray-300">Answer (Markdown)</Label>
+                      <Textarea
+                        value={faqItemForm.answer}
+                        onChange={(e) => setFaqItemForm({...faqItemForm, answer: e.target.value})}
+                        className="admin-input min-h-32"
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Tags (comma-separated)</Label>
+                        <Input
+                          value={faqItemForm.tags}
+                          onChange={(e) => setFaqItemForm({...faqItemForm, tags: e.target.value})}
+                          className="admin-input"
+                          placeholder="minecraft, setup, troubleshooting"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Sort Order</Label>
+                        <Input
+                          type="number"
+                          value={faqItemForm.sortOrder}
+                          onChange={(e) => setFaqItemForm({...faqItemForm, sortOrder: e.target.value})}
+                          className="admin-input"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={faqItemForm.isVisible}
+                        onCheckedChange={(checked) => setFaqItemForm({...faqItemForm, isVisible: checked})}
+                      />
+                      <Label className="text-gray-300">Visible</Label>
+                    </div>
+                    <Button type="submit" className="bg-gaming-green text-gaming-black hover:bg-gaming-green/80">
+                      <Save className="w-4 h-4 mr-2" />
+                      {editingFaqItem ? "Update FAQ Item" : "Add FAQ Item"}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* FAQ Categories List */}
+            <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
+              <CardHeader>
+                <CardTitle className="text-gaming-green">FAQ Categories</CardTitle>
+                <CardDescription className="text-gray-400">
+                  Manage FAQ categories and items
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {faqCategories.map((category: any) => (
+                    <div key={category.id} className="p-4 border border-gaming-green/20 rounded">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold text-gaming-white">{category.title}</h4>
+                          <p className="text-sm text-gray-400">{category.description || 'No description'}</p>
+                          <div className="flex items-center space-x-4 mt-2">
+                            <span className="text-xs text-gray-500">Sort: {category.sortOrder}</span>
+                            <Badge variant="outline" className={category.isVisible ? "text-gaming-green border-gaming-green/30" : "text-gray-400 border-gray-400/30"}>
+                              {category.isVisible ? 'Visible' : 'Hidden'}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            onClick={() => handleEditFaqCategory(category)}
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      {category.items && category.items.length > 0 && (
+                        <div className="mt-4 pl-4 border-l-2 border-gaming-green/20">
+                          <div className="space-y-2">
+                            {category.items.map((item: any) => (
+                              <div key={item.id} className="flex items-center justify-between p-2 bg-gaming-black-lighter rounded">
+                                <span className="text-sm">{item.question}</span>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEditFaqItem(item)}
+                                  >
+                                    <Edit2 className="w-3 h-3" />
+                                  </Button>
+                                  <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300">
+                                    <Trash2 className="w-3 h-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {faqCategories.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">
+                      <HelpCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>No FAQ categories found. Create one above to get started.</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
