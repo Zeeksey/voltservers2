@@ -60,7 +60,12 @@ export class WHMCSIntegration {
     };
 
     try {
-      const response = await fetch(`${this.config.url}/includes/api.php`, {
+      // Ensure URL has proper protocol
+      const apiUrl = this.config.url.startsWith('http') 
+        ? `${this.config.url}/includes/api.php`
+        : `https://${this.config.url}/includes/api.php`;
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

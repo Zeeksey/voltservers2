@@ -18,8 +18,39 @@ import {
   ExternalLink
 } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 
 export default function ClientPortal() {
+  // Test WHMCS connection first
+  const { data: whmcsStatus } = useQuery({
+    queryKey: ['/api/whmcs/test'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 2
+  });
+
+  // Only fetch WHMCS data if connection is working
+  const { data: whmcsServices, isLoading: servicesLoading } = useQuery({
+    queryKey: ['/api/whmcs/clients/1/services'],
+    enabled: whmcsStatus?.connected === true,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    retry: 1
+  });
+
+  const { data: whmcsInvoices, isLoading: invoicesLoading } = useQuery({
+    queryKey: ['/api/whmcs/clients/1/invoices'],
+    enabled: whmcsStatus?.connected === true,
+    staleTime: 2 * 60 * 1000,
+    retry: 1
+  });
+
+  const { data: whmcsTickets, isLoading: ticketsLoading } = useQuery({
+    queryKey: ['/api/whmcs/tickets'],
+    enabled: whmcsStatus?.connected === true,
+    staleTime: 2 * 60 * 1000,
+    retry: 1
+  });
+
   const quickActions = [
     {
       icon: <Server className="w-6 h-6 text-gaming-green" />,
@@ -51,11 +82,20 @@ export default function ClientPortal() {
     }
   ];
 
+  // Dynamic account stats based on WHMCS data
   const accountStats = [
-    { label: "Active Services", value: "3", icon: <Server className="w-5 h-5" /> },
+    { 
+      label: "Active Services", 
+      value: whmcsServices?.products?.length ? String(whmcsServices.products.length) : "3", 
+      icon: <Server className="w-5 h-5" /> 
+    },
     { label: "Total Uptime", value: "99.9%", icon: <Clock className="w-5 h-5" /> },
     { label: "Data Transfer", value: "2.4TB", icon: <BarChart3 className="w-5 h-5" /> },
-    { label: "Support Score", value: "5.0", icon: <Shield className="w-5 h-5" /> }
+    { 
+      label: "Open Tickets", 
+      value: whmcsTickets?.tickets?.length ? String(whmcsTickets.tickets.length) : "0", 
+      icon: <Shield className="w-5 h-5" /> 
+    }
   ];
 
   return (
@@ -143,8 +183,140 @@ export default function ClientPortal() {
             </CardContent>
           </Card>
 
-          {/* WHMCS Integration */}
-          <WHMCSIntegration />
+          {/* WHMCS Connection Status */}
+          {whmcsStatus && (
+            <Card className="bg-gaming-dark border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white text-xl flex items-center gap-2">
+                  <Shield className="w-5 h-5" />
+                  WHMCS Integration Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <div className={`w-3 h-3 rounded-full ${whmcsStatus.connected ? 'bg-green-500' : 'bg-red-500'}`} />
+                  <span className={`${whmcsStatus.connected ? 'text-green-400' : 'text-red-400'}`}>
+                    {whmcsStatus.message}
+                  </span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Real WHMCS Services */}
+          {whmcsStatus?.connected && whmcsServices && (
+            <Card className="bg-gaming-dark border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
+                  <Server className="w-6 h-6" />
+                  Your Services
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {servicesLoading ? (
+                  <div className="text-gaming-gray">Loading services...</div>
+                ) : whmcsServices?.products?.length > 0 ? (
+                  <div className="space-y-4">
+                    {whmcsServices.products.map((service: any, index: number) => (
+                      <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-gaming-white font-semibold">{service.product || service.name || 'Game Server'}</h4>
+                            <p className="text-gaming-gray text-sm">{service.domain || 'N/A'}</p>
+                            <Badge className={`mt-2 ${service.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                              {service.status || 'Unknown'}
+                            </Badge>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-gaming-green font-semibold">${service.amount || service.price || '0.00'}</div>
+                            <div className="text-gaming-gray text-sm">{service.billingcycle || 'Monthly'}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gaming-gray">No active services found.</div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Real WHMCS Invoices */}
+          {whmcsStatus?.connected && whmcsInvoices && (
+            <Card className="bg-gaming-dark border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
+                  <CreditCard className="w-6 h-6" />
+                  Recent Bills
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {invoicesLoading ? (
+                  <div className="text-gaming-gray">Loading invoices...</div>
+                ) : whmcsInvoices?.invoices?.length > 0 ? (
+                  <div className="space-y-4">
+                    {whmcsInvoices.invoices.slice(0, 5).map((invoice: any, index: number) => (
+                      <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h4 className="text-gaming-white font-semibold">Invoice #{invoice.invoiceid || invoice.id}</h4>
+                            <p className="text-gaming-gray text-sm">Due: {invoice.duedate || 'N/A'}</p>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-gaming-green font-semibold">${invoice.total || '0.00'}</div>
+                            <Badge className={`${invoice.status === 'Paid' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
+                              {invoice.status || 'Pending'}
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gaming-gray">No invoices found.</div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Real WHMCS Support Tickets */}
+          {whmcsStatus?.connected && whmcsTickets && (
+            <Card className="bg-gaming-dark border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
+                  <FileText className="w-6 h-6" />
+                  Support Tickets
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {ticketsLoading ? (
+                  <div className="text-gaming-gray">Loading tickets...</div>
+                ) : whmcsTickets?.tickets?.length > 0 ? (
+                  <div className="space-y-4">
+                    {whmcsTickets.tickets.slice(0, 5).map((ticket: any, index: number) => (
+                      <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="text-gaming-white font-semibold">#{ticket.tid || ticket.id} - {ticket.subject}</h4>
+                            <p className="text-gaming-gray text-sm">Last updated: {ticket.lastreply || ticket.date}</p>
+                          </div>
+                          <Badge className={`${ticket.status === 'Open' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                            {ticket.status || 'Unknown'}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-gaming-gray">No support tickets found.</div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Fallback WHMCS Integration when not connected */}
+          {!whmcsStatus?.connected && <WHMCSIntegration />}
         </div>
       </main>
       
