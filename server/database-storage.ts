@@ -163,6 +163,43 @@ export class DatabaseStorage implements IStorage {
     return updatedSetting;
   }
 
+  // Theme settings methods
+  async getThemeSettings(): Promise<any> {
+    const settings = await db.select().from(siteSettings).where(eq(siteSettings.key, 'theme'));
+    if (settings.length === 0) {
+      // Return default theme settings
+      return {
+        primaryColor: "#22c55e",
+        backgroundColor: "#0a0a0a",
+        accentColor: "#34d399",
+        textColor: "#ffffff",
+        cardColor: "#1a1a1a"
+      };
+    }
+    try {
+      return JSON.parse(settings[0].value);
+    } catch {
+      // Return default if JSON parse fails
+      return {
+        primaryColor: "#22c55e",
+        backgroundColor: "#0a0a0a", 
+        accentColor: "#34d399",
+        textColor: "#ffffff",
+        cardColor: "#1a1a1a"
+      };
+    }
+  }
+
+  async updateThemeSettings(themeSettings: any): Promise<any> {
+    const settingValue = JSON.stringify(themeSettings);
+    await this.setSiteSetting({
+      key: 'theme',
+      value: settingValue,
+      updatedAt: new Date()
+    });
+    return themeSettings;
+  }
+
   // Promo settings methods
   async getPromoSettings(): Promise<PromoSetting | undefined> {
     const [settings] = await db.select().from(promoSettings).limit(1);
