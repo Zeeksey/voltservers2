@@ -38,19 +38,24 @@ export default function BillingManagement() {
     }
   }, []);
 
-  // Fetch WHMCS invoices
+  // Fetch WHMCS invoices using email instead of ID for better compatibility
   const { data: invoices, isLoading: invoicesLoading } = useQuery({
-    queryKey: [`/api/whmcs/clients/${loggedInClient?.id}/invoices`],
-    enabled: !!loggedInClient?.id,
+    queryKey: [`/api/whmcs/clients/${loggedInClient?.email}/invoices`],
+    enabled: !!loggedInClient?.email,
     staleTime: 60 * 1000 // 1 minute
   });
 
   // Fetch WHMCS services for billing summary
   const { data: services, isLoading: servicesLoading } = useQuery({
-    queryKey: [`/api/whmcs/clients/${loggedInClient?.id}/services`],
-    enabled: !!loggedInClient?.id,
+    queryKey: [`/api/whmcs/clients/${loggedInClient?.email}/services`],
+    enabled: !!loggedInClient?.email,
     staleTime: 60 * 1000
   });
+
+  // Debug client data
+  console.log('Logged in client data:', loggedInClient);
+  console.log('Invoices data:', invoices);
+  console.log('Services data:', services);
 
   if (!loggedInClient) {
     return (

@@ -84,7 +84,7 @@ export class WispIntegration {
     }
   }
 
-  // Get client servers from Wisp
+  // Get client servers from Wisp based on user account
   async getClientServers(clientEmail: string): Promise<WispServer[]> {
     try {
       if (!this.apiKey || !this.apiUrl) {
@@ -92,10 +92,17 @@ export class WispIntegration {
         return this.getMockServers();
       }
 
+      // First, get the user ID from email
+      const userId = await this.getUserIdFromEmail(clientEmail);
+      if (!userId) {
+        console.log(`No Wisp user found for email: ${clientEmail}`);
+        return [];
+      }
+
       const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
       const apiUrl = `${cleanUrl}/api/application/servers`;
 
-      console.log('Fetching servers from:', apiUrl);
+      console.log(`Fetching servers for user ${userId} (${clientEmail}):`, apiUrl);
 
       const response = await fetch(apiUrl, {
         headers: {
@@ -109,29 +116,121 @@ export class WispIntegration {
         console.error(`Wisp API error: ${response.status} ${response.statusText}`);
         const errorText = await response.text();
         console.error('Error details:', errorText);
+        return [];
+      }
+
+      const data = await response.json();
+      console.log('Wisp API response received:', typeof data, 'total servers found:', data.data?.length || 0);
+      
+      // Handle different response formats from Wisp API
+      let allServers = [];
+      if (data.data && Array.isArray(data.data)) {
+        allServers = data.data;
+      } else if (Array.isArray(data)) {
+        allServers = data;
+      }
+
+      // Filter servers by user ID
+      const userServers = allServers.filter(server => {
+        const attrs = server.attributes || server;
+        return attrs.user === userId;
+      });
+
+      console.log(`Filtered to ${userServers.length} servers for user ${userId}`);
+
+      if (userServers.length === 0) {
+        console.log(`No servers found for user ${userId} (${clientEmail})`);
+        return [];
+      }
+
+      return this.transformWispServers(userServers);
+    } catch (error) {
+      console.error('Error fetching Wisp servers:', error);
+      return [];
+    }
+  }
+
+  // Get all servers (admin function)
+  async getAllServers(): Promise<WispServer[]> {
+    try {
+      if (!this.apiKey || !this.apiUrl) {
+        console.log('No Wisp credentials - returning mock data for demo');
+        return this.getMockServers();
+      }
+
+      const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+      const apiUrl = `${cleanUrl}/api/application/servers`;
+
+      console.log('Fetching all servers from:', apiUrl);
+
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.error(`Wisp API error: ${response.status} ${response.statusText}`);
         return this.getMockServers();
       }
 
       const data = await response.json();
-      console.log('Wisp API response received:', typeof data, 'servers found:', data.data?.length || 0);
+      console.log('All servers response:', typeof data, 'total servers found:', data.data?.length || 0);
       
-      // Handle different response formats from Wisp API
-      let servers = [];
+      let allServers = [];
       if (data.data && Array.isArray(data.data)) {
-        servers = data.data; // Keep the full objects with attributes
+        allServers = data.data;
       } else if (Array.isArray(data)) {
-        servers = data;
+        allServers = data;
       }
 
-      if (servers.length === 0) {
-        console.log('No servers found in Wisp response, returning mock data');
-        return this.getMockServers();
-      }
-
-      return this.transformWispServers(servers);
+      return this.transformWispServers(allServers);
     } catch (error) {
-      console.error('Error fetching Wisp servers:', error);
+      console.error('Error fetching all Wisp servers:', error);
       return this.getMockServers();
+    }
+  }
+
+  // Get user ID from email address
+  private async getUserIdFromEmail(email: string): Promise<number | null> {
+    try {
+      const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+      const apiUrl = `${cleanUrl}/api/application/users`;
+
+      const response = await fetch(apiUrl, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to fetch users: ${response.status}`);
+        return null;
+      }
+
+      const data = await response.json();
+      const users = data.data || [];
+      
+      const user = users.find((u: any) => {
+        const attrs = u.attributes || u;
+        return attrs.email === email;
+      });
+
+      if (user) {
+        const userId = user.attributes?.id || user.id;
+        console.log(`Found user ID ${userId} for email ${email}`);
+        return userId;
+      }
+
+      console.log(`No user found with email: ${email}`);
+      return null;
+    } catch (error) {
+      console.error('Error fetching user by email:', error);
+      return null;
     }
   }
 

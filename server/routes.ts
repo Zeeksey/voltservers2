@@ -2144,14 +2144,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all servers from Wisp
+  // Get client servers from Wisp (user-specific)
   app.get('/api/wisp/servers', async (req, res) => {
     try {
-      const servers = await wispIntegration.getClientServers('');
+      // Get user email from query parameter or session
+      let clientEmail = req.query.user as string;
+      
+      // If no user specified, try to get from WHMCS session or use test account
+      if (!clientEmail) {
+        // For demo purposes, use a test email - in production you'd get from authenticated session
+        clientEmail = 'itznickm@gmail.com'; // Default to Nick's account for testing
+      }
+      
+      console.log(`Fetching servers for user: ${clientEmail}`);
+      const servers = await wispIntegration.getClientServers(clientEmail);
       res.json(servers);
     } catch (error) {
       console.error('Error fetching Wisp servers:', error);
       res.status(500).json({ message: 'Failed to fetch servers' });
+    }
+  });
+
+  // Get all servers (admin view)
+  app.get('/api/wisp/admin/servers', async (req, res) => {
+    try {
+      console.log('Admin fetching all servers');
+      const servers = await wispIntegration.getAllServers();
+      res.json(servers);
+    } catch (error) {
+      console.error('Error fetching admin servers:', error);
+      res.status(500).json({ message: 'Failed to fetch admin servers' });
     }
   });
 
