@@ -537,7 +537,11 @@ export default function ClientPortal() {
                               <Button 
                                 variant="outline" 
                                 size="sm"
-                                onClick={() => window.location.href = `/ticket/${ticket.id}`}
+                                onClick={() => {
+                                  // Store current client data to ensure it's available in ticket page
+                                  localStorage.setItem('whmcs_client_data', JSON.stringify(loggedInClient));
+                                  window.location.href = `/ticket/${ticket.id}`;
+                                }}
                                 className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10"
                               >
                                 <MessageSquare className="w-4 h-4 mr-1" />

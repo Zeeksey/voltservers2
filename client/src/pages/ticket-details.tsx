@@ -44,11 +44,24 @@ export default function TicketDetails() {
   const queryClient = useQueryClient();
 
   // Get user email from localStorage (from WHMCS login)
-  const userEmail = localStorage.getItem('whmcs_user_email') || '';
+  const getClientData = () => {
+    const savedClient = localStorage.getItem('whmcs_client_data');
+    if (savedClient) {
+      try {
+        return JSON.parse(savedClient);
+      } catch (error) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const clientData = getClientData();
+  const userEmail = clientData?.email || '';
 
   const { data: ticketDetails, isLoading, error } = useQuery({
     queryKey: ['/api/whmcs/support/ticket', ticketId],
-    enabled: !!ticketId,
+    enabled: !!ticketId && !!userEmail,
     refetchInterval: 30000, // Refresh every 30 seconds for new replies
   });
 
@@ -89,14 +102,17 @@ export default function TicketDetails() {
     replyMutation.mutate(replyMessage);
   };
 
-  if (!userEmail) {
+  // Check if user is authenticated by looking for WHMCS client data
+  const isAuthenticated = !!clientData && !!userEmail;
+  
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gaming-black text-gaming-white">
         <div className="container mx-auto px-4 py-8">
           <Card className="bg-gaming-dark border-gaming-green/20">
             <CardContent className="p-8 text-center">
               <h1 className="text-2xl font-bold text-gaming-white mb-4">Authentication Required</h1>
-              <p className="text-gaming-gray mb-6">Please log in to view ticket details.</p>
+              <p className="text-gaming-gray mb-6">Please log in through the client portal to view ticket details.</p>
               <Button 
                 onClick={() => setLocation('/client-portal')}
                 className="bg-gaming-green hover:bg-gaming-green/80"
