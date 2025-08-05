@@ -2,10 +2,19 @@
 
 VoltServers is a full-stack game server hosting platform providing a comprehensive interface for users to browse games, view pricing, check server status, and manage game servers. The platform features a gaming-themed design with dedicated pages for organization and user experience. It includes professional enterprise features, service management dashboards, a Shockbyte-inspired Minecraft hosting page, and robust integration with WHMCS for client portal functionality, support tickets, account management, and dynamic product pricing. Key capabilities include individual game pages with detailed hosting information, individual blog posts, hardware specifications, an about page, support center, and contact information.
 
+## Recent Changes (August 2025)
+- Successfully integrated WHMCS API with IP whitelisting (104.196.223.28)
+- Fixed games flashing issue with improved React Query caching
+- Configured Vercel deployment with optimized build process
+- Added comprehensive environment variable configuration
+- Implemented VS Code Git integration for GitHub uploads
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
 Server Management Style: Simple server overview with direct link to Wisp.gg game panel - no complex controls or tabs interface.
+Deployment Platform: Vercel (switched from Render for better build support)
+Development Environment: Windows with VS Code and GitHub integration
 
 # System Architecture
 
