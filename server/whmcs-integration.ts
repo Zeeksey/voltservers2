@@ -100,6 +100,11 @@ export class WHMCSIntegration {
       return data;
     } catch (error) {
       console.error('WHMCS API Error:', error);
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+      if (error.cause) {
+        console.error('Error cause:', error.cause);
+      }
       throw error;
     }
   }

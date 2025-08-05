@@ -67,10 +67,7 @@ export default function TicketDetails() {
 
   const replyMutation = useMutation({
     mutationFn: async (message: string) => {
-      return apiRequest(`/api/whmcs/support/ticket/${ticketId}/reply`, {
-        method: 'POST',
-        body: { message, email: userEmail }
-      });
+      return apiRequest('POST', `/api/whmcs/support/ticket/${ticketId}/reply`, { message, email: userEmail });
     },
     onSuccess: (data) => {
       console.log('Reply success:', data);

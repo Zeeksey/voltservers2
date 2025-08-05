@@ -2469,13 +2469,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const replyResult = await whmcsIntegration.replyToTicket(ticketId, message, client.userid);
       if (!replyResult || replyResult.result !== 'success') {
+        console.error('WHMCS reply failed:', replyResult);
         return res.status(500).json({ error: 'Failed to add reply to ticket' });
       }
 
       res.json(replyResult);
     } catch (error) {
       console.error('Error replying to ticket:', error);
-      res.status(500).json({ error: 'Failed to reply to ticket' });
+      console.error('Error details:', error.message, error.stack);
+      res.status(500).json({ error: `Failed to reply to ticket: ${error.message || 'Unknown error'}` });
     }
   });
 
