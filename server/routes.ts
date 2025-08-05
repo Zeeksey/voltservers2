@@ -10,6 +10,16 @@ import { wispIntegration, WispIntegration } from "./wisp-integration";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
   await initializeDatabase();
+  
+  // Health check endpoint for Render
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ 
+      status: "healthy", 
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime()
+    });
+  });
+
   // Games endpoints
   app.get("/api/games", async (req, res) => {
     try {
