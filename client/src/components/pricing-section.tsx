@@ -54,7 +54,7 @@ export default function PricingSection() {
           {plans?.map((plan, index) => (
             <Card 
               key={plan.id} 
-              className={`relative ${
+              className={`relative flex flex-col h-full ${
                 plan.isPopular 
                   ? 'bg-gaming-black-lighter border-2 border-gaming-green transform lg:scale-105' 
                   : 'bg-gaming-black-lighter border border-gaming-black-lighter hover:border-gaming-green/30'
@@ -68,7 +68,7 @@ export default function PricingSection() {
                 </div>
               )}
               
-              <CardContent className={`p-8 ${plan.isPopular ? 'pt-12' : ''}`}>
+              <CardContent className={`p-8 flex-1 flex flex-col ${plan.isPopular ? 'pt-12' : ''}`}>
                 <div className="text-center mb-8">
                   <h3 className="text-2xl font-bold text-gaming-white mb-2">{plan.name}</h3>
                   <p className="text-gaming-gray mb-6">
@@ -80,7 +80,7 @@ export default function PricingSection() {
                   <div className="text-gaming-gray">/month</div>
                 </div>
                 
-                <ul className="space-y-4 mb-8">
+                <ul className="space-y-4 mb-8 flex-1">
                   {plan.maxPlayers && (
                     <li className="flex items-center">
                       <Check className="text-gaming-green mr-3 h-5 w-5" />
@@ -114,8 +114,8 @@ export default function PricingSection() {
                 <Button 
                   className={
                     plan.isPopular 
-                      ? "w-full bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/30" 
-                      : "w-full border-2 border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+                      ? "w-full bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/30 mt-auto" 
+                      : "w-full border-2 border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black mt-auto"
                   }
                   variant={plan.isPopular ? "default" : "outline"}
                 >
