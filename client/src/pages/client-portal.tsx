@@ -215,79 +215,264 @@ export default function ClientPortal() {
               </CardContent>
             </Card>
 
-            {/* WHMCS Services */}
+            {/* WHMCS Services - Enhanced Server Display */}
             {whmcsStatus?.connected && whmcsServices && (
               <Card className="bg-gaming-dark border-gaming-green/20">
                 <CardHeader>
                   <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
                     <Server className="w-6 h-6" />
-                    Your Services
+                    Your Game Servers ({whmcsServices?.products?.product?.length || 0})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {servicesLoading ? (
-                    <div className="text-gaming-gray">Loading services...</div>
-                  ) : whmcsServices?.products?.length > 0 ? (
-                    <div className="space-y-4">
-                      {whmcsServices.products.map((service: any, index: number) => (
-                        <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="text-gaming-white font-semibold">{service.product || service.name || 'Game Server'}</h4>
-                              <p className="text-gaming-gray text-sm">{service.domain || 'N/A'}</p>
-                              <Badge className={`mt-2 ${service.status === 'Active' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                                {service.status || 'Unknown'}
-                              </Badge>
+                    <div className="flex items-center gap-2 text-gaming-gray">
+                      <div className="w-4 h-4 border-2 border-gaming-green/20 border-t-gaming-green rounded-full animate-spin" />
+                      Loading your game servers...
+                    </div>
+                  ) : whmcsServices?.products?.product?.length > 0 ? (
+                    <div className="space-y-6">
+                      {whmcsServices.products.product.map((service: any, index: number) => (
+                        <div key={index} className="bg-gaming-black-lighter p-6 rounded-lg border border-gaming-green/20 hover:border-gaming-green/40 transition-colors">
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Server Info */}
+                            <div className="lg:col-span-2">
+                              <div className="flex items-start justify-between mb-4">
+                                <div>
+                                  <h4 className="text-gaming-white font-bold text-lg">
+                                    {service.serverDetails?.gameType || service.productname || 'Game Server'}
+                                  </h4>
+                                  <p className="text-gaming-gray text-sm">{service.domain || service.serverDetails?.ip || 'Server Domain'}</p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-3 h-3 rounded-full ${service.serverDetails?.status === 'Online' ? 'bg-green-500' : 'bg-red-500'}`} />
+                                  <span className={`text-sm font-medium ${service.serverDetails?.status === 'Online' ? 'text-green-400' : 'text-red-400'}`}>
+                                    {service.serverDetails?.status || service.domainstatus || 'Unknown'}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Server Connection Details */}
+                              <div className="bg-gaming-dark p-4 rounded-lg mb-4">
+                                <h5 className="text-gaming-white font-semibold mb-2">Connection Details</h5>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                  <div>
+                                    <span className="text-gaming-gray">Server IP:</span>
+                                    <span className="text-gaming-white ml-2 font-mono">
+                                      {service.serverDetails?.ip || service.dedicatedip || `server-${service.id}.gamehost.com`}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gaming-gray">Port:</span>
+                                    <span className="text-gaming-white ml-2 font-mono">
+                                      {service.serverDetails?.port || '25565'}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gaming-gray">Location:</span>
+                                    <span className="text-gaming-white ml-2">
+                                      {service.serverDetails?.location || 'Global Network'}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gaming-gray">Uptime:</span>
+                                    <span className="text-green-400 ml-2 font-semibold">
+                                      {service.serverDetails?.uptime || '99.9%'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Server Specifications */}
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="bg-gaming-dark p-3 rounded-lg text-center">
+                                  <div className="text-gaming-green font-semibold">
+                                    {service.serverDetails?.specs?.ram || '4GB RAM'}
+                                  </div>
+                                  <div className="text-gaming-gray text-xs">Memory</div>
+                                </div>
+                                <div className="bg-gaming-dark p-3 rounded-lg text-center">
+                                  <div className="text-gaming-green font-semibold">
+                                    {service.serverDetails?.specs?.storage || 'SSD'}
+                                  </div>
+                                  <div className="text-gaming-gray text-xs">Storage</div>
+                                </div>
+                                <div className="bg-gaming-dark p-3 rounded-lg text-center">
+                                  <div className="text-gaming-green font-semibold">
+                                    {service.serverDetails?.specs?.cpu || 'High CPU'}
+                                  </div>
+                                  <div className="text-gaming-gray text-xs">Processor</div>
+                                </div>
+                                <div className="bg-gaming-dark p-3 rounded-lg text-center">
+                                  <div className="text-gaming-green font-semibold">
+                                    {service.serverDetails?.specs?.bandwidth || 'Unlimited'}
+                                  </div>
+                                  <div className="text-gaming-gray text-xs">Bandwidth</div>
+                                </div>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <div className="text-gaming-green font-semibold">${service.amount || service.price || '0.00'}</div>
-                              <div className="text-gaming-gray text-sm">{service.billingcycle || 'Monthly'}</div>
+
+                            {/* Billing & Actions */}
+                            <div>
+                              <div className="bg-gaming-dark p-4 rounded-lg">
+                                <h5 className="text-gaming-white font-semibold mb-3">Billing</h5>
+                                <div className="space-y-2 mb-4">
+                                  <div>
+                                    <span className="text-gaming-gray text-sm">Price:</span>
+                                    <div className="text-gaming-green font-bold text-xl">
+                                      ${service.amount || service.recurringamount || '0.00'}
+                                    </div>
+                                    <span className="text-gaming-gray text-sm">
+                                      {service.billingcycle || 'Monthly'}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <span className="text-gaming-gray text-sm">Next Due:</span>
+                                    <div className="text-gaming-white text-sm">
+                                      {service.nextduedate || 'N/A'}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <Badge className={`w-full justify-center mb-3 ${
+                                  service.domainstatus === 'Active' 
+                                    ? 'bg-green-500/20 text-green-400' 
+                                    : 'bg-red-500/20 text-red-400'
+                                }`}>
+                                  {service.domainstatus || 'Unknown Status'}
+                                </Badge>
+
+                                <div className="space-y-2">
+                                  <Button 
+                                    className="w-full bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+                                    size="sm"
+                                  >
+                                    Manage Server
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    className="w-full border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10"
+                                    size="sm"
+                                  >
+                                    <ExternalLink className="w-4 h-4 mr-1" />
+                                    Control Panel
+                                  </Button>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-gaming-gray">No services found.</div>
+                    <div className="text-center py-8">
+                      <Server className="w-12 h-12 text-gaming-gray mx-auto mb-4" />
+                      <div className="text-gaming-gray">No game servers found.</div>
+                      <div className="text-gaming-gray text-sm">Purchase a server to get started!</div>
+                    </div>
                   )}
                 </CardContent>
               </Card>
             )}
 
-            {/* WHMCS Invoices */}
+            {/* WHMCS Invoices - Enhanced Billing Display */}
             {whmcsStatus?.connected && whmcsInvoices && (
               <Card className="bg-gaming-dark border-gaming-green/20">
                 <CardHeader>
                   <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
                     <CreditCard className="w-6 h-6" />
-                    Recent Invoices
+                    Billing & Invoices ({whmcsInvoices?.invoices?.invoice?.length || 0})
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {invoicesLoading ? (
-                    <div className="text-gaming-gray">Loading invoices...</div>
+                    <div className="flex items-center gap-2 text-gaming-gray">
+                      <div className="w-4 h-4 border-2 border-gaming-green/20 border-t-gaming-green rounded-full animate-spin" />
+                      Loading billing information...
+                    </div>
                   ) : whmcsInvoices?.invoices?.invoice?.length > 0 ? (
                     <div className="space-y-4">
-                      {whmcsInvoices.invoices.invoice.slice(0, 5).map((invoice: any, index: number) => (
-                        <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20">
-                          <div className="flex justify-between items-start">
+                      {whmcsInvoices.invoices.invoice.slice(0, 8).map((invoice: any, index: number) => (
+                        <div key={index} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20 hover:border-gaming-green/40 transition-colors">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            {/* Invoice Details */}
                             <div>
-                              <h4 className="text-gaming-white font-semibold">Invoice #{invoice.invoicenum}</h4>
-                              <p className="text-gaming-gray text-sm">Due: {invoice.duedate}</p>
-                              <Badge className={`mt-2 ${invoice.status === 'Paid' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                              <h4 className="text-gaming-white font-semibold">
+                                Invoice #{invoice.invoicenum}
+                              </h4>
+                              <p className="text-gaming-gray text-sm">
+                                Created: {new Date(invoice.date).toLocaleDateString()}
+                              </p>
+                            </div>
+
+                            {/* Amount & Payment */}
+                            <div className="text-center">
+                              <div className="text-gaming-green font-bold text-lg">
+                                {invoice.formattedTotal || `$${parseFloat(invoice.total || '0').toFixed(2)}`}
+                              </div>
+                              <div className="text-gaming-gray text-sm">
+                                {invoice.paymentMethod || 'Credit Card'}
+                              </div>
+                            </div>
+
+                            {/* Due Date & Status */}
+                            <div className="text-center">
+                              <div className="text-gaming-white text-sm">
+                                Due: {new Date(invoice.duedate).toLocaleDateString()}
+                              </div>
+                              {invoice.daysOverdue > 0 && (
+                                <div className="text-red-400 text-xs">
+                                  {invoice.daysOverdue} days overdue
+                                </div>
+                              )}
+                              <Badge className={`mt-1 ${
+                                invoice.status === 'Paid' 
+                                  ? 'bg-green-500/20 text-green-400' 
+                                  : invoice.status === 'Unpaid' 
+                                    ? 'bg-red-500/20 text-red-400'
+                                    : 'bg-yellow-500/20 text-yellow-400'
+                              }`}>
                                 {invoice.status}
                               </Badge>
                             </div>
-                            <div className="text-right">
-                              <div className="text-gaming-green font-semibold">${invoice.total}</div>
-                              <div className="text-gaming-gray text-sm">{invoice.date}</div>
+
+                            {/* Actions */}
+                            <div className="flex gap-2 justify-end">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10"
+                              >
+                                <FileText className="w-4 h-4 mr-1" />
+                                View
+                              </Button>
+                              {invoice.status === 'Unpaid' && (
+                                <Button 
+                                  size="sm"
+                                  className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+                                >
+                                  Pay Now
+                                </Button>
+                              )}
                             </div>
                           </div>
                         </div>
                       ))}
+
+                      {whmcsInvoices.invoices.invoice.length > 8 && (
+                        <div className="text-center pt-4">
+                          <Button variant="outline" className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10">
+                            View All Invoices ({whmcsInvoices.invoices.invoice.length})
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   ) : (
-                    <div className="text-gaming-gray">No invoices found.</div>
+                    <div className="text-center py-8">
+                      <CreditCard className="w-12 h-12 text-gaming-gray mx-auto mb-4" />
+                      <div className="text-gaming-gray">No invoices found.</div>
+                      <div className="text-gaming-gray text-sm">Your billing history will appear here.</div>
+                    </div>
                   )}
                 </CardContent>
               </Card>

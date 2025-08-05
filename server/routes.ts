@@ -2004,8 +2004,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const services = await whmcsIntegration.getClientServices(req.params.clientId);
-      res.json(services || { services: [] });
-    } catch (error) {
+      
+      // Enhance services with server details if available
+      if (services?.products?.product) {
+        const enhancedProducts = services.products.product.map((service: any) => ({
+          ...service,
+          serverDetails: {
+            ip: service.dedicatedip || service.assignedips || `server-${service.id}.gamehost.com`,
+            port: service.port || '25565',
+            location: service.servername?.includes('us') ? 'United States' : 'Global Network',
+            gameType: service.productname?.toLowerCase().includes('minecraft') ? 'Minecraft' : 'Game Server',
+            specs: {
+              ram: service.productname?.match(/(\d+)GB/) ? `${service.productname.match(/(\d+)GB/)[1]}GB RAM` : '4GB RAM',
+              storage: 'NVMe SSD',
+              cpu: 'High Performance CPU',
+              bandwidth: 'Unlimited'
+            },
+            status: service.domainstatus === 'Active' ? 'Online' : 'Offline',
+            uptime: '99.9%'
+          }
+        }));
+        
+        services.products.product = enhancedProducts;
+      }
+      
+      res.json(services || { products: { product: [] } });
+    } catch (error: any) {
       res.status(500).json({ message: "Failed to fetch client services", error: error.message });
     }
   });
@@ -2017,8 +2041,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     try {
       const invoices = await whmcsIntegration.getClientInvoices(req.params.clientId);
-      res.json(invoices || { invoices: [] });
-    } catch (error) {
+      
+      // Enhance invoice data with additional details
+      if (invoices?.invoices?.invoice) {
+        const enhancedInvoices = invoices.invoices.invoice.map((invoice: any) => ({
+          ...invoice,
+          paymentMethod: invoice.paymentmethod || 'Credit Card',
+          daysOverdue: invoice.status === 'Unpaid' ? Math.max(0, Math.floor((Date.now() - new Date(invoice.duedate).getTime()) / (1000 * 60 * 60 * 24))) : 0,
+          formattedTotal: `$${parseFloat(invoice.total || '0').toFixed(2)}`,
+          downloadUrl: `/whmcs/dl.php?type=i&id=${invoice.id}`,
+          statusColor: invoice.status === 'Paid' ? 'green' : invoice.status === 'Unpaid' ? 'red' : 'yellow'
+        }));
+        
+        invoices.invoices.invoice = enhancedInvoices;
+      }
+      
+      res.json(invoices || { invoices: { invoice: [] } });
+    } catch (error: any) {
       res.status(500).json({ message: "Failed to fetch client invoices", error: error.message });
     }
   });
