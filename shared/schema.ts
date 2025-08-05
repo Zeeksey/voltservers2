@@ -7,6 +7,34 @@ export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  isAdmin: boolean("is_admin").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const adminSessions = pgTable("admin_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const siteSettings = pgTable("site_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const promoSettings = pgTable("promo_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  message: text("message").notNull(),
+  linkText: text("link_text"),
+  linkUrl: text("link_url"),
+  backgroundColor: text("background_color").notNull().default("#22c55e"),
+  textColor: text("text_color").notNull().default("#ffffff"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 export const games = pgTable("games", {
@@ -104,9 +132,24 @@ export const pricingDetails = pgTable("pricing_details", {
 });
 
 // Insert schemas
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAdminSessionSchema = createInsertSchema(adminSessions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSiteSettingSchema = createInsertSchema(siteSettings).omit({
+  id: true,
+  updatedAt: true,
+});
+
+export const insertPromoSettingSchema = createInsertSchema(promoSettings).omit({
+  id: true,
+  updatedAt: true,
 });
 
 export const insertGameSchema = createInsertSchema(games).omit({
@@ -150,6 +193,15 @@ export const insertPricingDetailSchema = createInsertSchema(pricingDetails).omit
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
+
+export type InsertAdminSession = z.infer<typeof insertAdminSessionSchema>;
+export type AdminSession = typeof adminSessions.$inferSelect;
+
+export type InsertSiteSetting = z.infer<typeof insertSiteSettingSchema>;
+export type SiteSetting = typeof siteSettings.$inferSelect;
+
+export type InsertPromoSetting = z.infer<typeof insertPromoSettingSchema>;
+export type PromoSetting = typeof promoSettings.$inferSelect;
 
 export type InsertGame = z.infer<typeof insertGameSchema>;
 export type Game = typeof games.$inferSelect;

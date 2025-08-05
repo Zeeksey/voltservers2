@@ -1,8 +1,13 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { initializeDatabase } from "./initialize-db";
+import bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize database with default data
+  await initializeDatabase();
   // Games endpoints
   app.get("/api/games", async (req, res) => {
     try {
@@ -240,6 +245,178 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Server query error:", error);
       res.status(500).json({ message: "Failed to query server" });
+    }
+  });
+
+  // Admin Authentication Routes
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password required" });
+      }
+      
+      const user = await storage.getUserByUsername(username);
+      if (!user || !user.isAdmin) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      const isValid = await bcrypt.compare(password, user.password);
+      if (!isValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      // Create admin session
+      const token = randomUUID();
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+      
+      await storage.createAdminSession({
+        userId: user.id,
+        token,
+        expiresAt
+      });
+      
+      res.json({ 
+        token, 
+        user: { id: user.id, username: user.username, isAdmin: user.isAdmin }
+      });
+    } catch (error) {
+      console.error("Admin login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  app.post("/api/admin/logout", async (req, res) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+      if (token) {
+        await storage.deleteAdminSession(token);
+      }
+      res.json({ message: "Logged out successfully" });
+    } catch (error) {
+      console.error("Admin logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
+  });
+
+  // Admin middleware for protected routes
+  const requireAdmin = async (req: any, res: any, next: any) => {
+    try {
+      const token = req.headers.authorization?.replace("Bearer ", "");
+      if (!token) {
+        return res.status(401).json({ message: "No token provided" });
+      }
+      
+      const session = await storage.getAdminSession(token);
+      if (!session || session.expiresAt < new Date()) {
+        return res.status(401).json({ message: "Invalid or expired token" });
+      }
+      
+      const user = await storage.getUser(session.userId);
+      if (!user || !user.isAdmin) {
+        return res.status(401).json({ message: "Admin access required" });
+      }
+      
+      req.admin = user;
+      next();
+    } catch (error) {
+      console.error("Admin auth error:", error);
+      res.status(401).json({ message: "Authentication failed" });
+    }
+  };
+
+  // Admin CRUD Routes for Games
+  app.post("/api/admin/games", requireAdmin, async (req, res) => {
+    try {
+      const game = await storage.createGame(req.body);
+      res.json(game);
+    } catch (error) {
+      console.error("Create game error:", error);
+      res.status(500).json({ message: "Failed to create game" });
+    }
+  });
+
+  app.put("/api/admin/games/:id", requireAdmin, async (req, res) => {
+    try {
+      const game = await storage.updateGame(req.params.id, req.body);
+      res.json(game);
+    } catch (error) {
+      console.error("Update game error:", error);
+      res.status(500).json({ message: "Failed to update game" });
+    }
+  });
+
+  app.delete("/api/admin/games/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteGame(req.params.id);
+      res.json({ message: "Game deleted successfully" });
+    } catch (error) {
+      console.error("Delete game error:", error); 
+      res.status(500).json({ message: "Failed to delete game" });
+    }
+  });
+
+  // Admin CRUD Routes for Blog Posts
+  app.post("/api/admin/blog", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.createBlogPost(req.body);
+      res.json(post);
+    } catch (error) {
+      console.error("Create blog post error:", error);
+      res.status(500).json({ message: "Failed to create blog post" });
+    }
+  });
+
+  app.put("/api/admin/blog/:id", requireAdmin, async (req, res) => {
+    try {
+      const post = await storage.updateBlogPost(req.params.id, req.body);
+      res.json(post);
+    } catch (error) {
+      console.error("Update blog post error:", error);
+      res.status(500).json({ message: "Failed to update blog post" });
+    }
+  });
+
+  app.delete("/api/admin/blog/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deleteBlogPost(req.params.id);
+      res.json({ message: "Blog post deleted successfully" });
+    } catch (error) {
+      console.error("Delete blog post error:", error);
+      res.status(500).json({ message: "Failed to delete blog post" });
+    }
+  });
+
+  // Admin Promo Settings Routes
+  app.get("/api/admin/promo-settings", requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.getPromoSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Get promo settings error:", error);
+      res.status(500).json({ message: "Failed to get promo settings" });
+    }
+  });
+
+  app.put("/api/admin/promo-settings", requireAdmin, async (req, res) => {
+    try {
+      const settings = await storage.updatePromoSettings(req.body);
+      res.json(settings);
+    } catch (error) {
+      console.error("Update promo settings error:", error);
+      res.status(500).json({ message: "Failed to update promo settings" });
+    }
+  });
+
+  // Public endpoint to get current promo settings
+  app.get("/api/promo-settings", async (req, res) => {
+    try {
+      const settings = await storage.getPromoSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Get public promo settings error:", error);
+      res.status(500).json({ message: "Failed to get promo settings" });
     }
   });
 

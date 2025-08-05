@@ -18,20 +18,47 @@ import {
   type DemoServer,
   type InsertDemoServer,
   type PricingDetail,
-  type InsertPricingDetail
+  type InsertPricingDetail,
+  type AdminSession,
+  type InsertAdminSession,
+  type SiteSetting,
+  type InsertSiteSetting,
+  type PromoSetting,
+  type InsertPromoSetting
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { DatabaseStorage } from "./database-storage";
+import bcrypt from "bcrypt";
 
 export interface IStorage {
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<User>): Promise<User>;
+  
+  // Admin session methods
+  createAdminSession(session: InsertAdminSession): Promise<AdminSession>;
+  getAdminSession(token: string): Promise<AdminSession | undefined>;
+  deleteAdminSession(token: string): Promise<void>;
+  cleanExpiredSessions(): Promise<void>;
+  
+  // Site settings methods
+  getAllSiteSettings(): Promise<SiteSetting[]>;
+  getSiteSetting(key: string): Promise<SiteSetting | undefined>;
+  setSiteSetting(setting: InsertSiteSetting): Promise<SiteSetting>;
+  updateSiteSetting(key: string, value: string): Promise<SiteSetting>;
+  
+  // Promo settings methods
+  getPromoSettings(): Promise<PromoSetting | undefined>;
+  updatePromoSettings(settings: InsertPromoSetting): Promise<PromoSetting>;
   
   // Game methods
   getAllGames(): Promise<Game[]>;
   getGame(id: string): Promise<Game | undefined>;
   createGame(game: InsertGame): Promise<Game>;
+  updateGame(id: string, updates: Partial<InsertGame>): Promise<Game>;
+  deleteGame(id: string): Promise<void>;
   
   // Pricing methods
   getAllPricingPlans(): Promise<PricingPlan[]>;
@@ -58,6 +85,8 @@ export interface IStorage {
   getBlogPost(id: string): Promise<BlogPost | undefined>;
   getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
   createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
+  updateBlogPost(id: string, updates: Partial<InsertBlogPost>): Promise<BlogPost>;
+  deleteBlogPost(id: string): Promise<void>;
   getPublishedBlogPosts(): Promise<BlogPost[]>;
   
   // Game pages methods
@@ -686,4 +715,5 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Use DatabaseStorage for persistence
+export const storage = new DatabaseStorage();
