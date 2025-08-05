@@ -31,7 +31,10 @@ export class WHMCSIntegration {
   // Test WHMCS connection
   async testConnection(): Promise<boolean> {
     try {
+      console.log('Testing WHMCS connection with URL:', this.config.url);
+      console.log('Using identifier:', this.config.identifier?.substring(0, 8) + '...');
       const response = await this.makeAPICall('GetActivityLog', { limitnum: 1 });
+      console.log('WHMCS test response:', response);
       return response.result === 'success';
     } catch (error) {
       console.error('WHMCS connection test failed:', error);
