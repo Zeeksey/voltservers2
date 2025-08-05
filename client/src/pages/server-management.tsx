@@ -167,7 +167,12 @@ export default function ServerManagement() {
                         {server.status}
                       </Badge>
                     </div>
-                    <p className="text-gaming-gray text-sm">{server.game}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-gaming-gray text-sm">{server.game}</p>
+                      <div className="text-xs text-gaming-gray bg-gaming-black/50 px-2 py-1 rounded">
+                        {server.dedicatedip || `${server.ip}:${server.port}`}
+                      </div>
+                    </div>
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
@@ -199,11 +204,14 @@ export default function ServerManagement() {
                       </div>
                     </div>
 
-                    {/* Connection Info */}
-                    <div className="bg-gaming-black/30 rounded-lg p-3">
-                      <div className="text-xs text-gaming-gray mb-1">Server Address</div>
-                      <div className="text-sm text-gaming-white font-mono">
+                    {/* Connection Info - Prominently Display IP:Port */}
+                    <div className="bg-gaming-black/30 rounded-lg p-4 border border-gaming-green/20">
+                      <div className="text-xs text-gaming-gray mb-2">Game Server Address</div>
+                      <div className="text-lg text-gaming-white font-mono font-semibold">
                         {server.dedicatedip || `${server.ip}:${server.port}`}
+                      </div>
+                      <div className="text-xs text-gaming-gray mt-1">
+                        Connect using this IP and port in your game client
                       </div>
                     </div>
 
