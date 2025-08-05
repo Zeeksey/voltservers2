@@ -56,11 +56,12 @@ export default function BlogSection() {
               <Card className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden cursor-pointer">
                 <div className="relative">
                   <img 
-                    src={post.imageUrl} 
+                    src={post.imageUrl || '/api/placeholder/400/240'} 
                     alt={post.title} 
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
-                      e.currentTarget.src = '/api/placeholder/400/240';
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/api/placeholder/400/240';
                     }}
                   />
                   <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
