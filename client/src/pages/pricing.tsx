@@ -1,123 +1,93 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Check, 
-  X, 
-  Server, 
-  Users, 
-  Zap, 
-  Shield,
-  HardDrive,
-  Globe,
-  Star
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRight, GamepadIcon, Server } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 
 export default function PricingPage() {
-  const minecraftPlans = [
-    {
-      name: "Dirt",
-      popular: false,
-      price: "$3.99",
-      originalPrice: null,
-      players: "3+ Players",
-      ram: "1GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database"],
-      limitations: ["Basic Modpack Support"]
-    },
-    {
-      name: "Stone", 
-      popular: false,
-      price: "$7.99",
-      originalPrice: null,
-      players: "8+ Players",
-      ram: "2GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database", "Full FTP Access", "Advanced Modpack Support"],
-      limitations: []
-    },
-    {
-      name: "Iron",
-      popular: true,
-      price: "$11.99",
-      originalPrice: null,
-      players: "20+ Players", 
-      ram: "3GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database", "Full FTP Access", "Advanced Modpack Support", "Automatic Backups", "Plugin Support"],
-      limitations: []
-    },
-    {
-      name: "Gold",
-      popular: false,
-      price: "$15.99",
-      originalPrice: null,
-      players: "40+ Players",
-      ram: "4GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database", "Full FTP Access", "Advanced Modpack Support", "Automatic Backups", "Plugin Support", "Custom JAR Support"],
-      limitations: []
-    },
-    {
-      name: "Diamond",
-      popular: false,
-      price: "$23.99",
-      originalPrice: null,
-      players: "80+ Players",
-      ram: "6GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database", "Full FTP Access", "Advanced Modpack Support", "Automatic Backups", "Plugin Support", "Custom JAR Support", "Priority Support"],
-      limitations: []
-    },
-    {
-      name: "Emerald",
-      popular: false,
-      price: "$39.99",
-      originalPrice: null,
-      players: "160+ Players",
-      ram: "8GB RAM",
-      features: ["NVMe SSD Storage", "Free Subdomain", "24/7 Support", "DDoS Protection", "Instant Setup", "Free MySQL Database", "Full FTP Access", "Advanced Modpack Support", "Automatic Backups", "Plugin Support", "Custom JAR Support", "Priority Support", "Dedicated IP"],
-      limitations: []
-    }
-  ];
-
-  const otherGamePlans = [
-    {
-      game: "Rust",
-      plans: [
-        { name: "Wood", players: "40 Players", ram: "8GB RAM", price: "$14.99" },
-        { name: "Metal", players: "125+ Players", ram: "12GB+ RAM", price: "$40.00" }
-      ]
-    },
-    {
-      game: "ARK Survival",
-      plans: [
-        { name: "Raptor", players: "30 Players", ram: "10GB RAM", price: "$14.99" },
-        { name: "Rex", players: "125+ Players", ram: "16GB+ RAM", price: "$49.99" }
-      ]
-    },
-    {
-      game: "Valheim",
-      plans: [
-        { name: "Viking", players: "10 Players", ram: "4GB+ RAM", price: "$14.99" }
-      ]
-    }
+  const popularGames = [
+    { name: "Minecraft", slug: "minecraft", icon: "🎮", description: "The world's most popular sandbox game" },
+    { name: "Rust", slug: "rust", icon: "🔧", description: "Survival multiplayer at its finest" },
+    { name: "CS2", slug: "cs2", icon: "🎯", description: "Competitive gaming redefined" },
+    { name: "Valheim", slug: "valheim", icon: "⚔️", description: "Viking survival adventure" },
+    { name: "ARK", slug: "ark", icon: "🦕", description: "Dinosaur survival evolved" },
+    { name: "Palworld", slug: "palworld", icon: "🐾", description: "Creature collection adventure" }
   ];
 
   return (
     <div className="min-h-screen bg-gaming-black">
+      <title>Game Server Pricing - VoltServers</title>
+      <meta name="description" content="Find the perfect hosting plan for your game server. Browse pricing for Minecraft, Rust, CS2, and more popular games." />
+      
       <PromoBanner />
       <Navigation />
       
       {/* Hero Section */}
       <section className="py-20 bg-gradient-gaming">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-5xl font-bold text-gaming-white mb-6">
+            Game-Specific <span className="text-gaming-green">Pricing</span>
+          </h1>
+          <p className="text-xl text-gaming-gray mb-8 max-w-3xl mx-auto">
+            Each game has tailored hosting plans optimized for performance. View pricing and features specific to your favorite games.
+          </p>
+        </div>
+      </section>
+
+      {/* Games Grid */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl font-bold text-gaming-white mb-6">
-              Simple, Transparent <span className="text-gaming-green">Pricing</span>
-            </h1>
-            <p className="text-xl text-gaming-gray mb-8">
-              Choose the perfect plan for your gaming community. All plans include our premium features with no hidden fees.
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {popularGames.map((game) => (
+              <Card key={game.slug} className="bg-gaming-gray-dark border-gaming-gray hover:border-gaming-green transition-colors group">
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-3xl">{game.icon}</span>
+                    <CardTitle className="text-gaming-white">{game.name}</CardTitle>
+                  </div>
+                  <p className="text-gaming-gray text-sm">{game.description}</p>
+                </CardHeader>
+                <CardContent>
+                  <Link href={`/games/${game.slug}`}>
+                    <Button className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black group-hover:scale-105 transition-transform">
+                      View Plans
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Game-Specific Section */}
+      <section className="py-16 bg-gaming-gray-dark/20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold text-gaming-white mb-8">Why Game-Specific Plans?</h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+            <div className="text-center">
+              <Server className="w-12 h-12 text-gaming-green mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gaming-white mb-2">Optimized Performance</h3>
+              <p className="text-gaming-gray">Each plan is tuned for the specific requirements and player loads of different games.</p>
+            </div>
+            <div className="text-center">
+              <GamepadIcon className="w-12 h-12 text-gaming-green mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gaming-white mb-2">Game Features</h3>
+              <p className="text-gaming-gray">Plans include game-specific features like mod support, plugins, and specialized tools.</p>
+            </div>
+            <div className="text-center">
+              <ArrowRight className="w-12 h-12 text-gaming-green mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gaming-white mb-2">Fair Pricing</h3>
+              <p className="text-gaming-gray">Pay only for what you need based on your game's actual resource requirements.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
             </p>
             <Badge className="bg-gaming-green text-gaming-black text-lg px-4 py-2">
               🎉 Save 25% with Annual Plans - 3 Months Free!

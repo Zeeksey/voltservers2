@@ -92,9 +92,13 @@ export default function BlogPostPage() {
           {/* Hero Image */}
           <div className="mb-8">
             <img 
-              src={post.imageUrl} 
+              src={post.imageUrl || "/api/placeholder/800/400"} 
               alt={post.title}
               className="w-full h-96 object-cover rounded-lg"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = "/api/placeholder/800/400";
+              }}
             />
           </div>
 

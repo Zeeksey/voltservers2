@@ -6,7 +6,7 @@ import GameCards from "@/components/game-cards";
 import GamePanelShowcase from "@/components/game-panel-showcase";
 import DemoGamesSection from "@/components/demo-games-section";
 import FeaturesSection from "@/components/features-section";
-import PricingSection from "@/components/pricing-section";
+
 import TestimonialsSection from "@/components/testimonials-section";
 import BlogSection from "@/components/blog-section";
 import CtaSection from "@/components/cta-section";
@@ -35,7 +35,6 @@ export default function Home() {
       <GamePanelShowcase />
       <DemoGamesSection />
       <FeaturesSection />
-      <PricingSection />
       <TestimonialsSection />
       <BlogSection />
       <CtaSection />
