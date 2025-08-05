@@ -682,21 +682,21 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="admin-panel min-h-screen bg-gaming-black text-white">
+    <div className="admin-panel min-h-screen bg-gaming-black text-gaming-white">
       {/* Mobile-Friendly Header */}
-      <div className="border-b border-gaming-green/20 bg-gaming-dark">
+      <div className="border-b border-gaming-green/20 bg-gaming-black-lighter">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3">
             <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-gaming-green" />
             <div>
-              <h1 className="text-lg sm:text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Welcome back, {adminUser.username}</p>
+              <h1 className="text-lg sm:text-2xl font-bold text-gaming-white">Admin Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gaming-gray hidden sm:block">Welcome back, {adminUser.username}</p>
             </div>
           </div>
           <Button
             onClick={handleLogout}
             variant="outline"
-            size="sm" className="touch-target admin-button"
+            size="sm"
             className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 text-xs sm:text-sm"
           >
             <LogOut className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
@@ -707,20 +707,20 @@ export default function AdminDashboard() {
 
       <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         <Tabs defaultValue="games" className="space-y-4 sm:space-y-6 admin-tabs">
-          <TabsList className="bg-gaming-dark border border-gaming-green/20 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1 h-auto p-1 admin-tabs-list">
-            <TabsTrigger value="games" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+          <TabsList className="bg-gaming-black-lighter border border-gaming-green/20 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1 h-auto p-1 admin-tabs-list">
+            <TabsTrigger value="games" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-gaming-white hover:text-gaming-green text-xs sm:text-sm p-2 sm:p-3">
               <Gamepad2 className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Games</span>
             </TabsTrigger>
-            <TabsTrigger value="game-pages" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+            <TabsTrigger value="game-pages" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-gaming-white hover:text-gaming-green text-xs sm:text-sm p-2 sm:p-3">
               <Layout className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Pages</span>
             </TabsTrigger>
-            <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+            <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-gaming-white hover:text-gaming-green text-xs sm:text-sm p-2 sm:p-3">
               <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Blog</span>
             </TabsTrigger>
-            <TabsTrigger value="promo" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+            <TabsTrigger value="promo" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-gaming-white hover:text-gaming-green text-xs sm:text-sm p-2 sm:p-3">
               <Megaphone className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Promo</span>
             </TabsTrigger>
