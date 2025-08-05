@@ -142,7 +142,6 @@ export const demoServers = pgTable("demo_servers", {
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  lastUpdated: timestamp("last_updated").notNull().defaultNow(),
 });
 
 export const serverLocations = pgTable("server_locations", {

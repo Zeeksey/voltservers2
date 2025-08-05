@@ -1,0 +1,77 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="orange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF8C00;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF4500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="#2F4F4F"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="250" width="400" height="50" fill="#696969"/>
+  
+  <!-- Sandbox elements -->
+  <!-- Physics crate -->
+  <rect x="50" y="200" width="40" height="40" fill="#8B4513" stroke="#000" stroke-width="2"/>
+  <text x="70" y="225" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#000">CRATE</text>
+  
+  <!-- Barrel -->
+  <ellipse cx="150" cy="230" rx="15" ry="20" fill="#4682B4" stroke="#000" stroke-width="2"/>
+  <rect x="135" y="225" width="30" height="5" fill="#2F4F4F"/>
+  <rect x="135" y="235" width="30" height="5" fill="#2F4F4F"/>
+  
+  <!-- Explosive barrel -->
+  <ellipse cx="250" cy="230" rx="15" ry="20" fill="#8B0000" stroke="#000" stroke-width="2"/>
+  <polygon points="245,210 250,205 255,210" fill="#FFD700"/>
+  <text x="250" y="235" font-family="Arial, sans-serif" font-size="10" font-weight="bold" text-anchor="middle" fill="#FFD700">!</text>
+  
+  <!-- Ragdoll character -->
+  <rect x="320" y="200" width="15" height="15" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="320" y="215" width="15" height="25" fill="#0066CC" stroke="#000" stroke-width="1"/>
+  <rect x="310" y="220" width="10" height="15" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="340" y="220" width="10" height="15" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="325" y="240" width="5" height="15" fill="#654321" stroke="#000" stroke-width="1"/>
+  <rect x="335" y="240" width="5" height="15" fill="#654321" stroke="#000" stroke-width="1"/>
+  <!-- Exaggerated physics pose -->
+  <path d="M320 207 Q300 200 310 220" stroke="#F5DEB3" stroke-width="3" fill="none"/>
+  <path d="M335 207 Q355 200 345 220" stroke="#F5DEB3" stroke-width="3" fill="none"/>
+  
+  <!-- Wireframe sphere (physics prop) -->
+  <circle cx="180" cy="180" r="25" fill="none" stroke="url(#orange)" stroke-width="2"/>
+  <!-- Grid lines on sphere -->
+  <path d="M155 180 Q180 160 205 180 Q180 200 155 180" stroke="url(#orange)" stroke-width="1" fill="none"/>
+  <path d="M180 155 Q200 180 180 205 Q160 180 180 155" stroke="url(#orange)" stroke-width="1" fill="none"/>
+  <path d="M165 165 Q180 170 195 165 Q180 175 195 185 Q180 190 165 185 Q180 175 165 165" stroke="url(#orange)" stroke-width="1" fill="none"/>
+  
+  <!-- Toolgun -->
+  <rect x="100" y="160" width="30" height="8" fill="#2F4F4F" stroke="#000" stroke-width="1"/>
+  <rect x="130" y="158" width="5" height="12" fill="url(#orange)"/>
+  <rect x="95" y="162" width="8" height="4" fill="#C0C0C0"/>
+  <!-- Toolgun beam -->
+  <path d="M135 164 L180 180" stroke="url(#orange)" stroke-width="3" opacity="0.8"/>
+  <circle cx="180" r="5" cy="180" fill="url(#orange)" opacity="0.6"/>
+  
+  <!-- Lambda symbol -->
+  <text x="350" y="50" font-family="Arial, sans-serif" font-size="40" font-weight="bold" text-anchor="middle" fill="url(#orange)" stroke="#000" stroke-width="1">λ</text>
+  
+  <!-- Building blocks -->
+  <rect x="20" y="170" width="20" height="20" fill="#4682B4" stroke="#000" stroke-width="1"/>
+  <rect x="20" y="150" width="20" height="20" fill="#32CD32" stroke="#000" stroke-width="1"/>
+  <rect x="20" y="130" width="20" height="20" fill="#FF6347" stroke="#000" stroke-width="1"/>
+  
+  <!-- Physics constraint visualization -->
+  <circle cx="150" r="3" cy="150" fill="#FFD700"/>
+  <circle cx="180" r="3" cy="120" fill="#FFD700"/>
+  <path d="M150 150 L180 120" stroke="#FFD700" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="165" y="130" font-family="Arial, sans-serif" font-size="8" fill="#FFD700">ROPE</text>
+  
+  <!-- Explosion effect -->
+  <circle cx="250" cy="150" r="20" fill="#FF4500" opacity="0.7"/>
+  <circle cx="250" cy="150" r="15" fill="#FFD700" opacity="0.8"/>
+  <circle cx="250" cy="150" r="10" fill="#FFFFFF" opacity="0.9"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="url(#orange)" stroke="#000" stroke-width="1">GARRY'S MOD</text>
+</svg>

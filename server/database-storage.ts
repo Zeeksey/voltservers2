@@ -345,7 +345,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(demoServers)
       .where(eq(demoServers.isEnabled, true))
-      .orderBy(asc(demoServers.sortOrder));
+      .orderBy(demoServers.sortOrder);
   }
 
   async getDemoServer(id: string): Promise<DemoServer | undefined> {

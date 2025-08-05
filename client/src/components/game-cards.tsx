@@ -58,6 +58,8 @@ export default function GameCards() {
                     src={game.imageUrl} 
                     alt={`${game.name} server interface`} 
                     className="w-full h-48 object-cover" 
+                    loading="lazy"
+                    decoding="async"
                   />
                   {game.isPopular && (
                     <Badge className="absolute top-4 right-4 bg-gaming-green text-gaming-black">

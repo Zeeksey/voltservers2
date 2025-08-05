@@ -40,7 +40,7 @@ export async function initializeDatabase() {
           name: "Minecraft",
           slug: "minecraft",
           description: "Java & Bedrock support, unlimited mods, automatic backups",
-          imageUrl: "https://pixabay.com/get/g0f2a95e2a858acb44e5d404e612a684317375d9652e4fff2b2923d96673c86b933d76959bb030775cb48e79fb4a1b88692657d6eb50405ad040ba1f2dd006e09_1280.jpg",
+          imageUrl: "/images/games/minecraft.svg",
           basePrice: "2.99",
           playerCount: 2847,
           isPopular: true,
@@ -51,9 +51,53 @@ export async function initializeDatabase() {
           name: "CS2",
           slug: "cs2", 
           description: "Counter-Strike 2 servers with custom maps and plugins",
-          imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+          imageUrl: "/images/games/cs2.svg",
           basePrice: "4.99",
           playerCount: 1234,
+          isPopular: false,
+          isNew: false,
+          isTrending: false
+        },
+        {
+          name: "Rust",
+          slug: "rust",
+          description: "Survival multiplayer servers with full customization",
+          imageUrl: "/images/games/rust.svg",
+          basePrice: "6.99",
+          playerCount: 3421,
+          isPopular: false,
+          isNew: false,
+          isTrending: true
+        },
+        {
+          name: "Valheim",
+          slug: "valheim",
+          description: "Viking survival adventure with dedicated servers",
+          imageUrl: "/images/games/valheim.svg",
+          basePrice: "5.99",
+          playerCount: 1892,
+          isPopular: false,
+          isNew: false,
+          isTrending: false
+        },
+        {
+          name: "ARK: Survival Evolved",
+          slug: "ark-survival-evolved",
+          description: "Dinosaur survival servers with modding support",
+          imageUrl: "/images/games/ark.svg",
+          basePrice: "7.99",
+          playerCount: 2156,
+          isPopular: false,
+          isNew: false,
+          isTrending: false
+        },
+        {
+          name: "Garry's Mod",
+          slug: "gmod",
+          description: "Sandbox physics game servers with custom content",
+          imageUrl: "/images/games/gmod.svg",
+          basePrice: "3.99",
+          playerCount: 1743,
           isPopular: false,
           isNew: false,
           isTrending: false
@@ -62,12 +106,23 @@ export async function initializeDatabase() {
           name: "Palworld",
           slug: "palworld",
           description: "Creature collection servers with multiplayer support",
-          imageUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+          imageUrl: "/images/games/palworld.svg",
           basePrice: "9.99",
           playerCount: 1567,
           isPopular: false,
+          isNew: true,
+          isTrending: false
+        },
+        {
+          name: "Satisfactory",
+          slug: "satisfactory",
+          description: "Factory building multiplayer servers",
+          imageUrl: "/images/games/satisfactory.svg",
+          basePrice: "8.99",
+          playerCount: 987,
+          isPopular: false,
           isNew: false,
-          isTrending: true
+          isTrending: false
         }
       ];
 
