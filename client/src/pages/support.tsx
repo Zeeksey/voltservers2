@@ -34,6 +34,7 @@ import type { FaqCategory, FaqItem } from "@shared/schema";
 
 export default function SupportPage() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [emailForm, setEmailForm] = useState({
     name: "",
     email: "",
@@ -146,7 +147,7 @@ export default function SupportPage() {
   // Fetch FAQ data from API with fallback
   const { data: faqData = [], isLoading: isLoadingFaq } = useQuery({
     queryKey: ['/api/faqs'],
-    select: (data) => data || [
+    select: (data: any) => data || [
       {
         id: "getting-started",
         title: "Getting Started",
@@ -183,10 +184,7 @@ export default function SupportPage() {
   // Email form submission
   const sendEmailMutation = useMutation({
     mutationFn: async (formData: typeof emailForm) => {
-      return apiRequest('/api/contact', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-      });
+      return apiRequest('/api/contact', 'POST', formData);
     },
     onSuccess: () => {
       toast({
@@ -198,7 +196,8 @@ export default function SupportPage() {
         email: "",
         subject: "",
         message: "",
-        priority: "Medium"
+        priority: "Medium",
+        deptid: ""
       });
     },
     onError: (error: any) => {
@@ -427,7 +426,14 @@ export default function SupportPage() {
                             <option key={dept.id} value={dept.id}>
                               {dept.name}
                             </option>
-                          ))}
+                          )) || (
+                            <>
+                              <option value="1">General Support</option>
+                              <option value="2">Technical Support</option>
+                              <option value="3">Billing Support</option>
+                              <option value="4">Sales</option>
+                            </>
+                          )}
                         </select>
                       </div>
                       <div>
@@ -492,12 +498,12 @@ export default function SupportPage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {faqData.map((category) => (
+            {(faqData as any[]).map((category: any) => (
               <Card key={category.id} className="bg-gaming-black-lighter border-gaming-black-lighter">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold text-gaming-white mb-4">{category.title}</h3>
                   <div className="space-y-3">
-                    {category.items.map((item) => (
+                    {category.items.map((item: any) => (
                       <Collapsible key={item.id}>
                         <CollapsibleTrigger className="w-full text-left flex items-center gap-3 p-3 rounded-lg bg-gaming-black hover:bg-gaming-black-light transition-colors text-gaming-gray hover:text-gaming-white">
                           <HelpCircle className="w-4 h-4 text-gaming-green flex-shrink-0" />
