@@ -72,7 +72,8 @@ export default function TicketDetails() {
         body: { message, email: userEmail }
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Reply success:', data);
       toast({
         title: "Reply Sent",
         description: "Your reply has been added to the ticket.",
@@ -81,10 +82,11 @@ export default function TicketDetails() {
       // Refresh ticket details
       queryClient.invalidateQueries({ queryKey: ['/api/whmcs/support/ticket', ticketId] });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Reply error:', error);
       toast({
         title: "Error",
-        description: "Failed to send reply. Please try again.",
+        description: `Failed to send reply: ${error.message || 'Please try again.'}`,
         variant: "destructive"
       });
     }
@@ -99,6 +101,17 @@ export default function TicketDetails() {
       });
       return;
     }
+    
+    if (!userEmail) {
+      toast({
+        title: "Authentication Error",
+        description: "User email not found. Please log in again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    console.log('Sending reply with email:', userEmail);
     replyMutation.mutate(replyMessage);
   };
 
