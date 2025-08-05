@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack game server hosting platform called "GameHost Pro" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and access Minecraft-specific tools. It features a sleek gaming-themed design with a focus on performance and user experience.
+This is a full-stack game server hosting platform called "GameHost Pro" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and access Minecraft-specific tools. It features a sleek gaming-themed design with a focus on performance and user experience. The platform now includes WHMCS integration for client portal functionality, live server querying for demo servers, and a promotional banner system.
 
 # User Preferences
 
@@ -9,7 +9,11 @@ Preferred communication style: Simple, everyday language.
 # System Architecture
 
 ## Frontend Architecture
-The client-side is built using React with TypeScript, utilizing Vite for development and build processes. The UI is constructed with shadcn/ui components built on top of Radix UI primitives, styled with Tailwind CSS using a custom gaming theme. The application uses Wouter for client-side routing and TanStack Query for efficient data fetching and caching. The design follows a component-based architecture with clear separation between presentation and business logic.
+The client-side is built using React with TypeScript, utilizing Vite for development and build processes. The UI is constructed with shadcn/ui components built on top of Radix UI primitives, styled with Tailwind CSS using a custom gaming theme. The application uses Wouter for client-side routing and TanStack Query for efficient data fetching and caching. The design follows a component-based architecture with clear separation between presentation and business logic. Key features include:
+- WHMCS client portal integration with authentication and service management
+- Real-time server querying for live Minecraft server data display
+- Promotional banner system positioned above navigation
+- Social media integration with functional icon links
 
 ## Backend Architecture
 The server is implemented using Express.js with TypeScript, following a RESTful API design pattern. The application uses an in-memory storage implementation with interfaces designed for easy migration to persistent storage solutions. Routes are organized by resource type (games, pricing plans, server status, locations, and tools) with consistent error handling middleware. The server includes development-specific middleware for logging and debugging.

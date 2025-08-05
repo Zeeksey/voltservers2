@@ -14,7 +14,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-effect">
+    <nav className="fixed top-12 left-0 right-0 z-40 glass-effect">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2">
@@ -61,8 +61,9 @@ export default function Navigation() {
             <Button 
               variant="outline" 
               className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+              onClick={() => window.location.href = '/client-portal'}
             >
-              Login
+              Client Portal
             </Button>
             <Button className="bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/25">
               Get Started

@@ -1,4 +1,4 @@
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, Twitter, MessageCircle, Youtube, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Footer() {
@@ -22,29 +22,33 @@ export default function Footer() {
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
+                onClick={() => window.open('https://twitter.com/gamehostpro', '_blank')}
               >
-                <i className="fab fa-twitter" />
+                <Twitter className="h-5 w-5" />
               </Button>
               <Button 
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
+                onClick={() => window.open('https://discord.gg/gamehostpro', '_blank')}
               >
-                <i className="fab fa-discord" />
+                <MessageCircle className="h-5 w-5" />
               </Button>
               <Button 
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
+                onClick={() => window.open('https://youtube.com/@gamehostpro', '_blank')}
               >
-                <i className="fab fa-youtube" />
+                <Youtube className="h-5 w-5" />
               </Button>
               <Button 
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
+                onClick={() => window.open('https://github.com/gamehostpro', '_blank')}
               >
-                <i className="fab fa-github" />
+                <Github className="h-5 w-5" />
               </Button>
             </div>
           </div>
