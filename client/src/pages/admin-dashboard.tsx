@@ -218,48 +218,15 @@ export default function AdminDashboard() {
     queryFn: () => apiRequest("/api/server-locations"),
   });
 
-  // Auto-ping server locations
+  // Initialize server location pings with static data
   useEffect(() => {
     if (serverLocations.length === 0) return;
 
-    const pingServer = async (location: any) => {
-      try {
-        const startTime = performance.now();
-        // Use a simple fetch to test connectivity timing
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-        
-        await fetch(`https://httpbin.org/delay/0`, { 
-          method: 'GET',
-          signal: controller.signal,
-          cache: 'no-cache'
-        });
-        
-        clearTimeout(timeoutId);
-        const endTime = performance.now();
-        const pingTime = Math.round(endTime - startTime);
-        
-        setLocationPings(prev => new Map(prev.set(location.id, Math.max(10, pingTime))));
-      } catch (error) {
-        // If direct ping fails, estimate based on geographic location
-        const estimatedPing = getEstimatedPing(location.region, location.country);
-        setLocationPings(prev => new Map(prev.set(location.id, estimatedPing)));
-      }
-    };
-
-    // Ping all locations
+    // Set static ping values for each location to avoid network issues
     serverLocations.forEach(location => {
-      pingServer(location);
+      const estimatedPing = getEstimatedPing(location.region, location.country);
+      setLocationPings(prev => new Map(prev.set(location.id, estimatedPing)));
     });
-
-    // Refresh pings every 45 seconds
-    const interval = setInterval(() => {
-      serverLocations.forEach(location => {
-        pingServer(location);
-      });
-    }, 45000);
-
-    return () => clearInterval(interval);
   }, [serverLocations]);
 
   // Estimate ping based on geographic location
