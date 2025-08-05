@@ -601,6 +601,16 @@ export class MemStorage implements IStorage {
     this.serverLocations.delete(id);
   }
 
+  async updateServerLocation(id: string, updateData: Partial<ServerLocation>): Promise<ServerLocation | undefined> {
+    const existing = this.serverLocations.get(id);
+    if (existing) {
+      const updated = { ...existing, ...updateData };
+      this.serverLocations.set(id, updated);
+      return updated;
+    }
+    return undefined;
+  }
+
   // Minecraft tools methods
   async getAllMinecraftTools(): Promise<MinecraftTool[]> {
     return Array.from(this.minecraftTools.values());

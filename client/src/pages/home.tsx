@@ -5,6 +5,7 @@ import GameCards from "@/components/game-cards";
 import PricingSection from "@/components/pricing-section";
 import DemoServers from "@/components/demo-servers";
 import ServerStatus from "@/components/server-status";
+import ServerLocations from "@/components/server-locations";
 import MinecraftTools from "@/components/minecraft-tools";
 import BlogSection from "@/components/blog-section";
 import FeaturesSection from "@/components/features-section";
@@ -24,6 +25,7 @@ export default function Home() {
       <PricingSection />
       <DemoServers />
       <ServerStatus />
+      <ServerLocations />
       <MinecraftTools />
       <BlogSection />
       <FeaturesSection />

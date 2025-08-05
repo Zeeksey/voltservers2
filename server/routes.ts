@@ -487,6 +487,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/server-locations", requireAdmin, async (req, res) => {
     try {
       const location = await storage.createServerLocation(req.body);
+      // Auto-ping the server after creation
+      if (location.ipAddress) {
+        pingServerLocation(location.id, location.ipAddress);
+      }
       res.json(location);
     } catch (error) {
       console.error("Error creating server location:", error);
@@ -503,6 +507,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete server location" });
     }
   });
+
+  // Auto-ping server locations periodically
+  const pingServerLocation = async (locationId: string, ipAddress: string) => {
+    try {
+      const startTime = Date.now();
+      const response = await fetch(`http://${ipAddress}`, { 
+        method: 'HEAD',
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      const ping = Date.now() - startTime;
+      
+      // Update server location with ping data
+      const location = await storage.getServerLocation(locationId);
+      if (location) {
+        await storage.updateServerLocation(locationId, {
+          ...location,
+          ping: ping,
+          status: response.ok ? 'online' : 'offline'
+        });
+      }
+    } catch (error) {
+      // Update server location as offline if ping fails
+      const location = await storage.getServerLocation(locationId);
+      if (location) {
+        await storage.updateServerLocation(locationId, {
+          ...location,
+          ping: 9999,
+          status: 'offline'
+        });
+      }
+    }
+  };
+
+  // Ping all server locations every 5 minutes
+  setInterval(async () => {
+    try {
+      const locations = await storage.getAllServerLocations();
+      for (const location of locations) {
+        if (location.ipAddress) {
+          pingServerLocation(location.id, location.ipAddress);
+        }
+      }
+    } catch (error) {
+      console.error("Error in periodic ping:", error);
+    }
+  }, 5 * 60 * 1000); // 5 minutes
 
   const httpServer = createServer(app);
   return httpServer;
