@@ -330,6 +330,8 @@ export default function AdminDashboard() {
   const { data: games = [] } = useQuery({
     queryKey: ["/api/games"],
     queryFn: () => apiRequest("/api/games"),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   const { data: blogPosts = [] } = useQuery({

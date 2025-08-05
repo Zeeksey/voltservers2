@@ -10,8 +10,10 @@ import type { Game } from "@shared/schema";
 export default function GameCards() {
   const { data: games, isLoading } = useQuery<Game[]>({
     queryKey: ['/api/games'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
   });
 
   if (isLoading) {
