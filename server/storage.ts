@@ -294,7 +294,14 @@ export class MemStorage implements IStorage {
 
   async createGame(insertGame: InsertGame): Promise<Game> {
     const id = randomUUID();
-    const game: Game = { ...insertGame, id };
+    const game: Game = { 
+      ...insertGame, 
+      id,
+      playerCount: insertGame.playerCount ?? 0,
+      isPopular: insertGame.isPopular ?? false,
+      isNew: insertGame.isNew ?? false,
+      isTrending: insertGame.isTrending ?? false
+    };
     this.games.set(id, game);
     return game;
   }
@@ -310,7 +317,12 @@ export class MemStorage implements IStorage {
 
   async createPricingPlan(insertPlan: InsertPricingPlan): Promise<PricingPlan> {
     const id = randomUUID();
-    const plan: PricingPlan = { ...insertPlan, id };
+    const plan: PricingPlan = { 
+      ...insertPlan, 
+      id,
+      isPopular: insertPlan.isPopular ?? false,
+      maxPlayers: insertPlan.maxPlayers ?? null
+    };
     this.pricingPlans.set(id, plan);
     return plan;
   }
@@ -326,7 +338,13 @@ export class MemStorage implements IStorage {
 
   async createServerStatus(insertStatus: InsertServerStatus): Promise<ServerStatus> {
     const id = randomUUID();
-    const status: ServerStatus = { ...insertStatus, id, lastUpdated: new Date() };
+    const status: ServerStatus = { 
+      ...insertStatus, 
+      id, 
+      lastUpdated: new Date(),
+      responseTime: insertStatus.responseTime ?? null,
+      uptime: insertStatus.uptime ?? null
+    };
     this.serverStatus.set(id, status);
     return status;
   }

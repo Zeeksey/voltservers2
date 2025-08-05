@@ -50,7 +50,7 @@ export default function GameCards() {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {games?.map((game) => (
-            <Card key={game.id} className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden">
+            <Card key={game.id} className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full">
               <div className="relative">
                 <img 
                   src={game.imageUrl} 
@@ -74,13 +74,13 @@ export default function GameCards() {
                 )}
                 <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
               </div>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gaming-white">{game.name}</h3>
                   <span className="text-gaming-green font-semibold">From ${game.basePrice}/mo</span>
                 </div>
-                <p className="text-gaming-gray mb-4">{game.description}</p>
-                <div className="flex items-center justify-between">
+                <p className="text-gaming-gray mb-4 flex-1">{game.description}</p>
+                <div className="flex items-center justify-between mt-auto">
                   <div className="flex items-center space-x-1">
                     <span className="w-2 h-2 bg-gaming-green rounded-full server-online" />
                     <span className="text-sm text-gaming-gray">{game.playerCount.toLocaleString()} players</span>
@@ -94,14 +94,14 @@ export default function GameCards() {
           ))}
           
           {/* More Games Card */}
-          <Card className="group bg-gaming-black-lighter border-2 border-dashed border-gaming-green/30 hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2">
+          <Card className="group bg-gaming-black-lighter border-2 border-dashed border-gaming-green/30 hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 flex flex-col h-full">
             <CardContent className="p-6 h-full flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mb-4">
                 <Plus className="text-gaming-green text-2xl" />
               </div>
               <h3 className="text-xl font-bold text-gaming-white mb-2">More Games</h3>
-              <p className="text-gaming-gray mb-4">Don't see your game? We support 50+ games with custom installations.</p>
-              <Button variant="ghost" className="text-gaming-green hover:text-gaming-green-dark">
+              <p className="text-gaming-gray mb-4 flex-1">Don't see your game? We support 50+ games with custom installations.</p>
+              <Button variant="ghost" className="text-gaming-green hover:text-gaming-green-dark mt-auto">
                 View All Games <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             </CardContent>
