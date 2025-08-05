@@ -40,7 +40,8 @@ import {
   Share2,
   BarChart3,
   Code,
-  Cookie
+  Cookie,
+  Zap
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -115,6 +116,11 @@ export default function AdminDashboard() {
     siteName: "VoltServers",
     siteTagline: "Premium Game Server Hosting",
     siteDescription: "Professional game server hosting with 24/7 support and premium hardware",
+    heroTitle: "Deploy Your Game Server in Minutes",
+    heroSubtitle: "Experience lightning-fast deployment with our premium game server hosting platform", 
+    heroDescription: "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
+    heroButtonText: "Get Started",
+    heroButtonUrl: "/pricing",
     primaryColor: "#00ff88",
     secondaryColor: "#1a1a1a",
     accentColor: "#00cc6a",
@@ -1894,6 +1900,64 @@ export default function AdminDashboard() {
                             placeholder="© 2025 VoltServers. All rights reserved."
                             rows={3}
                           />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hero Section Customization */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
+                        Hero Section Content
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Hero Title</Label>
+                          <Input
+                            value={themeForm.heroTitle}
+                            onChange={(e) => setThemeForm({...themeForm, heroTitle: e.target.value})}
+                            className="admin-input"
+                            placeholder="Deploy Your Game Server in Minutes"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Hero Subtitle</Label>
+                          <Input
+                            value={themeForm.heroSubtitle}
+                            onChange={(e) => setThemeForm({...themeForm, heroSubtitle: e.target.value})}
+                            className="admin-input"
+                            placeholder="Experience lightning-fast deployment with our premium game server hosting platform"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Hero Description</Label>
+                          <Textarea
+                            value={themeForm.heroDescription}
+                            onChange={(e) => setThemeForm({...themeForm, heroDescription: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers."
+                            rows={3}
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-gray-300">Button Text</Label>
+                            <Input
+                              value={themeForm.heroButtonText}
+                              onChange={(e) => setThemeForm({...themeForm, heroButtonText: e.target.value})}
+                              className="admin-input"
+                              placeholder="Get Started"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300">Button URL</Label>
+                            <Input
+                              value={themeForm.heroButtonUrl}
+                              onChange={(e) => setThemeForm({...themeForm, heroButtonUrl: e.target.value})}
+                              className="admin-input"
+                              placeholder="/pricing"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>

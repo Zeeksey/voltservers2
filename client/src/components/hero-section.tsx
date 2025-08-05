@@ -2,8 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Play, Shield, Clock, Headphones } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function HeroSection() {
+  const { data: themeSettings } = useQuery({
+    queryKey: ["/api/theme-settings"],
+  });
   return (
     <section className="relative pt-16 lg:pt-20 pb-16 lg:pb-20 overflow-hidden">
       {/* Background Image */}
@@ -25,23 +29,27 @@ export default function HeroSection() {
               </Badge>
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                <span className="text-gaming-white">Premium</span><br />
-                <span className="text-gaming-green">Game Server</span><br />
-                <span className="text-gaming-white">Hosting</span>
+                <span className="text-gaming-white">
+                  {themeSettings?.heroTitle || "Deploy Your Game Server in Minutes"}
+                </span>
               </h1>
               
+              <p className="text-lg lg:text-xl text-gaming-green max-w-2xl font-semibold">
+                {themeSettings?.heroSubtitle || "Experience lightning-fast deployment with our premium game server hosting platform"}
+              </p>
+
               <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl">
-                Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month.
+                {themeSettings?.heroDescription || "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers."}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                <Link href="/games">
+                <Link href={themeSettings?.heroButtonUrl || "/pricing"}>
                   <Button 
                     className="bg-gradient-green text-gaming-black px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow w-full sm:w-auto"
                     size="lg"
                   >
                     <Rocket className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
-                    Get Started - From $2.99/mo
+                    {themeSettings?.heroButtonText || "Get Started"} - From $2.99/mo
                   </Button>
                 </Link>
                 <Link href="/minecraft-tools">

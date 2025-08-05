@@ -919,14 +919,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get theme settings error:", error);
-      // Return fallback theme settings if database is unavailable
-      res.json({
-        primaryColor: "#22c55e",
-        backgroundColor: "#0a0a0a",
-        accentColor: "#34d399",
-        textColor: "#ffffff",
-        cardColor: "#1a1a1a"
-      });
+      // Try memory storage as fallback
+      try {
+        const settings = await memStorage.getThemeSettings();
+        res.json(settings);
+      } catch (memError) {
+        // Return fallback theme settings if both storage systems fail
+        res.json({
+          primaryColor: "#22c55e",
+          backgroundColor: "#0a0a0a",
+          accentColor: "#34d399",
+          textColor: "#ffffff",
+          cardColor: "#1a1a1a",
+          siteName: "VoltServers",
+          siteTagline: "Premium Game Server Hosting",
+          siteDescription: "Professional game server hosting with 24/7 support and premium hardware",
+          heroTitle: "Deploy Your Game Server in Minutes",
+          heroSubtitle: "Experience lightning-fast deployment with our premium game server hosting platform",
+          heroDescription: "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
+          heroButtonText: "Get Started",
+          heroButtonUrl: "/pricing"
+        });
+      }
     }
   });
 
@@ -936,10 +950,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Update theme settings error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Theme settings not saved. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        const settings = await memStorage.updateThemeSettings(req.body);
+        res.json(settings);
+      } catch (memError) {
+        res.status(503).json({ 
+          message: "Database temporarily unavailable. Theme settings not saved. Please try again later or contact support.",
+          error: "DATABASE_UNAVAILABLE" 
+        });
+      }
     }
   });
 

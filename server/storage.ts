@@ -228,10 +228,6 @@ export class MemStorage implements IStorage {
   // Admin settings storage
   private promoSettings: PromoSetting | null = null;
   private themeSettings: any = null;
-  
-  // Admin settings storage
-  private promoSettings: PromoSetting | null = null;
-  private themeSettings: any = null;
 
   constructor() {
     this.users = new Map();
@@ -1533,9 +1529,20 @@ export class MemStorage implements IStorage {
       accentColor: "#34d399",
       textColor: "#ffffff",
       cardColor: "#1a1a1a",
-      logo: null,
-      siteName: "GameHost Pro",
-      tagline: "Professional Game Server Hosting"
+      siteName: "VoltServers",
+      siteTagline: "Premium Game Server Hosting",
+      siteDescription: "Professional game server hosting with 24/7 support and premium hardware",
+      heroTitle: "Deploy Your Game Server in Minutes",
+      heroSubtitle: "Experience lightning-fast deployment with our premium game server hosting platform",
+      heroDescription: "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
+      heroButtonText: "Get Started",
+      heroButtonUrl: "/pricing",
+      logoUrl: null,
+      faviconUrl: null,
+      footerText: null,
+      fontFamily: "Inter",
+      borderRadius: "0.5rem",
+      holidayTheme: "none"
     };
   }
 
