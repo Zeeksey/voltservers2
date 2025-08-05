@@ -75,12 +75,13 @@ export class WHMCSIntegration {
         : `https://${this.config.url}/includes/api.php`;
       
       console.log('Making WHMCS API call:', action, 'to:', apiUrl);
+      console.log('Request params:', JSON.stringify(params, null, 2));
       
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': 'VoltServers-API/1.0'
+          'User-Agent': 'VoltServers-API'
         },
         body: postData.toString()
       });
