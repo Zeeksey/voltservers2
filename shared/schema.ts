@@ -60,6 +60,52 @@ export const games = pgTable("games", {
   supportInfo: text("support_info"),
 });
 
+// Game page sections for customization
+export const gamePageSections = pgTable("game_page_sections", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  gameId: varchar("game_id").notNull(),
+  sectionType: text("section_type").notNull(), // "hero", "features", "pricing", "faq", "cta", "testimonials", "versions", "custom"
+  title: text("title"),
+  subtitle: text("subtitle"),
+  content: jsonb("content").default(sql`'{}'::jsonb`), // Flexible content structure
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Game pricing tiers for customization
+export const gamePricingTiers = pgTable("game_pricing_tiers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  gameId: varchar("game_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  players: integer("players"),
+  ram: text("ram"),
+  storage: text("storage"),
+  monthlyPrice: decimal("monthly_price", { precision: 10, scale: 2 }).notNull(),
+  biannualPrice: decimal("biannual_price", { precision: 10, scale: 2 }),
+  annualPrice: decimal("annual_price", { precision: 10, scale: 2 }),
+  features: text("features").array().default(sql`'{}'::text[]`),
+  isPopular: boolean("is_popular").notNull().default(false),
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Game features for customization
+export const gameFeatures = pgTable("game_features", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  gameId: varchar("game_id").notNull(),
+  icon: text("icon"), // Lucide icon name
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const pricingPlans = pgTable("pricing_plans", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
@@ -385,3 +431,31 @@ export type MinecraftBackup = typeof minecraftBackups.$inferSelect;
 
 export type InsertMinecraftLog = z.infer<typeof insertMinecraftLogSchema>;
 export type MinecraftLog = typeof minecraftLogs.$inferSelect;
+
+// Game customization schemas
+export const insertGamePageSectionSchema = createInsertSchema(gamePageSections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGamePricingTierSchema = createInsertSchema(gamePricingTiers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGameFeatureSchema = createInsertSchema(gameFeatures).omit({
+  id: true,
+  createdAt: true,
+});
+
+// Game customization types
+export type InsertGamePageSection = z.infer<typeof insertGamePageSectionSchema>;
+export type GamePageSection = typeof gamePageSections.$inferSelect;
+
+export type InsertGamePricingTier = z.infer<typeof insertGamePricingTierSchema>;
+export type GamePricingTier = typeof gamePricingTiers.$inferSelect;
+
+export type InsertGameFeature = z.infer<typeof insertGameFeatureSchema>;
+export type GameFeature = typeof gameFeatures.$inferSelect;

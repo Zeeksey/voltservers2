@@ -485,6 +485,181 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin game page sections
+  app.get('/api/admin/games/:gameId/sections', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const sections = await storage.getGamePageSections(gameId);
+      res.json(sections);
+    } catch (error) {
+      console.error('Error fetching game page sections:', error);
+      res.status(500).json({ error: 'Failed to fetch game page sections' });
+    }
+  });
+
+  app.post('/api/admin/games/:gameId/sections', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const sectionData = { ...req.body, gameId };
+      const section = await storage.createGamePageSection(sectionData);
+      res.json(section);
+    } catch (error) {
+      console.error('Error creating game page section:', error);
+      res.status(500).json({ error: 'Failed to create game page section' });
+    }
+  });
+
+  app.put('/api/admin/sections/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const section = await storage.updateGamePageSection(id, req.body);
+      res.json(section);
+    } catch (error) {
+      console.error('Error updating game page section:', error);
+      res.status(500).json({ error: 'Failed to update game page section' });
+    }
+  });
+
+  app.delete('/api/admin/sections/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGamePageSection(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting game page section:', error);
+      res.status(500).json({ error: 'Failed to delete game page section' });
+    }
+  });
+
+  // Admin game pricing tiers
+  app.get('/api/admin/games/:gameId/pricing-tiers', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const tiers = await storage.getGamePricingTiers(gameId);
+      res.json(tiers);
+    } catch (error) {
+      console.error('Error fetching game pricing tiers:', error);
+      res.status(500).json({ error: 'Failed to fetch game pricing tiers' });
+    }
+  });
+
+  app.post('/api/admin/games/:gameId/pricing-tiers', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const tierData = { ...req.body, gameId };
+      const tier = await storage.createGamePricingTier(tierData);
+      res.json(tier);
+    } catch (error) {
+      console.error('Error creating game pricing tier:', error);
+      res.status(500).json({ error: 'Failed to create game pricing tier' });
+    }
+  });
+
+  app.put('/api/admin/pricing-tiers/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const tier = await storage.updateGamePricingTier(id, req.body);
+      res.json(tier);
+    } catch (error) {
+      console.error('Error updating game pricing tier:', error);
+      res.status(500).json({ error: 'Failed to update game pricing tier' });
+    }
+  });
+
+  app.delete('/api/admin/pricing-tiers/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGamePricingTier(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting game pricing tier:', error);
+      res.status(500).json({ error: 'Failed to delete game pricing tier' });
+    }
+  });
+
+  // Admin game features
+  app.get('/api/admin/games/:gameId/features', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const features = await storage.getGameFeatures(gameId);
+      res.json(features);
+    } catch (error) {
+      console.error('Error fetching game features:', error);
+      res.status(500).json({ error: 'Failed to fetch game features' });
+    }
+  });
+
+  app.post('/api/admin/games/:gameId/features', requireAdmin, async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const featureData = { ...req.body, gameId };
+      const feature = await storage.createGameFeature(featureData);
+      res.json(feature);
+    } catch (error) {
+      console.error('Error creating game feature:', error);
+      res.status(500).json({ error: 'Failed to create game feature' });
+    }
+  });
+
+  app.put('/api/admin/features/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const feature = await storage.updateGameFeature(id, req.body);
+      res.json(feature);
+    } catch (error) {
+      console.error('Error updating game feature:', error);
+      res.status(500).json({ error: 'Failed to update game feature' });
+    }
+  });
+
+  app.delete('/api/admin/features/:id', requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deleteGameFeature(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting game feature:', error);
+      res.status(500).json({ error: 'Failed to delete game feature' });
+    }
+  });
+
+  // Public routes for game customization data
+  app.get('/api/games/:gameId/sections', async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const sections = await storage.getGamePageSections(gameId);
+      const enabledSections = sections.filter(section => section.isEnabled);
+      res.json(enabledSections);
+    } catch (error) {
+      console.error('Error fetching game page sections:', error);
+      res.status(500).json({ error: 'Failed to fetch game page sections' });
+    }
+  });
+
+  app.get('/api/games/:gameId/pricing-tiers', async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const tiers = await storage.getGamePricingTiers(gameId);
+      const enabledTiers = tiers.filter(tier => tier.isEnabled);
+      res.json(enabledTiers);
+    } catch (error) {
+      console.error('Error fetching game pricing tiers:', error);
+      res.status(500).json({ error: 'Failed to fetch game pricing tiers' });
+    }
+  });
+
+  app.get('/api/games/:gameId/features', async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const features = await storage.getGameFeatures(gameId);
+      const enabledFeatures = features.filter(feature => feature.isEnabled);
+      res.json(enabledFeatures);
+    } catch (error) {
+      console.error('Error fetching game features:', error);
+      res.status(500).json({ error: 'Failed to fetch game features' });
+    }
+  });
+
   // Admin server locations routes
   app.post("/api/admin/server-locations", requireAdmin, async (req, res) => {
     try {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -650,6 +650,15 @@ export default function AdminDashboard() {
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
+                          <Link href={`/admin/games/${game.id}/customize`}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10"
+                            >
+                              <Settings className="w-4 h-4" />
+                            </Button>
+                          </Link>
                           <Button
                             size="sm"
                             variant="outline"

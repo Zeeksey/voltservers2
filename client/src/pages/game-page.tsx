@@ -11,6 +11,70 @@ import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 import { Game } from "@shared/schema";
 
+// Custom Section Component
+function CustomSection({ section, game }: { section: any; game: Game }) {
+  const getSectionClass = (sectionType: string) => {
+    switch (sectionType) {
+      case 'hero':
+        return 'py-32 bg-gradient-to-br from-gaming-black via-gaming-black-light to-gaming-black';
+      case 'cta':
+        return 'py-20 bg-gaming-green/10';
+      case 'testimonials':
+        return 'py-20 bg-gaming-black-dark';
+      default:
+        return 'py-20';
+    }
+  };
+
+  return (
+    <section className={getSectionClass(section.sectionType)}>
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          {section.title && (
+            <h2 className="text-4xl font-bold text-gaming-white mb-4">
+              {section.title.replace('{game}', game.name)}
+            </h2>
+          )}
+          {section.subtitle && (
+            <p className="text-gaming-gray text-lg">
+              {section.subtitle.replace('{game}', game.name)}
+            </p>
+          )}
+        </div>
+        
+        {/* Render content based on section type */}
+        {section.sectionType === 'cta' && (
+          <div className="text-center">
+            <Button 
+              size="lg" 
+              className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold"
+            >
+              {section.content?.buttonText || 'Get Started'}
+            </Button>
+          </div>
+        )}
+        
+        {section.content?.items && (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {section.content.items.map((item: any, index: number) => (
+              <Card key={index} className="bg-gaming-black-lighter border-gaming-green/20">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold text-gaming-white mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-gaming-gray">
+                    {item.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function GamePage() {
   const [match, params] = useRoute("/games/:slug");
   const slug = params?.slug;
@@ -35,6 +99,22 @@ export default function GamePage() {
       return response.json();
     },
     enabled: !!slug,
+  });
+
+  // Fetch dynamic customization data
+  const { data: customSections = [] } = useQuery({
+    queryKey: [`/api/games/${game?.id}/sections`],
+    enabled: !!game?.id,
+  });
+
+  const { data: customPricingTiers = [] } = useQuery({
+    queryKey: [`/api/games/${game?.id}/pricing-tiers`],
+    enabled: !!game?.id,
+  });
+
+  const { data: customFeatures = [] } = useQuery({
+    queryKey: [`/api/games/${game?.id}/features`],
+    enabled: !!game?.id,
   });
 
   if (isLoading) {
@@ -221,9 +301,9 @@ export default function GamePage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan: any, index) => (
-              <Card key={index} className={`relative ${plan.popular ? 'border-gaming-green' : ''}`}>
-                {plan.popular && (
+            {(customPricingTiers.length > 0 ? customPricingTiers : pricingPlans).map((plan: any, index) => (
+              <Card key={index} className={`relative ${(plan.popular || plan.isPopular) ? 'border-gaming-green' : ''}`}>
+                {(plan.popular || plan.isPopular) && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                     <Badge className="bg-gaming-green text-gaming-black">Most Popular</Badge>
                   </div>
@@ -233,7 +313,14 @@ export default function GamePage() {
                   <div className="mt-4">
                     <div className="flex flex-col items-center gap-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-4xl font-bold text-gaming-green">${plan.price}</span>
+                        <span className="text-4xl font-bold text-gaming-green">
+                          ${billingPeriod === 'monthly' 
+                            ? (plan.monthlyPrice || plan.price)
+                            : billingPeriod === 'biannual' 
+                            ? (plan.biannualPrice || (plan.price * pricingMultipliers.biannual).toFixed(2))
+                            : (plan.annualPrice || (plan.price * pricingMultipliers.annual).toFixed(2))
+                          }
+                        </span>
                         <span className="text-gaming-gray">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
                       </div>
                       {billingPeriod !== 'monthly' && (
@@ -255,7 +342,14 @@ export default function GamePage() {
                       )}
                     </div>
                   </div>
-                  <p className="text-gaming-gray mt-2">Recommended Players: {plan.players}</p>
+                  <p className="text-gaming-gray mt-2">
+                    {plan.players && `Recommended Players: ${plan.players}`}
+                    {plan.ram && plan.storage && (
+                      <span className="block text-sm">
+                        {plan.ram} RAM • {plan.storage} Storage
+                      </span>
+                    )}
+                  </p>
                 </CardHeader>
                 <CardContent className="space-y-4 pt-0">
                   {plan.features.map((feature: string, featureIndex: number) => (
@@ -289,23 +383,45 @@ export default function GamePage() {
           </div>
           
           <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => {
+            {(customFeatures.length > 0 ? customFeatures : features).map((feature: any, index) => {
               const icons = [Users, Shield, Server, Zap, HeadphonesIcon];
-              const IconComponent = icons[index % icons.length];
+              const IconComponent = feature.icon ? 
+                (() => {
+                  switch(feature.icon.toLowerCase()) {
+                    case 'shield': return Shield;
+                    case 'users': return Users;
+                    case 'server': return Server;
+                    case 'zap': return Zap;
+                    case 'headphones': case 'headphonesicon': return HeadphonesIcon;
+                    case 'check': return Check;
+                    default: return icons[index % icons.length];
+                  }
+                })() : icons[index % icons.length];
               
               return (
                 <div key={index} className="text-center">
                   <div className="w-16 h-16 bg-gaming-green/20 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <IconComponent className="w-8 h-8 text-gaming-green" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gaming-white mb-2">{feature}</h3>
-                  <p className="text-gaming-gray text-sm">Professional-grade {feature.toLowerCase()} for your server</p>
+                  <h3 className="text-lg font-semibold text-gaming-white mb-2">
+                    {feature.title || feature}
+                  </h3>
+                  <p className="text-gaming-gray text-sm">
+                    {feature.description || `Professional-grade ${(feature.title || feature).toLowerCase()} for your server`}
+                  </p>
                 </div>
               );
             })}
           </div>
         </div>
       </section>
+
+      {/* Custom Sections */}
+      {customSections.length > 0 && customSections
+        .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
+        .map((section: any, index: number) => (
+          <CustomSection key={section.id} section={section} game={game} />
+        ))}
 
       {/* Detailed Description */}
       {(game.detailedDescription || game.description) && (

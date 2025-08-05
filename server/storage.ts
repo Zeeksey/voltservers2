@@ -37,6 +37,12 @@ import {
   type InsertMinecraftBackup,
   type MinecraftLog,
   type InsertMinecraftLog,
+  type GamePageSection,
+  type InsertGamePageSection,
+  type GamePricingTier,
+  type InsertGamePricingTier,
+  type GameFeature,
+  type InsertGameFeature,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { DatabaseStorage } from "./database-storage";
@@ -66,8 +72,20 @@ export interface IStorage {
   updatePromoSettings(settings: InsertPromoSetting): Promise<PromoSetting>;
 
   // Game page customization methods
-  getGamePageCustomization(gameId: string): Promise<any>;
-  updateGamePageCustomization(gameId: string, data: any): Promise<any>;
+  getGamePageSections(gameId: string): Promise<GamePageSection[]>;
+  createGamePageSection(section: InsertGamePageSection): Promise<GamePageSection>;
+  updateGamePageSection(id: string, updates: Partial<GamePageSection>): Promise<GamePageSection>;
+  deleteGamePageSection(id: string): Promise<void>;
+  
+  getGamePricingTiers(gameId: string): Promise<GamePricingTier[]>;
+  createGamePricingTier(tier: InsertGamePricingTier): Promise<GamePricingTier>;
+  updateGamePricingTier(id: string, updates: Partial<GamePricingTier>): Promise<GamePricingTier>;
+  deleteGamePricingTier(id: string): Promise<void>;
+  
+  getGameFeatures(gameId: string): Promise<GameFeature[]>;
+  createGameFeature(feature: InsertGameFeature): Promise<GameFeature>;
+  updateGameFeature(id: string, updates: Partial<GameFeature>): Promise<GameFeature>;
+  deleteGameFeature(id: string): Promise<void>;
   
   // Game methods
   getAllGames(): Promise<Game[]>;

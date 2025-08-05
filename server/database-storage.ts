@@ -39,7 +39,16 @@ import {
   type SiteSetting,
   type InsertSiteSetting,
   type PromoSetting,
-  type InsertPromoSetting
+  type InsertPromoSetting,
+  gamePageSections,
+  gamePricingTiers,
+  gameFeatures,
+  type GamePageSection,
+  type InsertGamePageSection,
+  type GamePricingTier,
+  type InsertGamePricingTier,
+  type GameFeature,
+  type InsertGameFeature
 } from "@shared/schema";
 import { IStorage } from "./storage";
 
@@ -348,24 +357,72 @@ export class DatabaseStorage implements IStorage {
     return newDetail;
   }
 
-  // Game page customization methods
-  private gamePageCustomizations: Map<string, any> = new Map();
-
-  async getGamePageCustomization(gameId: string): Promise<any> {
-    return this.gamePageCustomizations.get(gameId) || {
-      relatedArticles: [],
-      customSections: []
-    };
+  // Game page sections
+  async getGamePageSections(gameId: string): Promise<GamePageSection[]> {
+    return await db.select().from(gamePageSections).where(eq(gamePageSections.gameId, gameId));
   }
 
-  async updateGamePageCustomization(gameId: string, data: any): Promise<any> {
-    const customization = {
-      gameId,
-      relatedArticles: data.relatedArticles || [],
-      customSections: data.customSections || [],
-      updatedAt: new Date()
-    };
-    this.gamePageCustomizations.set(gameId, customization);
-    return customization;
+  async createGamePageSection(section: InsertGamePageSection): Promise<GamePageSection> {
+    const [newSection] = await db.insert(gamePageSections).values(section).returning();
+    return newSection;
+  }
+
+  async updateGamePageSection(id: string, updates: Partial<GamePageSection>): Promise<GamePageSection> {
+    const [updatedSection] = await db
+      .update(gamePageSections)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(gamePageSections.id, id))
+      .returning();
+    return updatedSection;
+  }
+
+  async deleteGamePageSection(id: string): Promise<void> {
+    await db.delete(gamePageSections).where(eq(gamePageSections.id, id));
+  }
+
+  // Game pricing tiers
+  async getGamePricingTiers(gameId: string): Promise<GamePricingTier[]> {
+    return await db.select().from(gamePricingTiers).where(eq(gamePricingTiers.gameId, gameId));
+  }
+
+  async createGamePricingTier(tier: InsertGamePricingTier): Promise<GamePricingTier> {
+    const [newTier] = await db.insert(gamePricingTiers).values(tier).returning();
+    return newTier;
+  }
+
+  async updateGamePricingTier(id: string, updates: Partial<GamePricingTier>): Promise<GamePricingTier> {
+    const [updatedTier] = await db
+      .update(gamePricingTiers)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(gamePricingTiers.id, id))
+      .returning();
+    return updatedTier;
+  }
+
+  async deleteGamePricingTier(id: string): Promise<void> {
+    await db.delete(gamePricingTiers).where(eq(gamePricingTiers.id, id));
+  }
+
+  // Game features
+  async getGameFeatures(gameId: string): Promise<GameFeature[]> {
+    return await db.select().from(gameFeatures).where(eq(gameFeatures.gameId, gameId));
+  }
+
+  async createGameFeature(feature: InsertGameFeature): Promise<GameFeature> {
+    const [newFeature] = await db.insert(gameFeatures).values(feature).returning();
+    return newFeature;
+  }
+
+  async updateGameFeature(id: string, updates: Partial<GameFeature>): Promise<GameFeature> {
+    const [updatedFeature] = await db
+      .update(gameFeatures)
+      .set(updates)
+      .where(eq(gameFeatures.id, id))
+      .returning();
+    return updatedFeature;
+  }
+
+  async deleteGameFeature(id: string): Promise<void> {
+    await db.delete(gameFeatures).where(eq(gameFeatures.id, id));
   }
 }
