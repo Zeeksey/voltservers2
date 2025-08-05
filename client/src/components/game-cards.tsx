@@ -8,16 +8,17 @@ import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
 
 export default function GameCards() {
-  const { data: games, isLoading } = useQuery<Game[]>({
+  const { data: games, isLoading, isInitialLoading } = useQuery<Game[]>({
     queryKey: ['/api/games'],
-    staleTime: Infinity, // Never automatically refetch
+    staleTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
-    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    gcTime: 60 * 60 * 1000, // Keep in cache for 1 hour
+    placeholderData: [], // Prevent flash by showing empty array initially
   });
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <section id="games" className="py-20 bg-gaming-black-light">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">

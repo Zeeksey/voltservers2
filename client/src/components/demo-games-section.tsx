@@ -38,11 +38,13 @@ export default function DemoGamesSection() {
   const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
 
   // Fetch demo servers from API
-  const { data: demoServers = [], isLoading } = useQuery<DemoServer[]>({
+  const { data: demoServers = [], isLoading, isInitialLoading } = useQuery<DemoServer[]>({
     queryKey: ['/api/demo-servers'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: false,
+    gcTime: 30 * 60 * 1000, // Keep in cache for 30 minutes
+    placeholderData: [], // Prevent flash
   });
 
   // Query each server's live status
@@ -90,7 +92,7 @@ export default function DemoGamesSection() {
     return () => clearInterval(interval);
   }, [demoServers]);
 
-  if (isLoading) {
+  if (isInitialLoading) {
     return (
       <section className="py-20 bg-gaming-black">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
