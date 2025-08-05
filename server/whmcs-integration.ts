@@ -158,9 +158,12 @@ export class WHMCSIntegration {
   // Get client services
   async getClientServices(clientId: string): Promise<any> {
     try {
-      return await this.makeAPICall('GetClientsProducts', {
+      console.log(`[WHMCS] Fetching services for client ID: ${clientId}`);
+      const result = await this.makeAPICall('GetClientsProducts', {
         clientid: clientId
       });
+      console.log(`[WHMCS] Services API response:`, JSON.stringify(result, null, 2));
+      return result;
     } catch (error) {
       console.error('Error fetching client services:', error);
       return null;

@@ -2004,7 +2004,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
     
     try {
-      const services = await whmcsIntegration.getClientServices(req.params.clientId);
+      let clientId = req.params.clientId;
+      console.log(`[DEBUG] Fetching services for client: ${clientId}`);
+      
+      // If email is provided, convert to numeric client ID first
+      if (clientId.includes('@')) {
+        console.log(`[DEBUG] Email provided, looking up client ID...`);
+        const clientsData = await whmcsIntegration.getClients();
+        const client = clientsData?.clients?.client?.find((c: any) => c.email === clientId);
+        
+        if (client) {
+          clientId = client.id;
+          console.log(`[DEBUG] Found client ID: ${clientId} for email: ${req.params.clientId}`);
+        } else {
+          console.log(`[DEBUG] No client found for email: ${req.params.clientId}`);
+          return res.json({ result: 'success', totalresults: '0', startnumber: 0, numreturned: 0, products: '' });
+        }
+      }
+      
+      const services = await whmcsIntegration.getClientServices(clientId);
+      console.log(`[DEBUG] Raw WHMCS services response:`, JSON.stringify(services, null, 2));
       
       // Enhance services with server details if available
       if (services?.products?.product) {
