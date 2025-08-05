@@ -33,7 +33,8 @@ export class WHMCSIntegration {
     try {
       console.log('Testing WHMCS connection with URL:', this.config.url);
       console.log('Using identifier:', this.config.identifier?.substring(0, 8) + '...');
-      const response = await this.makeAPICall('GetActivityLog', { limitnum: 1 });
+      // Use a simpler API call that requires fewer permissions
+      const response = await this.makeAPICall('GetProducts', { type: 'hostingaccount' });
       console.log('WHMCS test response:', response);
       return response.result === 'success';
     } catch (error) {

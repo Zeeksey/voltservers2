@@ -12,12 +12,13 @@ The WHMCS API is returning "Invalid IP 35.231.143.88" which means Replit's serve
 3. Find your API credentials or create new ones
 4. In the **Allowed IP Addresses** field, add: `35.231.143.88`
 5. Make sure the API credentials have these permissions:
-   - GetActivityLog
+   - GetProducts (for connection testing)
    - GetClients
    - GetClientsDetails
    - GetClientsProducts
    - GetInvoices
    - GetTickets
+   - GetActivityLog (optional)
 
 ### 2. WHMCS Admin Panel - Security Settings
 1. Go to **System Settings** → **General Settings** → **Security**
