@@ -2,7 +2,6 @@ import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
 import ServiceManagement from "@/components/service-management";
 import Footer from "@/components/footer";
-import LiveChat from "@/components/live-chat";
 
 export default function DashboardPage() {
   return (
@@ -35,7 +34,6 @@ export default function DashboardPage() {
       </main>
       
       <Footer />
-      <LiveChat />
     </div>
   );
 }

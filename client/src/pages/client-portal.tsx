@@ -2,7 +2,6 @@ import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
 import WHMCSIntegration from "@/components/whmcs-integration";
 import Footer from "@/components/footer";
-import LiveChat from "@/components/live-chat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -150,7 +149,6 @@ export default function ClientPortal() {
       </main>
       
       <Footer />
-      <LiveChat />
     </div>
   );
 }

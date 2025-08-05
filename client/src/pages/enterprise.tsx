@@ -2,7 +2,6 @@ import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
 import EnterpriseFeatures from "@/components/enterprise-features";
 import Footer from "@/components/footer";
-import LiveChat from "@/components/live-chat";
 
 export default function EnterprisePage() {
   return (
@@ -31,7 +30,6 @@ export default function EnterprisePage() {
       
       <EnterpriseFeatures />
       <Footer />
-      <LiveChat />
     </div>
   );
 }
