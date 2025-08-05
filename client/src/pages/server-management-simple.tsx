@@ -19,9 +19,9 @@ import {
 import { Link } from "wouter";
 
 export default function ServerManagement() {
+  const [loggedInClient, setLoggedInClient] = useState<any>(null);
 
   // Get logged in client
-  const [loggedInClient, setLoggedInClient] = useState<any>(null);
   useEffect(() => {
     const savedClient = localStorage.getItem('whmcs_client_data');
     if (savedClient) {
@@ -43,10 +43,8 @@ export default function ServerManagement() {
   // Test Wisp connection
   const { data: wispStatus } = useQuery({
     queryKey: ['/api/wisp/test'],
-    enabled: !!loggedInClient?.id
+    enabled: !!loggedInClient?.email
   });
-
-
 
   if (!loggedInClient) {
     return (

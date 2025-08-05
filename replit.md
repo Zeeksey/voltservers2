@@ -49,6 +49,7 @@ The platform now includes individual game pages with detailed hosting informatio
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+Server Management Style: Simple server overview with direct link to Wisp.gg game panel - no complex controls or tabs interface.
 
 # Recent Changes (January 2025)
 
