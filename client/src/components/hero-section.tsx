@@ -15,10 +15,10 @@ export default function HeroSection() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-gaming-black via-gaming-black/90 to-gaming-black/70" />
       
-      <div className="relative w-full">
+      <div className="relative w-full flex justify-center">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh] lg:min-h-[75vh]">
-            <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center justify-items-center lg:justify-items-start min-h-[80vh] lg:min-h-[75vh]">
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8 w-full max-w-2xl">
               <Badge className="inline-flex items-center px-3 py-2 lg:px-4 lg:py-2 bg-gaming-green/10 border border-gaming-green/20 text-gaming-green text-sm lg:text-base">
                 <span className="w-2 h-2 bg-gaming-green rounded-full mr-2 animate-pulse-green" />
                 99.9% Uptime Guaranteed
@@ -73,11 +73,26 @@ export default function HeroSection() {
           </div>
           
           <div className="relative">
-            <img 
-              src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
-              alt="Modern gaming setup with server interfaces" 
-              className="rounded-2xl shadow-2xl shadow-gaming-green/20 animate-float" 
-            />
+            <div className="bg-gradient-to-br from-gaming-dark to-gaming-black rounded-2xl shadow-2xl shadow-gaming-green/20 animate-float p-8 border border-gaming-green/20">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-gaming-green text-sm font-mono">server-control.exe</span>
+                </div>
+                <div className="bg-gaming-black rounded-lg p-4 font-mono text-sm">
+                  <div className="text-gaming-green mb-2">$ gamehost-pro status</div>
+                  <div className="text-white">Server Status: <span className="text-gaming-green">ONLINE</span></div>
+                  <div className="text-white">Players: <span className="text-gaming-green">247/500</span></div>
+                  <div className="text-white">CPU: <span className="text-gaming-green">12%</span></div>
+                  <div className="text-white">RAM: <span className="text-gaming-green">2.1GB/16GB</span></div>
+                  <div className="text-white">Uptime: <span className="text-gaming-green">99.9%</span></div>
+                </div>
+              </div>
+            </div>
             <div className="absolute -bottom-6 -right-6 bg-gaming-green text-gaming-black p-4 rounded-xl font-bold shadow-lg animate-pulse-green">
               <div className="text-2xl">15K+</div>
               <div className="text-sm">Active Servers</div>

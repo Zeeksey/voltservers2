@@ -71,6 +71,19 @@ html {
   --gaming-white: hsl(213, 31%, 97%);
 }
 
+/* Ensure input text is visible in dark mode */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  color: white !important;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  color: white !important;
+}
+
 .light {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

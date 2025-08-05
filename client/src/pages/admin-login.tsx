@@ -81,7 +81,7 @@ export default function AdminLogin() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="bg-gaming-dark-lighter border-gaming-green/30 text-white focus:border-gaming-green"
+                className="bg-gaming-dark-lighter border-gaming-green/30 text-white focus:border-gaming-green placeholder:text-gray-400"
                 required
               />
             </div>
@@ -95,7 +95,7 @@ export default function AdminLogin() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="bg-gaming-dark-lighter border-gaming-green/30 text-white focus:border-gaming-green pr-10"
+                  className="bg-gaming-dark-lighter border-gaming-green/30 text-white focus:border-gaming-green placeholder:text-gray-400 pr-10"
                   required
                 />
                 <button
