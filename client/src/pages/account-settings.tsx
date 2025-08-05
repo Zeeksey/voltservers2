@@ -281,7 +281,9 @@ export default function AccountSettings() {
             </div>
             <div className="flex items-center justify-between">
               <span className="text-gaming-gray">Member Since</span>
-              <span className="text-gaming-white">{profileDetails?.datecreated || 'Unknown'}</span>
+              <span className="text-gaming-white">
+                {profileDetails?.datecreated ? new Date(profileDetails.datecreated).toLocaleDateString() : 'July 2025'}
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -308,7 +310,7 @@ export default function AccountSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleProfileSubmit} className="space-y-6">
+                <form onSubmit={handleProfileSubmit} className="space-y-6 account-settings">
                   {/* Personal Information */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gaming-white flex items-center gap-2">
@@ -498,7 +500,7 @@ export default function AccountSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                <form onSubmit={handlePasswordSubmit} className="space-y-6 account-settings">
                   <Alert className="bg-gaming-dark border-gaming-green/20">
                     <Shield className="h-4 w-4 text-gaming-green" />
                     <AlertDescription className="text-gaming-gray">

@@ -74,14 +74,40 @@ html {
 /* Ensure input text is visible in dark mode */
 input[type="text"],
 input[type="password"],
-input[type="email"] {
+input[type="email"],
+input[type="tel"],
+textarea,
+.bg-gaming-dark input,
+.bg-gaming-dark-lighter input,
+input.bg-gaming-dark,
+input.bg-gaming-dark-lighter {
   color: white !important;
+  background-color: hsl(220, 13%, 15%) !important;
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus,
-input[type="email"]:focus {
+input[type="email"]:focus,
+input[type="tel"]:focus,
+textarea:focus,
+.bg-gaming-dark input:focus,
+.bg-gaming-dark-lighter input:focus,
+input.bg-gaming-dark:focus,
+input.bg-gaming-dark-lighter:focus {
   color: white !important;
+  background-color: hsl(220, 13%, 15%) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: hsl(215, 16%, 57%) !important;
+}
+
+/* Force input styling for account settings */
+.account-settings input {
+  color: white !important;
+  background-color: hsl(220, 13%, 15%) !important;
+  border-color: hsl(142, 76%, 36%, 0.3) !important;
 }
 
 .light {
