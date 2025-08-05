@@ -2261,7 +2261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { name, email, subject, message, priority, deptid } = req.body;
       
-      // Get client ID from email
+      // Get client ID from email (required for ticket creation)
       let clientId = null;
       if (email) {
         const clientData = await whmcsIntegration.getClientByEmail(email);
@@ -2271,8 +2271,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       if (!clientId) {
-        return res.status(400).json({ error: 'Client not found. Please ensure you have an account with us.' });
+        return res.status(400).json({ 
+          error: 'Client account not found. Please ensure you are logged into your client portal.',
+          code: 'CLIENT_NOT_FOUND'
+        });
       }
+      
+      console.log('Creating WHMCS ticket for client:', clientId, 'with subject:', subject);
       
       const ticket = await whmcsIntegration.createSupportTicket({
         clientid: clientId,
@@ -2280,14 +2285,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email,
         subject,
         message,
-        priority,
+        priority: priority || 'Medium',
         deptid
       });
       
+      console.log('WHMCS ticket created successfully:', ticket);
       res.json(ticket);
     } catch (error) {
       console.error('Error creating support ticket:', error);
-      res.status(500).json({ error: 'Failed to create ticket' });
+      res.status(500).json({ 
+        error: 'Failed to create ticket. Please try again or contact support.',
+        details: error.message 
+      });
     }
   });
 

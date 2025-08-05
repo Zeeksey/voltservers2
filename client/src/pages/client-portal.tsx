@@ -565,7 +565,7 @@ export default function ClientPortal() {
                             Create New Ticket
                           </Button>
                         </Link>
-                        {whmcsTickets.tickets.ticket.length > 5 && (
+                        {(Array.isArray(whmcsTickets.tickets.ticket) ? whmcsTickets.tickets.ticket.length : 1) > 5 && (
                           <Button variant="outline" className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10">
                             View All Tickets ({Array.isArray(whmcsTickets.tickets.ticket) ? whmcsTickets.tickets.ticket.length : 1})
                           </Button>

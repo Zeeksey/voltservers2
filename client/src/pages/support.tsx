@@ -191,21 +191,28 @@ export default function SupportPage() {
   const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!emailForm.name || !emailForm.email || !emailForm.subject || !emailForm.message) {
+    // Only allow logged-in users to create tickets
+    if (!loggedInClient) {
       toast({
-        title: "Please fill in all fields",
+        title: "Login Required",
+        description: "Please log into your client portal to create support tickets.",
         variant: "destructive",
       });
       return;
     }
     
-    // Use logged in client email if available, otherwise use form email
-    const submitEmail = loggedInClient?.email || emailForm.email;
-    const submitName = loggedInClient ? `${loggedInClient.firstname} ${loggedInClient.lastname}` : emailForm.name;
+    if (!emailForm.subject || !emailForm.message) {
+      toast({
+        title: "Please fill in all required fields",
+        description: "Subject and message are required.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     createTicketMutation.mutate({
-      name: submitName,
-      email: submitEmail,
+      name: `${loggedInClient.firstname} ${loggedInClient.lastname}`,
+      email: loggedInClient.email,
       subject: emailForm.subject,
       message: emailForm.message,
       priority: emailForm.priority
@@ -327,93 +334,109 @@ export default function SupportPage() {
           <Card id="contact-form" className="max-w-4xl mx-auto bg-gaming-black-lighter border-gaming-black-lighter">
             <CardHeader className="text-center">
               <CardTitle className="text-3xl text-gaming-white flex items-center justify-center">
-                <Mail className="w-8 h-8 text-gaming-green mr-3" />
-                Send us a Message
+                <MessageSquare className="w-8 h-8 text-gaming-green mr-3" />
+                Create Support Ticket
               </CardTitle>
               <CardDescription className="text-gaming-gray text-lg">
-                Fill out the form below and we'll get back to you within 4 hours.
+                Submit a ticket directly to our WHMCS system for technical support
               </CardDescription>
             </CardHeader>
             <CardContent className="p-8">
-              <form onSubmit={handleTicketSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <Label htmlFor="name" className="text-gaming-white text-sm font-medium mb-2 block">Name *</Label>
-                    <Input
-                      id="name"
-                      type="text"
-                      required
-                      value={emailForm.name}
-                      onChange={(e) => setEmailForm({ ...emailForm, name: e.target.value })}
-                      className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
-                      placeholder="Your full name"
-                    />
+              {!loggedInClient ? (
+                <div className="text-center py-12">
+                  <div className="mb-6 p-6 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                      <AlertCircle className="w-8 h-8 text-yellow-400" />
+                      <span className="text-yellow-400 font-semibold text-xl">Login Required</span>
+                    </div>
+                    <p className="text-yellow-300 text-lg mb-6">
+                      You must be logged into your client account to create support tickets. This ensures your tickets are properly tracked and linked to your services.
+                    </p>
+                    <Link href="/client-portal">
+                      <Button size="lg" className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold">
+                        <User className="w-5 h-5 mr-2" />
+                        Login to Client Portal
+                      </Button>
+                    </Link>
                   </div>
-                  <div>
-                    <Label htmlFor="email" className="text-gaming-white text-sm font-medium mb-2 block">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={emailForm.email}
-                      onChange={(e) => setEmailForm({ ...emailForm, email: e.target.value })}
-                      className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
-                      placeholder="your.email@example.com"
-                    />
+                  <div className="mt-8 p-4 bg-gaming-dark/50 rounded-lg">
+                    <p className="text-gaming-gray text-sm">
+                      Don't have an account? Contact us through Discord or email us directly for general inquiries.
+                    </p>
                   </div>
                 </div>
+              ) : (
                 <div>
-                  <Label htmlFor="subject" className="text-gaming-white text-sm font-medium mb-2 block">Subject *</Label>
-                  <Input
-                    id="subject"
-                    type="text"
-                    required
-                    value={emailForm.subject}
-                    onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
-                    className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
-                    placeholder="Brief description of your inquiry"
-                  />
+                  <div className="mb-6 p-4 bg-gaming-green/10 border border-gaming-green/20 rounded-lg">
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="w-5 h-5 text-gaming-green" />
+                      <span className="text-gaming-green font-semibold">Logged in as: {loggedInClient.firstname} {loggedInClient.lastname}</span>
+                    </div>
+                    <p className="text-gaming-gray text-sm">
+                      Your ticket will be automatically linked to your account ({loggedInClient.email})
+                    </p>
+                  </div>
+                  
+                  <form onSubmit={handleTicketSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <Label htmlFor="subject" className="text-gaming-white text-sm font-medium mb-2 block">Subject *</Label>
+                        <Input
+                          id="subject"
+                          type="text"
+                          required
+                          value={emailForm.subject}
+                          onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                          className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
+                          placeholder="Brief description of your inquiry"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="priority" className="text-gaming-white text-sm font-medium mb-2 block">Priority</Label>
+                        <select
+                          id="priority"
+                          value={emailForm.priority}
+                          onChange={(e) => setEmailForm({ ...emailForm, priority: e.target.value })}
+                          className="w-full px-3 py-2 bg-gaming-black border border-gaming-black-lighter rounded-md text-gaming-white focus:border-gaming-green focus:outline-none"
+                        >
+                          <option value="Low">Low - General inquiry</option>
+                          <option value="Medium">Medium - Standard support</option>
+                          <option value="High">High - Urgent issue</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="message" className="text-gaming-white text-sm font-medium mb-2 block">Message *</Label>
+                      <Textarea
+                        id="message"
+                        required
+                        rows={6}
+                        value={emailForm.message}
+                        onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
+                        className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green resize-none"
+                        placeholder="Please provide detailed information about your question or issue..."
+                      />
+                    </div>
+                    <Button 
+                      type="submit" 
+                      disabled={createTicketMutation.isPending}
+                      className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold py-3"
+                    >
+                      {createTicketMutation.isPending ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-gaming-black/20 border-t-gaming-black rounded-full animate-spin mr-2" />
+                          Creating Ticket...
+                        </>
+                      ) : (
+                        <>
+                          <MessageSquare className="w-5 h-5 mr-2" />
+                          Create Support Ticket
+                        </>
+                      )}
+                    </Button>
+                  </form>
                 </div>
-                <div>
-                  <Label htmlFor="priority" className="text-gaming-white text-sm font-medium mb-2 block">Priority</Label>
-                  <select
-                    id="priority"
-                    value={emailForm.priority}
-                    onChange={(e) => setEmailForm({ ...emailForm, priority: e.target.value })}
-                    className="w-full px-3 py-2 bg-gaming-black border border-gaming-black-lighter rounded-md text-gaming-white focus:border-gaming-green focus:outline-none"
-                  >
-                    <option value="Low">Low - General inquiry</option>
-                    <option value="Medium">Medium - Standard support</option>
-                    <option value="High">High - Urgent issue</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="message" className="text-gaming-white text-sm font-medium mb-2 block">Message *</Label>
-                  <Textarea
-                    id="message"
-                    required
-                    rows={6}
-                    value={emailForm.message}
-                    onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
-                    className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green resize-none"
-                    placeholder="Please provide detailed information about your question or issue..."
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  disabled={createTicketMutation.isPending}
-                  className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold py-3"
-                >
-                  {createTicketMutation.isPending ? (
-                    <>Creating Ticket...</>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5 mr-2" />
-                      Create Support Ticket
-                    </>
-                  )}
-                </Button>
-              </form>
+              )}
             </CardContent>
           </Card>
         </div>
