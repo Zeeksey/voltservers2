@@ -55,13 +55,18 @@ export class WHMCSIntegration {
 
   // Make API call to WHMCS
   async makeAPICall(action: string, params: Record<string, any> = {}): Promise<any> {
-    const postData = {
-      identifier: this.config.identifier,
-      secret: this.config.secret,
-      action,
-      responsetype: 'json',
-      ...params
-    };
+    const postData = new URLSearchParams();
+    postData.append('identifier', this.config.identifier);
+    postData.append('secret', this.config.secret);
+    postData.append('action', action);
+    postData.append('responsetype', 'json');
+    
+    // Add additional parameters
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        postData.append(key, String(value));
+      }
+    });
 
     try {
       // Ensure URL has proper protocol
@@ -69,15 +74,23 @@ export class WHMCSIntegration {
         ? `${this.config.url}/includes/api.php`
         : `https://${this.config.url}/includes/api.php`;
       
+      console.log('Making WHMCS API call:', action, 'to:', apiUrl);
+      
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'VoltServers-API/1.0'
         },
-        body: new URLSearchParams(postData).toString()
+        body: postData.toString()
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const data = await response.json();
+      console.log('WHMCS API response:', data);
       
       if (data.result !== 'success') {
         throw new Error(`WHMCS API Error: ${data.message || 'Unknown error'}`);

@@ -71,32 +71,45 @@ export default function SupportPage() {
       subject: string;
       message: string;
       priority: string;
+      deptid?: string;
     }) => {
-      return apiRequest('/api/whmcs/support/tickets', {
+      const response = await fetch('/api/whmcs/support/tickets', {
         method: 'POST',
-        body: JSON.stringify(ticketData),
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify(ticketData),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Network error' }));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Support Ticket Created",
-        description: "Your ticket has been submitted. We'll respond within 4 hours.",
+        description: `Ticket #${data.ticketid || data.id || 'N/A'} has been submitted. We'll respond within 4 hours.`,
       });
       setEmailForm({
         name: "",
         email: "",
         subject: "",
         message: "",
-        priority: "Medium"
+        priority: "Medium",
+        deptid: ""
       });
+      
+      // Refetch tickets to show the new one
+      queryClient.invalidateQueries({ queryKey: ['/api/whmcs/support/tickets'] });
     },
     onError: (error: any) => {
+      console.error('Ticket creation error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to create support ticket",
+        title: "Failed to create ticket",
+        description: error.message || "Please try again later.",
         variant: "destructive",
       });
     },
