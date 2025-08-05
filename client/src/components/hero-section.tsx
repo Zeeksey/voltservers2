@@ -4,8 +4,14 @@ import { Rocket, Play, Shield, Clock, Headphones } from "lucide-react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 
+interface ThemeSettings {
+  siteName?: string;
+  siteTagline?: string;
+  heroText?: string;
+}
+
 export default function HeroSection() {
-  const { data: themeSettings } = useQuery({
+  const { data: themeSettings } = useQuery<ThemeSettings>({
     queryKey: ["/api/theme-settings"],
   });
   return (
@@ -30,26 +36,26 @@ export default function HeroSection() {
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                 <span className="text-gaming-white">
-                  {themeSettings?.heroTitle || "Deploy Your Game Server in Minutes"}
+                  {themeSettings?.siteName || "VoltServers"}
                 </span>
               </h1>
               
               <p className="text-lg lg:text-xl text-gaming-green max-w-2xl font-semibold">
-                {themeSettings?.heroSubtitle || "Experience lightning-fast deployment with our premium game server hosting platform"}
+                {themeSettings?.siteTagline || "Premium Game Server Hosting"}
               </p>
 
               <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl">
-                {themeSettings?.heroDescription || "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers."}
+                {themeSettings?.heroText || "Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month."}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                <Link href={themeSettings?.heroButtonUrl || "/pricing"}>
+                <Link href="/pricing">
                   <Button 
                     className="bg-gradient-green text-gaming-black px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow w-full sm:w-auto"
                     size="lg"
                   >
                     <Rocket className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
-                    {themeSettings?.heroButtonText || "Get Started"} - From $2.99/mo
+                    Get Started - From $2.99/mo
                   </Button>
                 </Link>
                 <Link href="/minecraft-tools">
@@ -78,7 +84,7 @@ export default function HeroSection() {
                   <span className="text-gaming-gray text-sm lg:text-base">24/7 Support</span>
                 </div>
               </div>
-          </div>
+            </div>
           
           <div className="relative">
             <div className="bg-gradient-to-br from-gaming-dark to-gaming-black rounded-2xl shadow-2xl shadow-gaming-green/20 animate-float p-8 border border-gaming-green/20">

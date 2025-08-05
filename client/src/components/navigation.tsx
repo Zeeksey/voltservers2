@@ -2,10 +2,19 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap, Gamepad2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+
+interface ThemeSettings {
+  siteName?: string;
+}
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
+  
+  const { data: themeSettings } = useQuery<ThemeSettings>({
+    queryKey: ["/api/theme-settings"],
+  });
 
   const scrollToSection = (sectionId: string) => {
     if (location !== '/') {
@@ -36,7 +45,7 @@ export default function Navigation() {
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
                 <Zap className="text-gaming-black text-lg lg:text-xl" />
               </div>
-              <span className="text-xl lg:text-2xl font-bold text-gaming-green">VoltServers</span>
+              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{themeSettings?.siteName || "VoltServers"}</span>
             </div>
           </Link>
           
