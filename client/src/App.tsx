@@ -36,6 +36,7 @@ const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const ServerManagementPage = lazy(() => import("@/pages/server-management"));
 const BillingManagementPage = lazy(() => import("@/pages/billing-management"));
 const TicketDetailsPage = lazy(() => import("@/pages/ticket-details"));
+const AccountSettingsPage = lazy(() => import("@/pages/account-settings"));
 
 // Loading component for Suspense
 const PageLoader = () => (
@@ -77,6 +78,7 @@ function Router() {
       <Route path="/admin" component={(props) => <LazyWrapper Component={AdminDashboard} {...props} />} />
       <Route path="/server-management" component={(props) => <LazyWrapper Component={ServerManagementPage} {...props} />} />
       <Route path="/billing-management" component={(props) => <LazyWrapper Component={BillingManagementPage} {...props} />} />
+      <Route path="/account-settings" component={(props) => <LazyWrapper Component={AccountSettingsPage} {...props} />} />
       <Route component={NotFound} />
     </Switch>
   );

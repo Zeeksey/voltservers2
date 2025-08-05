@@ -98,19 +98,19 @@ export class WHMCSIntegration {
       }
 
       return data;
-    } catch (error) {
+    } catch (error: any) {
       console.error('WHMCS API Error:', error);
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      if (error.cause) {
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
+      if (error?.cause) {
         console.error('Error cause:', error.cause);
       }
       throw error;
     }
   }
 
-  // Get client details from WHMCS
-  async getClientDetails(clientId: string): Promise<WHMCSUser | null> {
+  // Get basic client details from WHMCS
+  async getBasicClientDetails(clientId: string): Promise<WHMCSUser | null> {
     try {
       const response = await this.makeAPICall('GetClientsDetails', {
         clientid: clientId
@@ -125,7 +125,7 @@ export class WHMCSIntegration {
         groupid: response.groupid
       };
     } catch (error) {
-      console.error('Error fetching client details:', error);
+      console.error('Error fetching basic client details:', error);
       return null;
     }
   }
@@ -139,7 +139,7 @@ export class WHMCSIntegration {
       });
 
       if (response.userid) {
-        return await this.getClientDetails(response.userid);
+        return await this.getBasicClientDetails(response.userid);
       }
 
       return null;
@@ -326,13 +326,54 @@ export class WHMCSIntegration {
     }
   }
 
-  // Get support departments
-  async getSupportDepartments(): Promise<any> {
+  // Update client details
+  async updateClientDetails(clientId: string, updates: {
+    firstname?: string;
+    lastname?: string;
+    companyname?: string;
+    email?: string;
+    address1?: string;
+    address2?: string;
+    city?: string;
+    state?: string;
+    postcode?: string;
+    country?: string;
+    phonenumber?: string;
+  }): Promise<any> {
     try {
-      return await this.makeAPICall('GetSupportDepartments');
+      return await this.makeAPICall('UpdateClient', {
+        clientid: clientId,
+        ...updates
+      });
     } catch (error) {
-      console.error('Error fetching support departments:', error);
+      console.error('Error updating client details:', error);
+      throw error;
+    }
+  }
+
+  // Get client details with full profile information
+  async getClientDetails(clientId: string): Promise<any> {
+    try {
+      return await this.makeAPICall('GetClientsDetails', {
+        clientid: clientId,
+        stats: true
+      });
+    } catch (error) {
+      console.error('Error fetching client details:', error);
       return null;
+    }
+  }
+
+  // Update client password
+  async updateClientPassword(clientId: string, newPassword: string): Promise<any> {
+    try {
+      return await this.makeAPICall('UpdateClientPassword', {
+        userid: clientId,
+        password: newPassword
+      });
+    } catch (error) {
+      console.error('Error updating client password:', error);
+      throw error;
     }
   }
 
@@ -372,7 +413,7 @@ export function createWHMCSAuthMiddleware(whmcs: WHMCSIntegration) {
     }
 
     // Get user details from WHMCS
-    const user = await whmcs.getClientDetails(userid);
+    const user = await whmcs.getBasicClientDetails(userid);
     if (!user) {
       return res.status(401).json({ message: 'User not found in WHMCS' });
     }

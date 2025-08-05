@@ -1964,6 +1964,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     whmcsIntegration = new WHMCSIntegration();
   }
 
+  // WHMCS Account Settings API Endpoints
+  
+  // Get detailed client profile information
+  app.get('/api/whmcs/account/profile/:clientEmail', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { clientEmail } = req.params;
+      const { requestorEmail } = req.query;
+      
+      // Verify the requesting user can only access their own profile
+      if (requestorEmail && requestorEmail !== clientEmail) {
+        return res.status(403).json({ error: 'Access denied: You can only view your own profile' });
+      }
+      
+      // Get client by email first
+      const clientData = await whmcsIntegration.getClientByEmail(clientEmail);
+      if (!clientData) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+      
+      // Get detailed client information
+      const profileDetails = await whmcsIntegration.getClientDetails(clientData.userid);
+      res.json(profileDetails);
+    } catch (error) {
+      console.error('Error fetching client profile:', error);
+      res.status(500).json({ error: 'Failed to fetch profile information' });
+    }
+  });
+
+  // Update client profile information
+  app.put('/api/whmcs/account/profile/:clientEmail', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { clientEmail } = req.params;
+      const { requestorEmail, ...updates } = req.body;
+      
+      // Verify the requesting user can only update their own profile
+      if (requestorEmail && requestorEmail !== clientEmail) {
+        return res.status(403).json({ error: 'Access denied: You can only update your own profile' });
+      }
+      
+      // Get client by email first
+      const clientData = await whmcsIntegration.getClientByEmail(clientEmail);
+      if (!clientData) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+      
+      // Update client information
+      const result = await whmcsIntegration.updateClientDetails(clientData.userid, updates);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating client profile:', error);
+      res.status(500).json({ error: 'Failed to update profile information' });
+    }
+  });
+
+  // Update client password
+  app.put('/api/whmcs/account/password/:clientEmail', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { clientEmail } = req.params;
+      const { requestorEmail, newPassword } = req.body;
+      
+      // Verify the requesting user can only update their own password
+      if (requestorEmail && requestorEmail !== clientEmail) {
+        return res.status(403).json({ error: 'Access denied: You can only update your own password' });
+      }
+      
+      if (!newPassword || newPassword.length < 8) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long' });
+      }
+      
+      // Get client by email first
+      const clientData = await whmcsIntegration.getClientByEmail(clientEmail);
+      if (!clientData) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+      
+      // Update password
+      const result = await whmcsIntegration.updateClientPassword(clientData.userid, newPassword);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating password:', error);
+      res.status(500).json({ error: 'Failed to update password' });
+    }
+  });
+
   // WHMCS API Endpoints
   app.get("/api/whmcs/test", async (req, res) => {
     if (!whmcsIntegration) {
