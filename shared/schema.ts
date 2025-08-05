@@ -54,7 +54,7 @@ export const games = pgTable("games", {
   heroImageUrl: text("hero_image_url"),
   features: text("features").array().default(sql`'{}'::text[]`),
   pricingPlans: jsonb("pricing_plans").default(sql`'[]'::jsonb`),
-  pricingTiers: jsonb("pricing_tiers").default(sql`'{"monthly": 1.0, "biannual": 0.85, "annual": 0.75}'::jsonb`), // Discount multipliers
+
   detailedDescription: text("detailed_description"),
   systemRequirements: text("system_requirements"),
   supportInfo: text("support_info"),
@@ -82,10 +82,13 @@ export const serverStatus = pgTable("server_status", {
 
 export const serverLocations = pgTable("server_locations", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  name: text("name").notNull(),
+  city: text("city").notNull(),
+  country: text("country").notNull(),
   region: text("region").notNull(),
-  status: text("status").notNull(),
-  icon: text("icon").notNull(),
+  provider: text("provider").notNull(),
+  ipAddress: text("ip_address").notNull(),
+  status: text("status").notNull().default("online"),
+  ping: integer("ping").default(0),
 });
 
 export const minecraftTools = pgTable("minecraft_tools", {

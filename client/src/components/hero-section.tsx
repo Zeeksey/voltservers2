@@ -30,7 +30,7 @@ export default function HeroSection() {
             
             <p className="text-xl text-gaming-gray max-w-xl">
               Deploy your game servers in seconds with our cutting-edge infrastructure. 
-              From Minecraft to CS2, we've got you covered with enterprise-grade performance.
+              From Minecraft to CS2, Rust, and more - we've got you covered with enterprise-grade performance and global reach.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -73,9 +73,13 @@ export default function HeroSection() {
               alt="Modern gaming setup with server interfaces" 
               className="rounded-2xl shadow-2xl shadow-gaming-green/20 animate-float" 
             />
-            <div className="absolute -bottom-6 -right-6 bg-gaming-green text-gaming-black p-4 rounded-xl font-bold shadow-lg">
-              <div className="text-2xl">50K+</div>
+            <div className="absolute -bottom-6 -right-6 bg-gaming-green text-gaming-black p-4 rounded-xl font-bold shadow-lg animate-pulse-green">
+              <div className="text-2xl">15K+</div>
               <div className="text-sm">Active Servers</div>
+            </div>
+            <div className="absolute -top-4 -left-4 bg-gaming-black-light border border-gaming-green/30 text-gaming-green p-3 rounded-xl font-bold shadow-lg">
+              <div className="text-lg">99.9%</div>
+              <div className="text-xs">Uptime</div>
             </div>
           </div>
         </div>

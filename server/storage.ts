@@ -307,39 +307,41 @@ export class MemStorage implements IStorage {
 
     sampleStatus.forEach(status => this.serverStatus.set(status.id, status));
 
-    // Initialize server locations
-    const sampleLocations: ServerLocation[] = [
+    // Initialize server locations with proper ping data
+    const sampleServerLocations: ServerLocation[] = [
       {
         id: randomUUID(),
-        name: "US East, US West",
-        region: "North America",
+        city: "Virginia Beach",
+        country: "United States", 
+        region: "Virginia",
+        provider: "VINTHILL",
+        ipAddress: "135.148.137.158",
         status: "online",
-        icon: "fas fa-globe-americas"
+        ping: 15
       },
       {
         id: randomUUID(),
-        name: "London, Frankfurt",
-        region: "Europe",
+        city: "Los Angeles",
+        country: "United States",
+        region: "California", 
+        provider: "DataPacket",
+        ipAddress: "8.8.8.8",
         status: "online",
-        icon: "fas fa-globe-europe"
+        ping: 25
       },
       {
         id: randomUUID(),
-        name: "Singapore, Tokyo",
-        region: "Asia Pacific",
+        city: "Frankfurt",
+        country: "Germany",
+        region: "Hesse",
+        provider: "Hetzner",
+        ipAddress: "1.1.1.1",
         status: "online",
-        icon: "fas fa-globe-asia"
-      },
-      {
-        id: randomUUID(),
-        name: "Sydney, Melbourne",
-        region: "Australia",
-        status: "online",
-        icon: "fas fa-globe"
+        ping: 35
       }
     ];
 
-    sampleLocations.forEach(location => this.serverLocations.set(location.id, location));
+    sampleServerLocations.forEach(location => this.serverLocations.set(location.id, location));
 
     // Initialize blog posts
     const samplePosts: BlogPost[] = [

@@ -1,14 +1,17 @@
 import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
 import HeroSection from "@/components/hero-section";
+import StatsSection from "@/components/stats-section";
 import GameCards from "@/components/game-cards";
+import FeaturesSection from "@/components/features-section";
 import PricingSection from "@/components/pricing-section";
+import TestimonialsSection from "@/components/testimonials-section";
 import DemoServers from "@/components/demo-servers";
 import ServerStatus from "@/components/server-status";
 import ServerLocations from "@/components/server-locations";
 import MinecraftTools from "@/components/minecraft-tools";
 import BlogSection from "@/components/blog-section";
-import FeaturesSection from "@/components/features-section";
+import CtaSection from "@/components/cta-section";
 import Footer from "@/components/footer";
 
 export default function Home() {
@@ -21,14 +24,17 @@ export default function Home() {
       <PromoBanner />
       <Navigation />
       <HeroSection />
+      <StatsSection />
       <GameCards />
+      <FeaturesSection />
       <PricingSection />
+      <TestimonialsSection />
       <DemoServers />
       <ServerStatus />
       <ServerLocations />
       <MinecraftTools />
       <BlogSection />
-      <FeaturesSection />
+      <CtaSection />
       <Footer />
     </div>
   );
