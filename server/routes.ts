@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage, memStorage, MemStorage } from "./storage";
 import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
@@ -872,17 +872,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get promo settings error:", error);
-      // Return fallback promo settings for admin if database is unavailable
-      res.json({
-        id: "fallback-promo",
-        isEnabled: true,
-        message: "🎮 Welcome to GameHost Pro - Professional Game Server Hosting!",
-        linkText: "Get Started",
-        linkUrl: "/pricing",
-        backgroundColor: "#22c55e",
-        textColor: "#ffffff",
-        updatedAt: new Date()
-      });
+      // Return memory storage fallback instead of hardcoded fallback
+      try {
+        const { MemStorage } = await import("./storage");
+        const memStorage = new MemStorage();
+        const fallbackSettings = await memStorage.getPromoSettings();
+        res.json(fallbackSettings || {
+          id: "fallback-promo",
+          isEnabled: true,
+          message: "🎮 Welcome to GameHost Pro - Professional Game Server Hosting!",
+          linkText: "Get Started",
+          linkUrl: "/pricing",
+          backgroundColor: "#22c55e",
+          textColor: "#ffffff",
+          updatedAt: new Date()
+        });
+      } catch (memError) {
+        res.status(500).json({ error: "Failed to load promo settings" });
+      }
     }
   });
 
@@ -892,12 +899,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Update promo settings error:", error);
-      // Return updated settings as requested when database is unavailable
-      res.json({
-        ...req.body,
-        id: "fallback-promo",
-        updatedAt: new Date()
-      });
+      // Use memory storage fallback instead of hardcoded fallback
+      try {
+        const { MemStorage } = await import("./storage");
+        const memStorage = new MemStorage();
+        const updatedSettings = await memStorage.updatePromoSettings(req.body);
+        res.json(updatedSettings);
+      } catch (memError) {
+        res.status(500).json({ error: "Failed to update promo settings" });
+      }
     }
   });
 
@@ -929,17 +939,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Get public promo settings error:", error);
-      // Return fallback promo settings if database is unavailable
-      res.json({
-        id: "fallback-promo",
-        isEnabled: true,
-        message: "🎮 Welcome to GameHost Pro - Professional Game Server Hosting!",
-        linkText: "Get Started",
-        linkUrl: "/pricing",
-        backgroundColor: "#22c55e",
-        textColor: "#ffffff",
-        updatedAt: new Date()
-      });
+      // Use memory storage fallback instead of hardcoded fallback
+      try {
+        const { MemStorage } = await import("./storage");
+        const memStorage = new MemStorage();
+        const fallbackSettings = await memStorage.getPromoSettings();
+        res.json(fallbackSettings || {
+          id: "fallback-promo",
+          isEnabled: true,
+          message: "🎮 Welcome to GameHost Pro - Professional Game Server Hosting!",
+          linkText: "Get Started",
+          linkUrl: "/pricing",
+          backgroundColor: "#22c55e",
+          textColor: "#ffffff",
+          updatedAt: new Date()
+        });
+      } catch (memError) {
+        res.status(500).json({ error: "Failed to load promo settings" });
+      }
     }
   });
 

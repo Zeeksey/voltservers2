@@ -213,6 +213,14 @@ export class MemStorage implements IStorage {
   private minecraftPlayers: Map<string, MinecraftPlayer>;
   private minecraftBackups: Map<string, MinecraftBackup>;
   private minecraftLogs: Map<string, MinecraftLog>;
+  
+  // Admin settings storage
+  private promoSettings: PromoSetting | null = null;
+  private themeSettings: any = null;
+  
+  // Admin settings storage
+  private promoSettings: PromoSetting | null = null;
+  private themeSettings: any = null;
 
   constructor() {
     this.users = new Map();
@@ -1412,7 +1420,43 @@ export class MemStorage implements IStorage {
 
     logs.forEach(log => this.minecraftLogs.set(log.id, log));
   }
+
+  // Promo settings methods
+  async getPromoSettings(): Promise<PromoSetting | undefined> {
+    return this.promoSettings || undefined;
+  }
+
+  async updatePromoSettings(settings: InsertPromoSetting): Promise<PromoSetting> {
+    const promoSetting: PromoSetting = {
+      id: this.promoSettings?.id || "promo-1",
+      ...settings,
+      updatedAt: new Date()
+    };
+    this.promoSettings = promoSetting;
+    return promoSetting;
+  }
+
+  // Theme settings methods
+  async getThemeSettings(): Promise<any> {
+    return this.themeSettings || {
+      primaryColor: "#22c55e",
+      backgroundColor: "#0a0a0a",
+      accentColor: "#34d399",
+      textColor: "#ffffff",
+      cardColor: "#1a1a1a",
+      logo: null,
+      siteName: "GameHost Pro",
+      tagline: "Professional Game Server Hosting"
+    };
+  }
+
+  async updateThemeSettings(settings: any): Promise<any> {
+    this.themeSettings = { ...this.themeSettings, ...settings };
+    return this.themeSettings;
+  }
 }
 
-// Use DatabaseStorage for persistence
+// Use DatabaseStorage for persistence, with memory fallback
+const memStorageInstance = new MemStorage();
 export const storage = new DatabaseStorage();
+export const memStorage = memStorageInstance;
