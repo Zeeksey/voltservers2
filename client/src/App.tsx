@@ -9,6 +9,7 @@ import ClientPortal from "@/pages/client-portal";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import GamePage from "@/pages/game-page";
+import BlogPostPage from "@/pages/blog-post";
 
 function Router() {
   return (
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/games/:slug" component={GamePage} />
+      <Route path="/blog/:slug" component={BlogPostPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
