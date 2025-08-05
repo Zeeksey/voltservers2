@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Script to create a static version of the gaming hosting website
+ * Script to create a static version optimized for NameCheap shared hosting
  * This removes all dynamic functionality and creates a purely static site
  */
 
