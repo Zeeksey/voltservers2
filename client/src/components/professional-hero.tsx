@@ -15,8 +15,22 @@ import {
   Play
 } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+
+interface ThemeSettings {
+  siteName?: string;
+  siteTagline?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroButtonText?: string;
+  heroButtonUrl?: string;
+}
 
 export default function ProfessionalHero() {
+  const { data: themeSettings } = useQuery<ThemeSettings>({
+    queryKey: ["/api/theme-settings"],
+  });
   const features = [
     { icon: <Zap className="w-5 h-5" />, text: "Deploy in 60 seconds" },
     { icon: <Shield className="w-5 h-5" />, text: "DDoS Protection" },
@@ -61,15 +75,14 @@ export default function ProfessionalHero() {
             {/* Main Headline */}
             <div className="space-y-4">
               <h1 className="text-5xl lg:text-7xl font-bold text-gaming-white leading-tight">
-                Premium Game
+                {themeSettings?.heroTitle || themeSettings?.siteName || "Premium Game"} 
                 <br />
                 <span className="text-gaming-green bg-gradient-to-r from-gaming-green to-green-400 bg-clip-text text-transparent">
-                  Server Hosting
+                  {themeSettings?.heroSubtitle || "Server Hosting"}
                 </span>
               </h1>
               <p className="text-xl text-gaming-gray leading-relaxed max-w-lg">
-                Deploy high-performance game servers instantly with enterprise-grade infrastructure, 
-                DDoS protection, and 24/7 expert support. Starting at just $2.99/month.
+                {themeSettings?.heroDescription || "Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month."}
               </p>
             </div>
 
@@ -85,9 +98,9 @@ export default function ProfessionalHero() {
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/games">
+              <Link href={themeSettings?.heroButtonUrl || "/games"}>
                 <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black text-lg px-8 py-4 h-auto group">
-                  Get Started Today
+                  {themeSettings?.heroButtonText || "Get Started Today"}
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
