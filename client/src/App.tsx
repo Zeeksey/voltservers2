@@ -8,7 +8,7 @@ import Home from "@/pages/home";
 import ClientPortal from "@/pages/client-portal";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
-import MinecraftManagement from "@/pages/minecraft-management";
+import MinecraftHosting from "@/pages/minecraft-hosting";
 import GamePage from "@/pages/game-page";
 import BlogPostPage from "@/pages/blog-post";
 import HardwarePage from "@/pages/hardware";
@@ -19,6 +19,7 @@ import PricingPage from "@/pages/pricing";
 import KnowledgebasePage from "@/pages/knowledgebase";
 import StatusPage from "@/pages/status";
 import GamesPage from "@/pages/games";
+import MinecraftHostingPage from "@/pages/minecraft-hosting";
 import EnterprisePage from "@/pages/enterprise";
 import DashboardPage from "@/pages/dashboard";
 
@@ -37,11 +38,12 @@ function Router() {
       <Route path="/knowledgebase" component={KnowledgebasePage} />
       <Route path="/status" component={StatusPage} />
       <Route path="/games" component={GamesPage} />
+      <Route path="/games/minecraft" component={MinecraftHostingPage} />
       <Route path="/enterprise" component={EnterprisePage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/minecraft" component={MinecraftManagement} />
+      <Route path="/minecraft" component={MinecraftHosting} />
       <Route component={NotFound} />
     </Switch>
   );

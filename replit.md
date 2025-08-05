@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack game server hosting platform called "GameHost Pro" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and access Minecraft-specific tools. It features a sleek gaming-themed design with a focus on performance and user experience.
+This is a full-stack game server hosting platform called "GameHost Pro" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and manage game servers. It features a sleek gaming-themed design with separated content across dedicated pages for better organization and user experience. The platform now includes professional enterprise features, service management dashboards, and a Shockbyte-inspired Minecraft hosting page.
 
 ## Recent Changes (January 2025)
 
@@ -39,7 +39,17 @@ Preferred communication style: Simple, everyday language.
 # System Architecture
 
 ## Frontend Architecture
-The client-side is built using React with TypeScript, utilizing Vite for development and build processes. The UI is constructed with shadcn/ui components built on top of Radix UI primitives, styled with Tailwind CSS using a custom gaming theme. The application uses Wouter for client-side routing and TanStack Query for efficient data fetching and caching. The design follows a component-based architecture with clear separation between presentation and business logic. Key features include:
+The client-side is built using React with TypeScript, utilizing Vite for development and build processes. The UI is constructed with shadcn/ui components built on top of Radix UI primitives, styled with Tailwind CSS using a custom gaming theme. The application uses Wouter for client-side routing and TanStack Query for efficient data fetching and caching. The design follows a component-based architecture with clear separation between presentation and business logic.
+
+### Page Organization (Updated January 2025)
+Content is now organized into dedicated pages to improve navigation and reduce clutter:
+- `/` - Home page with core features and hero section
+- `/enterprise` - Enterprise solutions and compliance features
+- `/dashboard` - Service management and server controls
+- `/client-portal` - Account overview and WHMCS integration
+- `/minecraft` - Shockbyte-style Minecraft hosting page with pricing plans
+- `/knowledgebase` - Professional knowledge base with categorized articles
+- `/contact` - Enhanced contact page with multiple support channels Key features include:
 - WHMCS client portal integration with authentication and service management
 - Real-time server querying for live Minecraft server data display
 - Promotional banner system positioned above navigation

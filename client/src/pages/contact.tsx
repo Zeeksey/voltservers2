@@ -2,7 +2,6 @@ import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 import EnhancedContact from "@/components/enhanced-contact";
-import LiveChat from "@/components/live-chat";
 
 export default function ContactPage() {
   return (
@@ -32,7 +31,6 @@ export default function ContactPage() {
       </section>
 
       <Footer />
-      <LiveChat />
     </div>
   );
 }

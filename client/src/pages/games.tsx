@@ -394,7 +394,7 @@ export default function GamesPage() {
                     </div>
 
                     {/* Action Button */}
-                    <Link href={`/games/${game.slug}`}>
+                    <Link href={game.slug === 'minecraft' ? '/games/minecraft' : `/games/${game.slug}`}>
                       <Button className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold group-hover:shadow-lg group-hover:shadow-gaming-green/25 transition-all">
                         Deploy Server
                       </Button>
