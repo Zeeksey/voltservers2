@@ -51,22 +51,51 @@ export default function WHMCSLogin({ onLoginSuccess, whmcsConnected }: WHMCSLogi
     }
   };
 
+  // Demo login when WHMCS is not connected
+  const handleDemoLogin = () => {
+    const demoClient = {
+      id: 'demo-123',
+      firstname: 'Demo',
+      lastname: 'User',
+      email: 'demo@voltservers.com',
+      status: 'Active',
+      companyname: 'VoltServers Demo',
+      phonenumber: '(555) 123-4567'
+    };
+    
+    localStorage.setItem('whmcs_client_id', demoClient.id);
+    localStorage.setItem('whmcs_client_data', JSON.stringify(demoClient));
+    onLoginSuccess(demoClient);
+  };
+
   if (!whmcsConnected) {
     return (
       <Card className="bg-gaming-dark border-gaming-green/20">
         <CardHeader className="text-center">
           <CardTitle className="text-gaming-white text-2xl flex items-center justify-center gap-2">
-            <AlertCircle className="w-6 h-6 text-red-500" />
-            WHMCS Connection Required
+            <AlertCircle className="w-6 h-6 text-yellow-500" />
+            Demo Mode Available
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-center">
-          <Alert className="bg-gaming-dark border-red-500/20">
-            <AlertCircle className="h-4 w-4 text-red-500" />
+        <CardContent className="text-center space-y-4">
+          <Alert className="bg-gaming-dark border-yellow-500/20">
+            <AlertCircle className="h-4 w-4 text-yellow-500" />
             <AlertDescription className="text-gaming-gray">
-              WHMCS billing system is not connected. Please contact support to resolve the connection issue.
+              WHMCS billing system is temporarily unavailable. You can explore the client portal using demo mode.
             </AlertDescription>
           </Alert>
+          
+          <Button 
+            onClick={handleDemoLogin}
+            className="w-full bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Continue with Demo Account
+          </Button>
+          
+          <p className="text-gaming-gray text-sm">
+            Demo mode shows sample data and functionality. Contact support for WHMCS access.
+          </p>
         </CardContent>
       </Card>
     );

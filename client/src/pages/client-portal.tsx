@@ -48,7 +48,8 @@ export default function ClientPortal() {
   const { data: whmcsStatus } = useQuery({
     queryKey: ['/api/whmcs/test'],
     staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 2
+    retry: 1,
+    placeholderData: { connected: false, message: "Testing connection..." }
   });
 
   // Only fetch WHMCS data if connection is working and user is logged in
@@ -127,6 +128,7 @@ export default function ClientPortal() {
     localStorage.removeItem('whmcs_client_data');
     localStorage.removeItem('whmcs_client_id');
     setLoggedInClient(null);
+    setWispServerDetails({});
   };
 
   const quickActions = [
