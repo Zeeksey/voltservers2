@@ -33,9 +33,9 @@ export default function ServerManagement() {
     }
   }, []);
 
-  // Fetch Wisp servers data
-  const { data: servers, isLoading: serversLoading } = useQuery({
-    queryKey: [`/api/wisp/servers?user=${loggedInClient?.email}`],
+  // Fetch WHMCS services (real billing data)
+  const { data: whmcsServices, isLoading: servicesLoading } = useQuery({
+    queryKey: [`/api/whmcs/clients/${loggedInClient?.email}/services`],
     enabled: !!loggedInClient?.email,
     staleTime: 30 * 1000 // 30 seconds
   });
@@ -66,7 +66,29 @@ export default function ServerManagement() {
     );
   }
 
-  const serverList = servers || [];
+  // Filter and convert WHMCS services to server format - ONLY ACTIVE services
+  const serverList = whmcsServices?.products?.product?.filter((service: any) => 
+    service.status === 'Active'
+  ).map((service: any) => ({
+    id: service.id,
+    name: service.name, // Use exact product name from WHMCS
+    game: service.groupname, // Use exact group name from WHMCS
+    status: 'online', // Active services are considered online
+    ip: service.dedicatedip?.split(':')[0] || service.serverhostname,
+    port: service.dedicatedip?.split(':')[1] || '25565',
+    dedicatedip: service.dedicatedip, // Full IP:Port from WHMCS
+    billingCycle: service.billingcycle,
+    nextDueDate: service.nextduedate,
+    recurringAmount: service.recurringamount,
+    servername: service.servername,
+    serverhostname: service.serverhostname,
+    orderNumber: service.ordernumber,
+    regDate: service.regdate
+  })) || [];
+
+  console.log('Logged in client data:', loggedInClient);
+  console.log('Services data:', whmcsServices);
+  console.log('Filtered active servers:', serverList);
 
   return (
     <div className="min-h-screen bg-gaming-black text-gaming-white">
@@ -83,7 +105,7 @@ export default function ServerManagement() {
           </p>
         </div>
 
-        {serversLoading ? (
+        {servicesLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-8 h-8 border-2 border-gaming-green/20 border-t-gaming-green rounded-full animate-spin" />
             <span className="ml-3 text-gaming-gray">Loading your servers...</span>
@@ -149,30 +171,30 @@ export default function ServerManagement() {
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
-                    {/* Server Stats Overview */}
+                    {/* Server Info Grid */}
                     <div className="grid grid-cols-2 gap-4">
                       <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-gaming-blue" />
+                        <Monitor className="w-4 h-4 text-gaming-green" />
                         <span className="text-sm text-gaming-gray">
-                          {server.currentPlayers}/{server.maxPlayers} Players
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Cpu className="w-4 h-4 text-gaming-green" />
-                        <span className="text-sm text-gaming-gray">
-                          {server.cpu}% CPU
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Monitor className="w-4 h-4 text-gaming-purple" />
-                        <span className="text-sm text-gaming-gray">
-                          {Math.round(server.memory.used / 1024 * 100) / 100}GB / {Math.round(server.memory.total / 1024 * 100) / 100}GB RAM
+                          {server.billingCycle}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Network className="w-4 h-4 text-gaming-yellow" />
                         <span className="text-sm text-gaming-gray">
-                          {server.location}
+                          {server.servername}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Server className="w-4 h-4 text-gaming-blue" />
+                        <span className="text-sm text-gaming-gray">
+                          Order #{server.orderNumber}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-4 h-4 text-gaming-green" />
+                        <span className="text-sm text-gaming-gray">
+                          Since {server.regDate}
                         </span>
                       </div>
                     </div>
@@ -181,7 +203,7 @@ export default function ServerManagement() {
                     <div className="bg-gaming-black/30 rounded-lg p-3">
                       <div className="text-xs text-gaming-gray mb-1">Server Address</div>
                       <div className="text-sm text-gaming-white font-mono">
-                        {server.ip}:{server.port}
+                        {server.dedicatedip || `${server.ip}:${server.port}`}
                       </div>
                     </div>
 
