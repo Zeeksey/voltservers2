@@ -58,6 +58,51 @@ export const minecraftTools = pgTable("minecraft_tools", {
   icon: text("icon").notNull(),
 });
 
+export const blogPosts = pgTable("blog_posts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url").notNull(),
+  author: text("author").notNull(),
+  publishedAt: timestamp("published_at").notNull().defaultNow(),
+  tags: text("tags").array().notNull(),
+  isPublished: boolean("is_published").notNull().default(true),
+});
+
+export const gamePages = pgTable("game_pages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  gameId: varchar("game_id").notNull(),
+  features: text("features").array().notNull(),
+  requirements: text("requirements").array().notNull(),
+  mods: text("mods").array().notNull(),
+  screenshots: text("screenshots").array().notNull(),
+  setupGuide: text("setup_guide").notNull(),
+  faq: text("faq").array().notNull(),
+});
+
+export const demoServers = pgTable("demo_servers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  gameId: varchar("game_id").notNull(),
+  serverName: text("server_name").notNull(),
+  serverIp: text("server_ip").notNull(),
+  serverPort: integer("server_port").notNull(),
+  maxPlayers: integer("max_players").notNull(),
+  description: text("description").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  playtime: integer("playtime").notNull().default(0), // in minutes
+});
+
+export const pricingDetails = pgTable("pricing_details", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  planId: varchar("plan_id").notNull(),
+  gameId: varchar("game_id").notNull(),
+  customPrice: decimal("custom_price", { precision: 10, scale: 2 }),
+  gameSpecificFeatures: text("game_specific_features").array().notNull(),
+  limitations: text("limitations").array().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -85,6 +130,23 @@ export const insertMinecraftToolSchema = createInsertSchema(minecraftTools).omit
   id: true,
 });
 
+export const insertBlogPostSchema = createInsertSchema(blogPosts).omit({
+  id: true,
+  publishedAt: true,
+});
+
+export const insertGamePageSchema = createInsertSchema(gamePages).omit({
+  id: true,
+});
+
+export const insertDemoServerSchema = createInsertSchema(demoServers).omit({
+  id: true,
+});
+
+export const insertPricingDetailSchema = createInsertSchema(pricingDetails).omit({
+  id: true,
+});
+
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -103,3 +165,15 @@ export type ServerLocation = typeof serverLocations.$inferSelect;
 
 export type InsertMinecraftTool = z.infer<typeof insertMinecraftToolSchema>;
 export type MinecraftTool = typeof minecraftTools.$inferSelect;
+
+export type InsertBlogPost = z.infer<typeof insertBlogPostSchema>;
+export type BlogPost = typeof blogPosts.$inferSelect;
+
+export type InsertGamePage = z.infer<typeof insertGamePageSchema>;
+export type GamePage = typeof gamePages.$inferSelect;
+
+export type InsertDemoServer = z.infer<typeof insertDemoServerSchema>;
+export type DemoServer = typeof demoServers.$inferSelect;
+
+export type InsertPricingDetail = z.infer<typeof insertPricingDetailSchema>;
+export type PricingDetail = typeof pricingDetails.$inferSelect;

@@ -113,6 +113,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Blog posts endpoints
+  app.get("/api/blog", async (req, res) => {
+    try {
+      const posts = await storage.getPublishedBlogPosts();
+      res.json(posts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch blog posts" });
+    }
+  });
+
+  app.get("/api/blog/:slug", async (req, res) => {
+    try {
+      const post = await storage.getBlogPostBySlug(req.params.slug);
+      if (!post) {
+        return res.status(404).json({ message: "Blog post not found" });
+      }
+      res.json(post);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch blog post" });
+    }
+  });
+
+  // Game pages endpoints
+  app.get("/api/games/:gameId/details", async (req, res) => {
+    try {
+      const gamePage = await storage.getGamePageByGameId(req.params.gameId);
+      if (!gamePage) {
+        return res.status(404).json({ message: "Game page not found" });
+      }
+      res.json(gamePage);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch game page" });
+    }
+  });
+
+  // Demo servers endpoints
+  app.get("/api/demo-servers", async (req, res) => {
+    try {
+      const servers = await storage.getActiveDemoServers();
+      res.json(servers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch demo servers" });
+    }
+  });
+
+  app.get("/api/demo-servers/:id", async (req, res) => {
+    try {
+      const server = await storage.getDemoServer(req.params.id);
+      if (!server) {
+        return res.status(404).json({ message: "Demo server not found" });
+      }
+      res.json(server);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch demo server" });
+    }
+  });
+
+  app.get("/api/games/:gameId/demo-servers", async (req, res) => {
+    try {
+      const servers = await storage.getDemoServersByGameId(req.params.gameId);
+      res.json(servers);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch demo servers for game" });
+    }
+  });
+
+  // Pricing details endpoints
+  app.get("/api/pricing-details", async (req, res) => {
+    try {
+      const details = await storage.getAllPricingDetails();
+      res.json(details);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch pricing details" });
+    }
+  });
+
+  app.get("/api/pricing-plans/:planId/details", async (req, res) => {
+    try {
+      const details = await storage.getPricingDetailsByPlanId(req.params.planId);
+      res.json(details);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch pricing details for plan" });
+    }
+  });
+
+  app.get("/api/games/:gameId/pricing", async (req, res) => {
+    try {
+      const details = await storage.getPricingDetailsByGameId(req.params.gameId);
+      res.json(details);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch pricing details for game" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

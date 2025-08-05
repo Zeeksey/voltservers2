@@ -10,7 +10,15 @@ import {
   type MinecraftTool,
   type InsertMinecraftTool,
   type User, 
-  type InsertUser 
+  type InsertUser,
+  type BlogPost,
+  type InsertBlogPost,
+  type GamePage,
+  type InsertGamePage,
+  type DemoServer,
+  type InsertDemoServer,
+  type PricingDetail,
+  type InsertPricingDetail
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -44,6 +52,33 @@ export interface IStorage {
   getAllMinecraftTools(): Promise<MinecraftTool[]>;
   getMinecraftTool(id: string): Promise<MinecraftTool | undefined>;
   createMinecraftTool(tool: InsertMinecraftTool): Promise<MinecraftTool>;
+  
+  // Blog posts methods
+  getAllBlogPosts(): Promise<BlogPost[]>;
+  getBlogPost(id: string): Promise<BlogPost | undefined>;
+  getBlogPostBySlug(slug: string): Promise<BlogPost | undefined>;
+  createBlogPost(post: InsertBlogPost): Promise<BlogPost>;
+  getPublishedBlogPosts(): Promise<BlogPost[]>;
+  
+  // Game pages methods
+  getAllGamePages(): Promise<GamePage[]>;
+  getGamePage(id: string): Promise<GamePage | undefined>;
+  getGamePageByGameId(gameId: string): Promise<GamePage | undefined>;
+  createGamePage(page: InsertGamePage): Promise<GamePage>;
+  
+  // Demo servers methods
+  getAllDemoServers(): Promise<DemoServer[]>;
+  getDemoServer(id: string): Promise<DemoServer | undefined>;
+  getDemoServersByGameId(gameId: string): Promise<DemoServer[]>;
+  createDemoServer(server: InsertDemoServer): Promise<DemoServer>;
+  getActiveDemoServers(): Promise<DemoServer[]>;
+  
+  // Pricing details methods
+  getAllPricingDetails(): Promise<PricingDetail[]>;
+  getPricingDetail(id: string): Promise<PricingDetail | undefined>;
+  getPricingDetailsByPlanId(planId: string): Promise<PricingDetail[]>;
+  getPricingDetailsByGameId(gameId: string): Promise<PricingDetail[]>;
+  createPricingDetail(detail: InsertPricingDetail): Promise<PricingDetail>;
 }
 
 export class MemStorage implements IStorage {
@@ -53,6 +88,10 @@ export class MemStorage implements IStorage {
   private serverStatus: Map<string, ServerStatus>;
   private serverLocations: Map<string, ServerLocation>;
   private minecraftTools: Map<string, MinecraftTool>;
+  private blogPosts: Map<string, BlogPost>;
+  private gamePages: Map<string, GamePage>;
+  private demoServers: Map<string, DemoServer>;
+  private pricingDetails: Map<string, PricingDetail>;
 
   constructor() {
     this.users = new Map();
@@ -61,6 +100,10 @@ export class MemStorage implements IStorage {
     this.serverStatus = new Map();
     this.serverLocations = new Map();
     this.minecraftTools = new Map();
+    this.blogPosts = new Map();
+    this.gamePages = new Map();
+    this.demoServers = new Map();
+    this.pricingDetails = new Map();
     
     this.initializeData();
   }
@@ -263,6 +306,65 @@ export class MemStorage implements IStorage {
     ];
 
     sampleLocations.forEach(location => this.serverLocations.set(location.id, location));
+
+    // Initialize blog posts
+    const samplePosts: BlogPost[] = [
+      {
+        id: randomUUID(),
+        title: "How to Optimize Your Minecraft Server for Better Performance",
+        slug: "optimize-minecraft-server-performance",
+        excerpt: "Learn essential tips and tricks to boost your Minecraft server performance and reduce lag for your players.",
+        content: "# Server Optimization Guide\n\nRunning a smooth Minecraft server requires careful configuration and regular maintenance. Here are the key steps to optimize your server...",
+        imageUrl: "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        author: "GameHost Pro Team",
+        publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+        tags: ["minecraft", "optimization", "performance"],
+        isPublished: true
+      },
+      {
+        id: randomUUID(),
+        title: "Best Rust Server Plugins for 2025",
+        slug: "best-rust-server-plugins-2025",
+        excerpt: "Discover the top Rust server plugins that will enhance gameplay and keep your community engaged.",
+        content: "# Top Rust Plugins\n\nRust servers can be greatly enhanced with the right plugins. Here are our top recommendations...",
+        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400",
+        author: "Sarah Johnson",
+        publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+        tags: ["rust", "plugins", "mods"],
+        isPublished: true
+      }
+    ];
+
+    samplePosts.forEach(post => this.blogPosts.set(post.id, post));
+
+    // Initialize demo servers
+    const gameIds = Array.from(this.games.keys());
+    const sampleDemoServers: DemoServer[] = [
+      {
+        id: randomUUID(),
+        gameId: gameIds[0], // Minecraft
+        serverName: "GameHost Pro Minecraft Demo",
+        serverIp: "demo-mc.gamehostpro.com",
+        serverPort: 25565,
+        maxPlayers: 20,
+        description: "Try our Minecraft hosting with this demo server. Explore our optimized world and test our performance!",
+        isActive: true,
+        playtime: 30
+      },
+      {
+        id: randomUUID(),
+        gameId: gameIds[1], // CS2
+        serverName: "GameHost Pro CS2 Demo",
+        serverIp: "demo-cs2.gamehostpro.com",
+        serverPort: 27015,
+        maxPlayers: 16,
+        description: "Experience Counter-Strike 2 on our high-performance servers. Try different maps and game modes!",
+        isActive: true,
+        playtime: 15
+      }
+    ];
+
+    sampleDemoServers.forEach(server => this.demoServers.set(server.id, server));
   }
 
   // User methods
@@ -379,6 +481,112 @@ export class MemStorage implements IStorage {
     const tool: MinecraftTool = { ...insertTool, id };
     this.minecraftTools.set(id, tool);
     return tool;
+  }
+
+  // Blog posts methods
+  async getAllBlogPosts(): Promise<BlogPost[]> {
+    return Array.from(this.blogPosts.values());
+  }
+
+  async getBlogPost(id: string): Promise<BlogPost | undefined> {
+    return this.blogPosts.get(id);
+  }
+
+  async getBlogPostBySlug(slug: string): Promise<BlogPost | undefined> {
+    return Array.from(this.blogPosts.values()).find(post => post.slug === slug);
+  }
+
+  async createBlogPost(insertPost: InsertBlogPost): Promise<BlogPost> {
+    const id = randomUUID();
+    const post: BlogPost = { 
+      ...insertPost, 
+      id, 
+      publishedAt: new Date(),
+      isPublished: insertPost.isPublished ?? true
+    };
+    this.blogPosts.set(id, post);
+    return post;
+  }
+
+  async getPublishedBlogPosts(): Promise<BlogPost[]> {
+    return Array.from(this.blogPosts.values()).filter(post => post.isPublished);
+  }
+
+  // Game pages methods
+  async getAllGamePages(): Promise<GamePage[]> {
+    return Array.from(this.gamePages.values());
+  }
+
+  async getGamePage(id: string): Promise<GamePage | undefined> {
+    return this.gamePages.get(id);
+  }
+
+  async getGamePageByGameId(gameId: string): Promise<GamePage | undefined> {
+    return Array.from(this.gamePages.values()).find(page => page.gameId === gameId);
+  }
+
+  async createGamePage(insertPage: InsertGamePage): Promise<GamePage> {
+    const id = randomUUID();
+    const page: GamePage = { ...insertPage, id };
+    this.gamePages.set(id, page);
+    return page;
+  }
+
+  // Demo servers methods
+  async getAllDemoServers(): Promise<DemoServer[]> {
+    return Array.from(this.demoServers.values());
+  }
+
+  async getDemoServer(id: string): Promise<DemoServer | undefined> {
+    return this.demoServers.get(id);
+  }
+
+  async getDemoServersByGameId(gameId: string): Promise<DemoServer[]> {
+    return Array.from(this.demoServers.values()).filter(server => server.gameId === gameId);
+  }
+
+  async createDemoServer(insertServer: InsertDemoServer): Promise<DemoServer> {
+    const id = randomUUID();
+    const server: DemoServer = { 
+      ...insertServer, 
+      id,
+      isActive: insertServer.isActive ?? true,
+      playtime: insertServer.playtime ?? 0
+    };
+    this.demoServers.set(id, server);
+    return server;
+  }
+
+  async getActiveDemoServers(): Promise<DemoServer[]> {
+    return Array.from(this.demoServers.values()).filter(server => server.isActive);
+  }
+
+  // Pricing details methods
+  async getAllPricingDetails(): Promise<PricingDetail[]> {
+    return Array.from(this.pricingDetails.values());
+  }
+
+  async getPricingDetail(id: string): Promise<PricingDetail | undefined> {
+    return this.pricingDetails.get(id);
+  }
+
+  async getPricingDetailsByPlanId(planId: string): Promise<PricingDetail[]> {
+    return Array.from(this.pricingDetails.values()).filter(detail => detail.planId === planId);
+  }
+
+  async getPricingDetailsByGameId(gameId: string): Promise<PricingDetail[]> {
+    return Array.from(this.pricingDetails.values()).filter(detail => detail.gameId === gameId);
+  }
+
+  async createPricingDetail(insertDetail: InsertPricingDetail): Promise<PricingDetail> {
+    const id = randomUUID();
+    const detail: PricingDetail = { 
+      ...insertDetail, 
+      id,
+      customPrice: insertDetail.customPrice ?? null
+    };
+    this.pricingDetails.set(id, detail);
+    return detail;
   }
 }
 
