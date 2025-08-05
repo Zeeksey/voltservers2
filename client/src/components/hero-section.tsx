@@ -15,60 +15,61 @@ export default function HeroSection() {
       />
       <div className="absolute inset-0 bg-gradient-to-r from-gaming-black via-gaming-black/90 to-gaming-black/70" />
       
-      <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh] lg:min-h-[75vh]">
-          <div className="space-y-6 lg:space-y-8 text-center lg:text-left flex flex-col items-center lg:items-start">
-            <Badge className="inline-flex items-center px-3 py-2 lg:px-4 lg:py-2 bg-gaming-green/10 border border-gaming-green/20 text-gaming-green text-sm lg:text-base">
-              <span className="w-2 h-2 bg-gaming-green rounded-full mr-2 animate-pulse-green" />
-              99.9% Uptime Guaranteed
-            </Badge>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-              <span className="text-gaming-white">Premium</span><br />
-              <span className="text-gaming-green">Game Server</span><br />
-              <span className="text-gaming-white">Hosting</span>
-            </h1>
-            
-            <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl text-center lg:text-left">
-              Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Link href="/games">
-                <Button 
-                  className="bg-gradient-green text-gaming-black px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow w-full sm:w-auto"
-                  size="lg"
-                >
-                  <Rocket className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
-                  Get Started - From $2.99/mo
-                </Button>
-              </Link>
-              <Link href="/minecraft-tools">
-                <Button 
-                  variant="outline"
-                  className="border-2 border-gaming-green text-gaming-green px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:bg-gaming-green hover:text-gaming-black w-full sm:w-auto"
-                  size="lg"
-                >
-                  <Play className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
-                  View Demo
-                </Button>
-              </Link>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-8 pt-4">
-              <div className="flex items-center space-x-2">
-                <Shield className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
-                <span className="text-gaming-gray text-sm lg:text-base">DDoS Protection</span>
+      <div className="relative w-full">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh] lg:min-h-[75vh]">
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-6 lg:space-y-8">
+              <Badge className="inline-flex items-center px-3 py-2 lg:px-4 lg:py-2 bg-gaming-green/10 border border-gaming-green/20 text-gaming-green text-sm lg:text-base">
+                <span className="w-2 h-2 bg-gaming-green rounded-full mr-2 animate-pulse-green" />
+                99.9% Uptime Guaranteed
+              </Badge>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
+                <span className="text-gaming-white">Premium</span><br />
+                <span className="text-gaming-green">Game Server</span><br />
+                <span className="text-gaming-white">Hosting</span>
+              </h1>
+              
+              <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl">
+                Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
+                <Link href="/games">
+                  <Button 
+                    className="bg-gradient-green text-gaming-black px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow w-full sm:w-auto"
+                    size="lg"
+                  >
+                    <Rocket className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
+                    Get Started - From $2.99/mo
+                  </Button>
+                </Link>
+                <Link href="/minecraft-tools">
+                  <Button 
+                    variant="outline"
+                    className="border-2 border-gaming-green text-gaming-green px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:bg-gaming-green hover:text-gaming-black w-full sm:w-auto"
+                    size="lg"
+                  >
+                    <Play className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
+                    View Demo
+                  </Button>
+                </Link>
               </div>
-              <div className="flex items-center space-x-2">
-                <Clock className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
-                <span className="text-gaming-gray text-sm lg:text-base">Instant Setup</span>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6 lg:space-x-8 pt-4 w-full">
+                <div className="flex items-center space-x-2">
+                  <Shield className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
+                  <span className="text-gaming-gray text-sm lg:text-base">DDoS Protection</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Clock className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
+                  <span className="text-gaming-gray text-sm lg:text-base">Instant Setup</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Headphones className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
+                  <span className="text-gaming-gray text-sm lg:text-base">24/7 Support</span>
+                </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <Headphones className="text-gaming-green w-5 h-5 lg:w-6 lg:h-6" />
-                <span className="text-gaming-gray text-sm lg:text-base">24/7 Support</span>
-              </div>
-            </div>
           </div>
           
           <div className="relative">
