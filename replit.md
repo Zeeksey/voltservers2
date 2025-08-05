@@ -80,6 +80,19 @@ The application implements a comprehensive design system using shadcn/ui compone
 ## Development Tooling
 The project uses modern development tools including TypeScript for type safety, ESLint for code quality, and Vite for fast development builds. The build process is optimized for both development and production environments, with separate configurations for client and server bundling.
 
+# Deployment Documentation
+
+A comprehensive deployment guide (DEPLOYMENT_GUIDE.md) has been created covering:
+- Games management and customization
+- Demo servers configuration with real IPs
+- Branding and visual identity updates
+- Pricing plans and billing configuration
+- Blog and content management
+- Server locations setup
+- Admin panel usage
+- Environment variables and database setup
+- Production deployment with Nginx and SSL
+
 # External Dependencies
 
 ## Core Framework Dependencies
