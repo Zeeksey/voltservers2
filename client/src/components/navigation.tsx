@@ -33,12 +33,11 @@ export default function Navigation() {
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => scrollToSection('games')}
-              className="hover:text-gaming-green transition-colors"
-            >
-              Games
-            </button>
+            <Link href="/games">
+              <span className="hover:text-gaming-green transition-colors cursor-pointer">
+                Games
+              </span>
+            </Link>
             <Link href="/hardware">
               <span className="hover:text-gaming-green transition-colors cursor-pointer">
                 Hardware
@@ -92,12 +91,11 @@ export default function Navigation() {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gaming-green/20">
             <div className="flex flex-col space-y-4">
-              <button 
-                onClick={() => scrollToSection('games')}
-                className="text-left hover:text-gaming-green transition-colors"
-              >
-                Games
-              </button>
+              <Link href="/games">
+                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
+                  Games
+                </span>
+              </Link>
               <Link href="/hardware">
                 <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
                   Hardware

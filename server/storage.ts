@@ -295,6 +295,102 @@ export class MemStorage implements IStorage {
         isPopular: false,
         isNew: false,
         isTrending: true
+      },
+      {
+        id: randomUUID(),
+        name: "Project Zomboid",
+        slug: "project-zomboid",
+        description: "Isometric zombie survival with crafting and building",
+        imageUrl: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "4.99",
+        playerCount: 512,
+        isPopular: true,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "The Forest",
+        slug: "the-forest",
+        description: "Survival horror with base building and cooperative play",
+        imageUrl: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "6.99",
+        playerCount: 298,
+        isPopular: false,
+        isNew: false,
+        isTrending: true
+      },
+      {
+        id: randomUUID(),
+        name: "Terraria",
+        slug: "terraria",
+        description: "2D sandbox adventure with crafting and exploration",
+        imageUrl: "https://images.unsplash.com/photo-1578632749014-ca77efd052ee?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "3.99",
+        playerCount: 765,
+        isPopular: true,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "Space Engineers",
+        slug: "space-engineers",
+        description: "Space and planet exploration with construction and physics",
+        imageUrl: "https://images.unsplash.com/photo-1582201942988-d4e8cc5b4be7?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "8.99",
+        playerCount: 189,
+        isPopular: false,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "Garry's Mod",
+        slug: "garrys-mod",
+        description: "Physics sandbox with endless customization possibilities",
+        imageUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "4.99",
+        playerCount: 423,
+        isPopular: true,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "DayZ",
+        slug: "dayz",
+        description: "Post-apocalyptic survival with persistent character progression",
+        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "7.99",
+        playerCount: 356,
+        isPopular: false,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "Left 4 Dead 2",
+        slug: "left-4-dead-2",
+        description: "Cooperative zombie shooter with campaign and versus modes",
+        imageUrl: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "3.99",
+        playerCount: 634,
+        isPopular: true,
+        isNew: false,
+        isTrending: false
+      },
+      {
+        id: randomUUID(),
+        name: "Green Hell",
+        slug: "green-hell",
+        description: "Amazonian rainforest survival with psychological thriller elements",
+        imageUrl: "https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250",
+        basePrice: "5.99",
+        playerCount: 167,
+        isPopular: false,
+        isNew: true,
+        isTrending: false
       }
     ];
 

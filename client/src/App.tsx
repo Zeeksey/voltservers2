@@ -19,6 +19,8 @@ import PricingPage from "@/pages/pricing";
 import KnowledgebasePage from "@/pages/knowledgebase";
 import StatusPage from "@/pages/status";
 import GamesPage from "@/pages/games";
+import EnterprisePage from "@/pages/enterprise";
+import DashboardPage from "@/pages/dashboard";
 
 function Router() {
   return (
@@ -35,6 +37,8 @@ function Router() {
       <Route path="/knowledgebase" component={KnowledgebasePage} />
       <Route path="/status" component={StatusPage} />
       <Route path="/games" component={GamesPage} />
+      <Route path="/enterprise" component={EnterprisePage} />
+      <Route path="/dashboard" component={DashboardPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/minecraft" component={MinecraftManagement} />
