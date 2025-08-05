@@ -35,6 +35,7 @@ const EnterprisePage = lazy(() => import("@/pages/enterprise"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const ServerManagementPage = lazy(() => import("@/pages/server-management"));
 const BillingManagementPage = lazy(() => import("@/pages/billing-management"));
+const TicketDetailsPage = lazy(() => import("@/pages/ticket-details"));
 
 // Loading component for Suspense
 const PageLoader = () => (
@@ -55,6 +56,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/client-portal" component={(props) => <LazyWrapper Component={ClientPortal} {...props} />} />
+      <Route path="/ticket/:ticketId" component={(props) => <LazyWrapper Component={TicketDetailsPage} {...props} />} />
       <Route path="/games/:slug" component={(props) => <LazyWrapper Component={GamePage} {...props} />} />
       <Route path="/blog/:slug" component={(props) => <LazyWrapper Component={BlogPostPage} {...props} />} />
       <Route path="/hardware" component={(props) => <LazyWrapper Component={HardwarePage} {...props} />} />

@@ -2423,5 +2423,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get ticket details by ID
+  app.get('/api/whmcs/support/ticket/:ticketId', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { ticketId } = req.params;
+      console.log('Getting ticket details for ID:', ticketId);
+      
+      const ticketDetails = await whmcsIntegration.getTicketDetails(ticketId);
+      if (!ticketDetails || ticketDetails.result !== 'success') {
+        return res.status(404).json({ error: 'Ticket not found' });
+      }
+
+      res.json(ticketDetails);
+    } catch (error) {
+      console.error('Error fetching ticket details:', error);
+      res.status(500).json({ error: 'Failed to fetch ticket details' });
+    }
+  });
+
+  // Reply to a ticket
+  app.post('/api/whmcs/support/ticket/:ticketId/reply', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { ticketId } = req.params;
+      const { message, email } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ error: 'Message is required' });
+      }
+
+      console.log('Adding reply to ticket ID:', ticketId, 'with message:', message);
+      
+      // Get client by email to verify ownership
+      const client = await whmcsIntegration.getClientByEmail(email);
+      if (!client) {
+        return res.status(404).json({ error: 'Client not found' });
+      }
+
+      const replyResult = await whmcsIntegration.replyToTicket(ticketId, message, client.userid);
+      if (!replyResult || replyResult.result !== 'success') {
+        return res.status(500).json({ error: 'Failed to add reply to ticket' });
+      }
+
+      res.json(replyResult);
+    } catch (error) {
+      console.error('Error replying to ticket:', error);
+      res.status(500).json({ error: 'Failed to reply to ticket' });
+    }
+  });
+
   return httpServer;
 }
