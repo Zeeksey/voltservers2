@@ -58,7 +58,10 @@ export default function BlogSection() {
                   <img 
                     src={post.imageUrl} 
                     alt={post.title} 
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" 
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      e.currentTarget.src = '/api/placeholder/400/240';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
                   <div className="absolute top-4 left-4">

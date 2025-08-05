@@ -867,8 +867,21 @@ export default function AdminDashboard() {
                         value={gameForm.imageUrl}
                         onChange={(e) => setGameForm({...gameForm, imageUrl: e.target.value})}
                         className="admin-input"
+                        placeholder="https://example.com/game-image.png or /images/games/game.svg"
                         required
                       />
+                      {gameForm.imageUrl && (
+                        <div className="mt-2">
+                          <img 
+                            src={gameForm.imageUrl} 
+                            alt="Game image preview" 
+                            className="max-h-20 w-auto rounded border border-gaming-green/20 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -1043,8 +1056,21 @@ export default function AdminDashboard() {
                         value={blogForm.imageUrl}
                         onChange={(e) => setBlogForm({...blogForm, imageUrl: e.target.value})}
                         className="admin-input"
+                        placeholder="https://example.com/blog-image.jpg"
                         required
                       />
+                      {blogForm.imageUrl && (
+                        <div className="mt-2">
+                          <img 
+                            src={blogForm.imageUrl} 
+                            alt="Blog image preview" 
+                            className="max-h-20 w-auto rounded border border-gaming-green/20 object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      )}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                       <div>

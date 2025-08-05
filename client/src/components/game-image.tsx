@@ -28,14 +28,33 @@ export default function GameImage({ src, alt, className, loading = 'lazy', gameS
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
-  // Try to get local image first if we have a game slug
+  // Prioritize external URLs, fallback to local images if needed
   const getImageSrc = () => {
-    if (gameSlug && LOCAL_GAME_IMAGES[gameSlug]) {
-      return LOCAL_GAME_IMAGES[gameSlug];
+    // If there's an error with the original src, use fallback logic
+    if (imageError) {
+      // Try to find a local image based on gameSlug
+      if (gameSlug && LOCAL_GAME_IMAGES[gameSlug]) {
+        return LOCAL_GAME_IMAGES[gameSlug];
+      }
+      
+      // Try to find local image based on alt text
+      const foundLocalImage = Object.entries(LOCAL_GAME_IMAGES).find(([slug]) => 
+        alt.toLowerCase().includes(slug) || alt.toLowerCase().includes(slug.replace('-', ' '))
+      );
+      if (foundLocalImage) {
+        return foundLocalImage[1];
+      }
+      
+      // Final fallback
+      return '/images/games/minecraft.svg';
     }
     
     // If original src is a placeholder API, try to find local image
     if (src.includes('/api/placeholder')) {
+      if (gameSlug && LOCAL_GAME_IMAGES[gameSlug]) {
+        return LOCAL_GAME_IMAGES[gameSlug];
+      }
+      
       const foundLocalImage = Object.entries(LOCAL_GAME_IMAGES).find(([slug]) => 
         alt.toLowerCase().includes(slug) || alt.toLowerCase().includes(slug.replace('-', ' '))
       );
@@ -44,7 +63,8 @@ export default function GameImage({ src, alt, className, loading = 'lazy', gameS
       }
     }
     
-    return imageError ? '/images/games/minecraft.svg' : src; // Fallback to minecraft.svg
+    // Use the original src (external URLs will be used as-is)
+    return src;
   };
 
   const handleImageError = () => {
