@@ -8,6 +8,7 @@ import GameCards from "@/components/game-cards";
 import FeaturesSection from "@/components/features-section";
 import AdvancedFeatures from "@/components/advanced-features";
 import GameOptimization from "@/components/game-optimization";
+import EnterpriseFeatures from "@/components/enterprise-features";
 import ComparisonSection from "@/components/comparison-section";
 import PricingSection from "@/components/pricing-section";
 import TestimonialsSection from "@/components/testimonials-section";
@@ -35,6 +36,7 @@ export default function Home() {
       <FeaturesSection />
       <AdvancedFeatures />
       <GameOptimization />
+      <EnterpriseFeatures />
       <ComparisonSection />
       <PricingSection />
       <TestimonialsSection />

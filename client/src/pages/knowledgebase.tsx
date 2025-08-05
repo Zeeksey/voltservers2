@@ -28,6 +28,8 @@ import { Link } from "wouter";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import ProfessionalKnowledgeBase from "@/components/professional-knowledge-base";
+import LiveChat from "@/components/live-chat";
 import type { BlogPost, ServerLocation } from "@shared/schema";
 
 export default function KnowledgebasePage() {
