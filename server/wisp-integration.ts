@@ -44,6 +44,83 @@ export class WispIntegration {
     console.log('API Key configured:', !!this.apiKey);
   }
 
+  // Get server details by server ID
+  async getServerById(serverId: string): Promise<WispServer | null> {
+    try {
+      if (!this.apiKey || !this.apiUrl) {
+        console.log('Missing Wisp credentials for server fetch');
+        return null;
+      }
+
+      const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+      const serverUrl = `${cleanUrl}/api/application/servers/${serverId}`;
+
+      console.log('Fetching Wisp server:', serverUrl);
+
+      const response = await fetch(serverUrl, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.log('Wisp server fetch failed:', response.status, response.statusText);
+        return null;
+      }
+
+      const data = await response.json();
+      console.log('Wisp server data received:', data?.attributes?.name);
+
+      if (data?.attributes) {
+        return {
+          id: data.attributes.id?.toString() || serverId,
+          name: data.attributes.name || 'Unknown Server',
+          game: data.attributes.nest?.name || 'Unknown',
+          status: this.mapWispStatus(data.attributes.status),
+          ip: data.attributes.allocation?.ip || '',
+          port: data.attributes.allocation?.port || 0,
+          maxPlayers: data.attributes.limits?.players || 0,
+          currentPlayers: 0, // Would need separate query for current players
+          cpu: data.attributes.limits?.cpu || 0,
+          memory: {
+            used: 0,
+            total: data.attributes.limits?.memory || 0
+          },
+          disk: {
+            used: 0,
+            total: data.attributes.limits?.disk || 0
+          },
+          node: data.attributes.node?.name || 'Unknown',
+          location: data.attributes.node?.location || 'Unknown',
+          uptime: 0
+        };
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error fetching Wisp server:', error);
+      return null;
+    }
+  }
+
+  // Map Wisp status to our status format
+  private mapWispStatus(status: string): 'online' | 'offline' | 'starting' | 'stopping' {
+    switch (status?.toLowerCase()) {
+      case 'running':
+        return 'online';
+      case 'stopped':
+        return 'offline';
+      case 'starting':
+        return 'starting';
+      case 'stopping':
+        return 'stopping';
+      default:
+        return 'offline';
+    }
+  }
+
   // Test Wisp connection
   async testConnection(): Promise<boolean> {
     try {

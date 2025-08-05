@@ -27,6 +27,7 @@ import { Link } from "wouter";
 
 export default function ClientPortal() {
   const [loggedInClient, setLoggedInClient] = useState<any>(null);
+  const [wispServerDetails, setWispServerDetails] = useState<Record<string, any>>({});
 
   // Check for existing login on page load
   useEffect(() => {
@@ -40,6 +41,8 @@ export default function ClientPortal() {
       }
     }
   }, []);
+
+
 
   // Test WHMCS connection first
   const { data: whmcsStatus } = useQuery({
@@ -71,6 +74,38 @@ export default function ClientPortal() {
     staleTime: 2 * 60 * 1000,
     retry: 1
   });
+
+  // Fetch Wisp server details for each WHMCS service
+  useEffect(() => {
+    const fetchWispDetails = async () => {
+      if (whmcsServices?.products?.product) {
+        const serverDetails: Record<string, any> = {};
+        
+        for (const service of whmcsServices.products.product) {
+          if (service.serverid) {
+            try {
+              const response = await fetch(`/api/wisp/server/${service.serverid}`);
+              if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.server) {
+                  serverDetails[service.serverid] = data.server;
+                  console.log(`Wisp server ${service.serverid}:`, data.server.name);
+                }
+              }
+            } catch (error) {
+              console.log(`Failed to fetch Wisp details for server ${service.serverid}:`, error);
+            }
+          }
+        }
+        
+        setWispServerDetails(serverDetails);
+      }
+    };
+
+    if (whmcsServices && !servicesLoading) {
+      fetchWispDetails();
+    }
+  }, [whmcsServices, servicesLoading]);
 
   const handleLoginSuccess = (clientData: any) => {
     setLoggedInClient(clientData);
@@ -244,7 +279,13 @@ export default function ClientPortal() {
                                 <div>
                                   <h4 className="text-gaming-white font-bold text-lg">
                                     {(() => {
-                                      // Look for custom server name in custom fields
+                                      // First try to get server name from Wisp
+                                      const wispServer = wispServerDetails[service.serverid];
+                                      if (wispServer?.name) {
+                                        return wispServer.name;
+                                      }
+                                      
+                                      // Fallback to custom fields
                                       const customFields = service.customfields?.customfield || [];
                                       const serverNameField = customFields.find((field: any) => 
                                         field.name?.toLowerCase().includes('name of the server') || 
@@ -257,8 +298,14 @@ export default function ClientPortal() {
                                     {service.groupname || service.translated_groupname || 'Game Server'} • 
                                     {service.domain || service.dedicatedip || 'Server Domain'}
                                   </p>
-                                  {/* Show additional custom field info if available */}
-                                  {service.customfields?.customfield && service.customfields.customfield.length > 0 && (
+                                  {/* Show Wisp server info or custom field info */}
+                                  {wispServerDetails[service.serverid] ? (
+                                    <div className="mt-2 text-xs text-gaming-green">
+                                      <span className="block">
+                                        ✓ Live server from Wisp panel
+                                      </span>
+                                    </div>
+                                  ) : service.customfields?.customfield && service.customfields.customfield.length > 0 && (
                                     <div className="mt-2 text-xs text-gaming-gray">
                                       {service.customfields.customfield.map((field: any, idx: number) => (
                                         field.name?.toLowerCase().includes('cluster') && (

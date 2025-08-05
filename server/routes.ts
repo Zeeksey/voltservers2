@@ -5,7 +5,7 @@ import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { WHMCSIntegration, createWHMCSAuthMiddleware, getWHMCSProducts } from "./whmcs-integration";
-import { wispIntegration } from "./wisp-integration";
+import { wispIntegration, WispIntegration } from "./wisp-integration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
@@ -2610,6 +2610,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error replying to ticket:', error);
       console.error('Error details:', error.message, error.stack);
       res.status(500).json({ error: `Failed to reply to ticket: ${error.message || 'Unknown error'}` });
+    }
+  });
+
+  // Wisp Server Details API route
+  app.get('/api/wisp/server/:serverId', async (req, res) => {
+    try {
+      const { serverId } = req.params;
+      console.log(`Fetching Wisp server details for ID: ${serverId}`);
+      
+      const wispClient = new WispIntegration();
+      const serverDetails = await wispClient.getServerById(serverId);
+      
+      if (serverDetails) {
+        res.json({
+          success: true,
+          server: serverDetails
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          error: 'Server not found in Wisp panel'
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching Wisp server details:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to fetch server details from Wisp'
+      });
     }
   });
 
