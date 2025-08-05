@@ -92,12 +92,12 @@ export default function BlogPostPage() {
           {/* Hero Image */}
           <div className="mb-8">
             <img 
-              src={post.imageUrl || "/api/placeholder/800/400"} 
+              src={post.imageUrl || "/images/blog/minecraft-setup.svg"} 
               alt={post.title}
-              className="w-full h-96 object-cover rounded-lg"
+              className="w-full h-96 object-contain rounded-lg bg-gaming-black-lighter p-8"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
-                target.src = "/api/placeholder/800/400";
+                target.src = "/images/blog/minecraft-setup.svg";
               }}
             />
           </div>
