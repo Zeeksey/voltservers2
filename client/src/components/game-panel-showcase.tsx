@@ -148,7 +148,7 @@ export default function GamePanelShowcase() {
         </div>
 
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
             {/* Server Control Panel */}
             <div className="lg:col-span-2 space-y-6">
               {/* Server Status Card */}
@@ -157,7 +157,7 @@ export default function GamePanelShowcase() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-gaming-white flex items-center gap-2">
                       <Server className="w-5 h-5 text-gaming-green" />
-                      Minecraft Server - Creative Build
+                      Minecraft Server #1
                     </CardTitle>
                     <div className="flex items-center gap-2">
                       {getStatusIcon()}
@@ -169,7 +169,7 @@ export default function GamePanelShowcase() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Server Controls */}
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button 
                       onClick={startServer}
                       disabled={serverStatus === 'online' || isStarting}
@@ -209,7 +209,7 @@ export default function GamePanelShowcase() {
                   </div>
 
                   {/* Server Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
                     <div className="text-center p-3 bg-gaming-black-light rounded-lg">
                       <Users className="w-5 h-5 text-gaming-green mx-auto mb-1" />
                       <div className="text-sm text-gaming-gray">Players</div>
