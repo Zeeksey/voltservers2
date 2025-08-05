@@ -35,7 +35,11 @@ import {
   TreePine,
   Upload,
   Eye,
-  EyeOff
+  EyeOff,
+  Search,
+  Share2,
+  BarChart3,
+  Code
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -1748,24 +1752,226 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    {/* Custom CSS */}
+                    {/* SEO & Meta Tags */}
                     <div className="space-y-4">
-                      <h3 className="text-gaming-green font-semibold">Advanced Customization</h3>
-                      <div>
-                        <Label className="text-gray-300">Custom CSS</Label>
-                        <Textarea
-                          value={themeForm.customCss}
-                          onChange={(e) => setThemeForm({...themeForm, customCss: e.target.value})}
-                          className="admin-textarea font-mono text-sm"
-                          rows={6}
-                          placeholder="/* Add your custom CSS here */
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Search className="w-4 h-4" />
+                        SEO & Meta Tags
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Site Description</Label>
+                          <Textarea
+                            value={themeForm.siteDescription}
+                            onChange={(e) => setThemeForm({...themeForm, siteDescription: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Professional game server hosting with 24/7 support and premium hardware"
+                            rows={2}
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
+                          <div>
+                            <Label className="text-gray-300">Meta Title Override</Label>
+                            <Input
+                              value={themeForm.metaTitle}
+                              onChange={(e) => setThemeForm({...themeForm, metaTitle: e.target.value})}
+                              className="admin-input"
+                              placeholder="Leave empty to use site name"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300">Meta Keywords</Label>
+                            <Input
+                              value={themeForm.metaKeywords}
+                              onChange={(e) => setThemeForm({...themeForm, metaKeywords: e.target.value})}
+                              className="admin-input"
+                              placeholder="gaming, servers, hosting, minecraft"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Meta Description</Label>
+                          <Textarea
+                            value={themeForm.metaDescription}
+                            onChange={(e) => setThemeForm({...themeForm, metaDescription: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Optimized description for search engines (150-160 characters)"
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Social Media & Analytics */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Share2 className="w-4 h-4" />
+                        Social Media & Analytics
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
+                        <div>
+                          <Label className="text-gray-300">Open Graph Title</Label>
+                          <Input
+                            value={themeForm.ogTitle}
+                            onChange={(e) => setThemeForm({...themeForm, ogTitle: e.target.value})}
+                            className="admin-input"
+                            placeholder="Title for social sharing"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Twitter Handle</Label>
+                          <Input
+                            value={themeForm.twitterSite}
+                            onChange={(e) => setThemeForm({...themeForm, twitterSite: e.target.value})}
+                            className="admin-input"
+                            placeholder="@yourgamingsite"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Google Analytics ID</Label>
+                          <Input
+                            value={themeForm.googleAnalyticsId}
+                            onChange={(e) => setThemeForm({...themeForm, googleAnalyticsId: e.target.value})}
+                            className="admin-input"
+                            placeholder="G-XXXXXXXXXX"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Facebook Pixel ID</Label>
+                          <Input
+                            value={themeForm.facebookPixelId}
+                            onChange={(e) => setThemeForm({...themeForm, facebookPixelId: e.target.value})}
+                            className="admin-input"
+                            placeholder="123456789012345"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Open Graph Description</Label>
+                          <Textarea
+                            value={themeForm.ogDescription}
+                            onChange={(e) => setThemeForm({...themeForm, ogDescription: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Description for social media sharing"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Open Graph Image URL</Label>
+                          <Input
+                            value={themeForm.ogImage}
+                            onChange={(e) => setThemeForm({...themeForm, ogImage: e.target.value})}
+                            className="admin-input"
+                            placeholder="https://example.com/og-image.jpg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Site Management */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Settings className="w-4 h-4" />
+                        Site Management
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={themeForm.maintenanceMode}
+                            onCheckedChange={(checked) => setThemeForm({...themeForm, maintenanceMode: checked})}
+                          />
+                          <Label className="text-gray-300">Maintenance Mode</Label>
+                        </div>
+                        {themeForm.maintenanceMode && (
+                          <div>
+                            <Label className="text-gray-300">Maintenance Message</Label>
+                            <Textarea
+                              value={themeForm.maintenanceMessage}
+                              onChange={(e) => setThemeForm({...themeForm, maintenanceMessage: e.target.value})}
+                              className="admin-textarea"
+                              placeholder="We're currently performing maintenance. Please check back soon!"
+                              rows={2}
+                            />
+                          </div>
+                        )}
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={themeForm.showAnnouncementBanner}
+                            onCheckedChange={(checked) => setThemeForm({...themeForm, showAnnouncementBanner: checked})}
+                          />
+                          <Label className="text-gray-300">Show Announcement Banner</Label>
+                        </div>
+                        {themeForm.showAnnouncementBanner && (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
+                            <div>
+                              <Label className="text-gray-300">Announcement Text</Label>
+                              <Input
+                                value={themeForm.announcementBanner}
+                                onChange={(e) => setThemeForm({...themeForm, announcementBanner: e.target.value})}
+                                className="admin-input"
+                                placeholder="🎉 Special offer: 50% off first month!"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-gray-300">Banner Type</Label>
+                              <Select value={themeForm.announcementType} onValueChange={(value) => setThemeForm({...themeForm, announcementType: value})}>
+                                <SelectTrigger className="admin-select">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent className="bg-gaming-black border-gaming-green/20">
+                                  <SelectItem value="info">Info (Blue)</SelectItem>
+                                  <SelectItem value="success">Success (Green)</SelectItem>
+                                  <SelectItem value="warning">Warning (Yellow)</SelectItem>
+                                  <SelectItem value="error">Error (Red)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Custom CSS & Code */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Code className="w-4 h-4" />
+                        Advanced Customization
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">Custom CSS</Label>
+                          <Textarea
+                            value={themeForm.customCss}
+                            onChange={(e) => setThemeForm({...themeForm, customCss: e.target.value})}
+                            className="admin-textarea font-mono text-sm"
+                            rows={4}
+                            placeholder="/* Add your custom CSS here */
 .custom-class {
   background: linear-gradient(45deg, #00ff88, #00cc6a);
 }"
-                        />
-                        <p className="text-gray-400 text-xs mt-1">
-                          Add custom CSS to override default styles. Use with caution.
-                        </p>
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Custom Head Code</Label>
+                          <Textarea
+                            value={themeForm.customHeadCode}
+                            onChange={(e) => setThemeForm({...themeForm, customHeadCode: e.target.value})}
+                            className="admin-textarea font-mono text-sm"
+                            placeholder="<!-- Additional meta tags, analytics, or custom scripts -->"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Custom Body Code</Label>
+                          <Textarea
+                            value={themeForm.customBodyCode}
+                            onChange={(e) => setThemeForm({...themeForm, customBodyCode: e.target.value})}
+                            className="admin-textarea font-mono text-sm"
+                            placeholder="<!-- Tracking pixels, chat widgets, or footer scripts -->"
+                            rows={3}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -1776,7 +1982,7 @@ export default function AdminDashboard() {
                         disabled={updateThemeMutation.isPending}
                       >
                         <Save className="w-4 h-4 mr-2" />
-                        {updateThemeMutation.isPending ? 'Saving...' : 'Save Theme Settings'}
+                        {updateThemeMutation.isPending ? 'Saving...' : 'Save All Settings'}
                       </Button>
                       <Button 
                         type="button"

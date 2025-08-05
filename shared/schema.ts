@@ -58,6 +58,7 @@ export const games = pgTable("games", {
   detailedDescription: text("detailed_description"),
   systemRequirements: text("system_requirements"),
   supportInfo: text("support_info"),
+  pageStructure: text("page_structure"), // JSON string for page builder structure
 });
 
 // Game page sections for customization
