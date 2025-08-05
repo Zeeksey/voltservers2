@@ -35,21 +35,25 @@ export default function HeroSection() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
-                className="bg-gradient-green text-gaming-black px-8 py-4 text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow"
-                size="lg"
-              >
-                <Rocket className="mr-2" />
-                Get Started - From $2.99/mo
-              </Button>
-              <Button 
-                variant="outline"
-                className="border-2 border-gaming-green text-gaming-green px-8 py-4 text-lg font-bold hover:bg-gaming-green hover:text-gaming-black"
-                size="lg"
-              >
-                <Play className="mr-2" />
-                View Demo
-              </Button>
+              <Link href="/games">
+                <Button 
+                  className="bg-gradient-green text-gaming-black px-8 py-4 text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow"
+                  size="lg"
+                >
+                  <Rocket className="mr-2" />
+                  Get Started - From $2.99/mo
+                </Button>
+              </Link>
+              <Link href="/minecraft-tools">
+                <Button 
+                  variant="outline"
+                  className="border-2 border-gaming-green text-gaming-green px-8 py-4 text-lg font-bold hover:bg-gaming-green hover:text-gaming-black"
+                  size="lg"
+                >
+                  <Play className="mr-2" />
+                  View Demo
+                </Button>
+              </Link>
             </div>
             
             <div className="flex items-center space-x-8 pt-4">

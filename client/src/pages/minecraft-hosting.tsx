@@ -475,9 +475,11 @@ export default function MinecraftHostingPage() {
             Join thousands of satisfied server owners. Get your Minecraft server online in under 60 seconds.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold px-8">
-              Start Your Server Now
-            </Button>
+            <Link href="/games">
+              <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold px-8">
+                Start Your Server Now
+              </Button>
+            </Link>
             <Link href="/minecraft-tools">
               <Button size="lg" variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black">
                 Minecraft Tools

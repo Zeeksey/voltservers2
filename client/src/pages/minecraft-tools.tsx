@@ -123,7 +123,7 @@ const featuredTools = minecraftTools.filter(tool => tool.featured);
 export default function MinecraftToolsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedPlatform, setSelectedPlatform] = useState('All');
+
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -143,9 +143,8 @@ export default function MinecraftToolsPage() {
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || tool.category === selectedCategory;
-    const matchesPlatform = selectedPlatform === 'All' || tool.platforms.includes(selectedPlatform);
     
-    return matchesSearch && matchesCategory && matchesPlatform;
+    return matchesSearch && matchesCategory;
   });
 
   return (
