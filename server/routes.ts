@@ -774,12 +774,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const server = await storage.createDemoServer(req.body);
       res.json(server);
     } catch (error) {
-      // Database unavailable, return created data as confirmation for admin
-      res.json({
-        id: `server-${Date.now()}`,
-        ...req.body,
-        createdAt: new Date(),
-        updatedAt: new Date()
+      console.error("Create demo server error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Demo server not created. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -789,11 +787,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const server = await storage.updateDemoServer(req.params.id, req.body);
       res.json(server);
     } catch (error) {
-      // Database unavailable, return updated data as confirmation for admin
-      res.json({
-        id: req.params.id,
-        ...req.body,
-        updatedAt: new Date()
+      console.error("Update demo server error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Demo server changes not saved. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -803,8 +800,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deleteDemoServer(req.params.id);
       res.json({ message: "Demo server deleted successfully" });
     } catch (error) {
-      // Database unavailable, return success confirmation for admin
-      res.json({ message: "Demo server deleted successfully" });
+      console.error("Delete demo server error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Demo server not deleted. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
+      });
     }
   });
 
@@ -814,12 +814,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const game = await storage.createGame(req.body);
       res.json(game);
     } catch (error) {
-      // Database unavailable, return created data as confirmation for admin
-      res.json({
-        id: `game-${Date.now()}`,
-        ...req.body,
-        createdAt: new Date(),
-        updatedAt: new Date()
+      console.error("Create game error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Game not created. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -829,11 +827,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const game = await storage.updateGame(req.params.id, req.body);
       res.json(game);
     } catch (error) {
-      // Database unavailable, return updated data as confirmation for admin
-      res.json({
-        id: req.params.id,
-        ...req.body,
-        updatedAt: new Date()
+      console.error("Update game error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Game changes not saved. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -843,8 +840,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.deleteGame(req.params.id);
       res.json({ message: "Game deleted successfully" });
     } catch (error) {
-      // Database unavailable, return success confirmation for admin
-      res.json({ message: "Game deleted successfully" });
+      console.error("Delete game error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Game not deleted. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
+      });
     }
   });
 
@@ -854,13 +854,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const post = await storage.createBlogPost(req.body);
       res.json(post);
     } catch (error) {
-      // Database unavailable, return created data as confirmation for admin
-      res.json({
-        id: `post-${Date.now()}`,
-        ...req.body,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        published: req.body.published || false
+      console.error("Create blog post error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Blog post not saved. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -870,11 +867,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const post = await storage.updateBlogPost(req.params.id, req.body);
       res.json(post);
     } catch (error) {
-      // Database unavailable, return updated data as confirmation for admin
-      res.json({
-        id: req.params.id,
-        ...req.body,
-        updatedAt: new Date()
+      console.error("Update blog post error:", error);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Changes not saved. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
       });
     }
   });
@@ -885,7 +881,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Blog post deleted successfully" });
     } catch (error) {
       console.error("Delete blog post error:", error);
-      res.status(500).json({ message: "Failed to delete blog post" });
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Blog post not deleted. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
+      });
     }
   });
 
@@ -913,8 +912,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(settings);
     } catch (error) {
       console.error("Update theme settings error:", error);
-      // Return the updated settings as requested when database is unavailable
-      res.json(req.body);
+      res.status(503).json({ 
+        message: "Database temporarily unavailable. Theme settings not saved. Please try again later or contact support.",
+        error: "DATABASE_UNAVAILABLE" 
+      });
     }
   });
 
