@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
                 <Gamepad2 className="text-gaming-black text-xl" />
               </div>
-              <span className="text-2xl font-bold text-gaming-green">GameHost Pro</span>
+              <span className="text-2xl font-bold text-gaming-green">VoltServers</span>
             </div>
             <p className="text-gaming-gray mb-6 max-w-md">
               The premier game server hosting platform trusted by thousands of gaming communities worldwide. 
@@ -23,7 +23,7 @@ export default function Footer() {
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
-                onClick={() => window.open('https://twitter.com/gamehostpro', '_blank')}
+                onClick={() => window.open('https://twitter.com/voltservers', '_blank')}
               >
                 <Twitter className="h-5 w-5" />
               </Button>
@@ -31,7 +31,7 @@ export default function Footer() {
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
-                onClick={() => window.open('https://discord.gg/gamehostpro', '_blank')}
+                onClick={() => window.open('https://discord.gg/voltservers', '_blank')}
               >
                 <MessageCircle className="h-5 w-5" />
               </Button>
@@ -39,7 +39,7 @@ export default function Footer() {
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
-                onClick={() => window.open('https://youtube.com/@gamehostpro', '_blank')}
+                onClick={() => window.open('https://youtube.com/@voltservers', '_blank')}
               >
                 <Youtube className="h-5 w-5" />
               </Button>
@@ -47,7 +47,7 @@ export default function Footer() {
                 variant="ghost" 
                 size="icon"
                 className="w-10 h-10 bg-gaming-black text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10"
-                onClick={() => window.open('https://github.com/gamehostpro', '_blank')}
+                onClick={() => window.open('https://github.com/voltservers', '_blank')}
               >
                 <Github className="h-5 w-5" />
               </Button>
@@ -57,11 +57,11 @@ export default function Footer() {
           <div>
             <h4 className="text-gaming-white font-bold mb-4">Services</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Minecraft Hosting</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">CS2 Servers</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Rust Hosting</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">ARK Servers</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Dedicated Servers</a></li>
+              <li><Link href="/games/minecraft"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Minecraft Hosting</span></Link></li>
+              <li><Link href="/games/cs2"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">CS2 Servers</span></Link></li>
+              <li><Link href="/games/rust"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Rust Hosting</span></Link></li>
+              <li><Link href="/games/ark"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">ARK Servers</span></Link></li>
+              <li><Link href="/enterprise"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Dedicated Servers</span></Link></li>
             </ul>
           </div>
           
@@ -82,15 +82,15 @@ export default function Footer() {
               <li><Link href="/knowledgebase"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Knowledge Base</span></Link></li>
               <li><Link href="/contact"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Contact Us</span></Link></li>
               <li><Link href="/client-portal"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Client Portal</span></Link></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">API Documentation</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Community Forum</a></li>
+              <li><Link href="/minecraft-tools"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Minecraft Tools</span></Link></li>
+              <li><a href="https://discord.gg/voltservers" target="_blank" rel="noopener noreferrer" className="text-gaming-gray hover:text-gaming-green transition-colors">Discord Community</a></li>
             </ul>
           </div>
         </div>
         
         <div className="border-t border-gaming-black pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gaming-gray text-sm mb-4 md:mb-0">
-            © 2025 GameHost Pro. All rights reserved.
+            © 2025 VoltServers. All rights reserved.
           </div>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Privacy Policy</a>

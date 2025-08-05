@@ -28,7 +28,7 @@ export default function Navigation() {
               <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
                 <Gamepad2 className="text-gaming-black text-xl" />
               </div>
-              <span className="text-2xl font-bold text-gaming-green">GameHost Pro</span>
+              <span className="text-2xl font-bold text-gaming-green">VoltServers</span>
             </div>
           </Link>
           
@@ -46,6 +46,16 @@ export default function Navigation() {
             <Link href="/pricing">
               <span className="hover:text-gaming-green transition-colors cursor-pointer">
                 Pricing
+              </span>
+            </Link>
+            <Link href="/knowledgebase">
+              <span className="hover:text-gaming-green transition-colors cursor-pointer">
+                Knowledge Base
+              </span>
+            </Link>
+            <Link href="/status">
+              <span className="hover:text-gaming-green transition-colors cursor-pointer">
+                Status
               </span>
             </Link>
             <Link href="/about">
@@ -66,16 +76,19 @@ export default function Navigation() {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline" 
-              className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
-              onClick={() => window.location.href = '/client-portal'}
-            >
-              Client Portal
-            </Button>
-            <Button className="bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/25">
-              Get Started
-            </Button>
+            <Link href="/client-portal">
+              <Button 
+                variant="outline" 
+                className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+              >
+                Client Portal
+              </Button>
+            </Link>
+            <Link href="/games">
+              <Button className="bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/25">
+                Get Started
+              </Button>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
@@ -104,6 +117,16 @@ export default function Navigation() {
               <Link href="/pricing">
                 <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
                   Pricing
+                </span>
+              </Link>
+              <Link href="/knowledgebase">
+                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
+                  Knowledge Base
+                </span>
+              </Link>
+              <Link href="/status">
+                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
+                  Status
                 </span>
               </Link>
               <Link href="/about">

@@ -82,25 +82,25 @@ export default function SupportPage() {
       icon: <BookOpen className="w-6 h-6 text-gaming-green" />,
       title: "Knowledge Base",
       description: "Comprehensive guides and tutorials",
-      link: "#"
+      link: "/knowledgebase"
     },
     {
       icon: <FileText className="w-6 h-6 text-gaming-green" />,
-      title: "Documentation",
-      description: "Technical documentation and API reference",
-      link: "#"
+      title: "Minecraft Tools",
+      description: "Specialized tools and utilities",
+      link: "/minecraft-tools"
     },
     {
       icon: <Users className="w-6 h-6 text-gaming-green" />,
-      title: "Community Forum",
+      title: "Community Discord",
       description: "Connect with other users and share tips",
-      link: "#"
+      link: "https://discord.gg/gamehost"
     },
     {
       icon: <Shield className="w-6 h-6 text-gaming-green" />,
       title: "Status Page",
       description: "Check our service status and uptime",
-      link: "#"
+      link: "/status"
     }
   ];
 

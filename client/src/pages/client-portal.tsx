@@ -33,8 +33,8 @@ export default function ClientPortal() {
       icon: <CreditCard className="w-6 h-6 text-gaming-green" />,
       title: "Billing & Invoices",
       description: "View billing history",
-      href: "#",
-      external: true
+      href: "/pricing",
+      external: false
     },
     {
       icon: <FileText className="w-6 h-6 text-gaming-green" />,
@@ -47,8 +47,8 @@ export default function ClientPortal() {
       icon: <Settings className="w-6 h-6 text-gaming-green" />,
       title: "Account Settings",
       description: "Update your profile",
-      href: "#",
-      external: true
+      href: "/dashboard",
+      external: false
     }
   ];
 

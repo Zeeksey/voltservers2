@@ -1,6 +1,6 @@
 # Overview
 
-This is a full-stack game server hosting platform called "GameHost Pro" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and manage game servers. It features a sleek gaming-themed design with separated content across dedicated pages for better organization and user experience. The platform now includes professional enterprise features, service management dashboards, and a Shockbyte-inspired Minecraft hosting page.
+This is a full-stack game server hosting platform called "VoltServers" built with modern web technologies. The application provides a comprehensive interface for users to browse games, view pricing plans, check server status, and manage game servers. It features a sleek gaming-themed design with separated content across dedicated pages for better organization and user experience. The platform now includes professional enterprise features, service management dashboards, and a Shockbyte-inspired Minecraft hosting page.
 
 ## Recent Changes (January 2025)
 

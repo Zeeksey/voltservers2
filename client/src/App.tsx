@@ -41,15 +41,14 @@ function Router() {
       <Route path="/knowledgebase" component={KnowledgebasePage} />
       <Route path="/status" component={StatusPage} />
       <Route path="/games" component={GamesPage} />
-      <Route path="/games/minecraft" component={MinecraftHostingPage} />
+      <Route path="/minecraft-hosting" component={MinecraftHostingPage} />
+      <Route path="/minecraft-tools" component={MinecraftToolsPage} />
+      <Route path="/minecraft-tool/:toolSlug" component={MinecraftToolPage} />
       <Route path="/enterprise" component={EnterprisePage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/games/:gameId/customize" component={AdminGameCustomization} />
       <Route path="/admin" component={AdminDashboard} />
-      <Route path="/minecraft" component={MinecraftHosting} />
-      <Route path="/minecraft-tool/:toolSlug" component={MinecraftToolPage} />
-      <Route path="/minecraft-tools" component={MinecraftToolsPage} />
       <Route component={NotFound} />
     </Switch>
   );
