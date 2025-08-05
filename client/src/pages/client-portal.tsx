@@ -1,7 +1,8 @@
 import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
-import WHMCSIntegration from "@/components/whmcs-integration";
+import ServiceManagement from "@/components/service-management";
 import Footer from "@/components/footer";
+import LiveChat from "@/components/live-chat";
 
 export default function ClientPortal() {
   return (
@@ -14,11 +15,20 @@ export default function ClientPortal() {
       
       <main className="pt-44 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <WHMCSIntegration />
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gaming-white mb-2">
+              Service Management
+            </h1>
+            <p className="text-gaming-gray">
+              Manage your game servers, view performance metrics, and control your services
+            </p>
+          </div>
+          <ServiceManagement />
         </div>
       </main>
       
       <Footer />
+      <LiveChat />
     </div>
   );
 }

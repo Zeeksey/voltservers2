@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import ClientPortal from "@/pages/client-portal";
 import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
+import MinecraftManagement from "@/pages/minecraft-management";
 import GamePage from "@/pages/game-page";
 import BlogPostPage from "@/pages/blog-post";
 import HardwarePage from "@/pages/hardware";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/status" component={StatusPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/minecraft" component={MinecraftManagement} />
       <Route component={NotFound} />
     </Switch>
   );

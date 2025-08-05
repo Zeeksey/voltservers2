@@ -206,6 +206,7 @@ export class MemStorage implements IStorage {
     this.minecraftLogs = new Map();
     
     this.initializeData();
+    this.initializeMinecraftData();
   }
 
   private initializeData() {
@@ -1005,6 +1006,286 @@ export class MemStorage implements IStorage {
       .filter(log => log.serverId === serverId && new Date(log.timestamp) < cutoffDate);
     
     logsToDelete.forEach(log => this.minecraftLogs.delete(log.id));
+  }
+
+  // Initialize sample Minecraft data
+  private initializeMinecraftData() {
+    // Create sample Minecraft servers
+    const server1Id = randomUUID();
+    const server2Id = randomUUID();
+    const server3Id = randomUUID();
+
+    const servers: MinecraftServer[] = [
+      {
+        id: server1Id,
+        userId: 'admin',
+        serverName: 'Creative Build Server',
+        serverType: 'paper',
+        version: '1.20.4',
+        status: 'online',
+        ipAddress: 'creative.gamehost.pro',
+        port: 25565,
+        maxPlayers: 50,
+        currentPlayers: 23,
+        ramAllocation: 8,
+        diskSpace: 50,
+        lastOnline: new Date(),
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+        updatedAt: new Date(),
+      },
+      {
+        id: server2Id,
+        userId: 'admin',
+        serverName: 'SMP Survival',
+        serverType: 'spigot',
+        version: '1.20.1',
+        status: 'offline',
+        ipAddress: 'survival.gamehost.pro',
+        port: 25566,
+        maxPlayers: 20,
+        currentPlayers: 0,
+        ramAllocation: 4,
+        diskSpace: 25,
+        lastOnline: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+        updatedAt: new Date(),
+      },
+      {
+        id: server3Id,
+        userId: 'admin',
+        serverName: 'Modded Adventure',
+        serverType: 'forge',
+        version: '1.19.4',
+        status: 'starting',
+        ipAddress: 'modded.gamehost.pro',
+        port: 25567,
+        maxPlayers: 30,
+        currentPlayers: 0,
+        ramAllocation: 12,
+        diskSpace: 100,
+        lastOnline: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 14 days ago
+        updatedAt: new Date(),
+      },
+    ];
+
+    servers.forEach(server => this.minecraftServers.set(server.id, server));
+
+    // Create sample plugins
+    const plugins: MinecraftPlugin[] = [
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        pluginName: 'WorldEdit',
+        version: '7.2.15',
+        author: 'sk89q',
+        description: 'Fast world editing plugin for builders',
+        isEnabled: true,
+        installedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        pluginName: 'CoreProtect',
+        version: '21.2',
+        author: 'Intelli',
+        description: 'Block logging and rollback plugin',
+        isEnabled: true,
+        installedAt: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        pluginName: 'EssentialsX',
+        version: '2.20.1',
+        author: 'EssentialsX Team',
+        description: 'Essential commands and features',
+        isEnabled: true,
+        installedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        pluginName: 'LuckPerms',
+        version: '5.4.94',
+        author: 'Luck',
+        description: 'Advanced permissions management',
+        isEnabled: true,
+        installedAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000),
+      },
+    ];
+
+    plugins.forEach(plugin => this.minecraftPlugins.set(plugin.id, plugin));
+
+    // Create sample worlds
+    const worlds: MinecraftWorld[] = [
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        worldName: 'Creative_Main',
+        worldType: 'flat',
+        seed: 'creative_world_2024',
+        gamemode: 'creative',
+        difficulty: 'peaceful',
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        worldName: 'Survival_World',
+        worldType: 'default',
+        seed: '-2043500553',
+        gamemode: 'survival',
+        difficulty: 'normal',
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server3Id,
+        worldName: 'Modded_Adventure',
+        worldType: 'biomesoplenty',
+        seed: 'modded_2024',
+        gamemode: 'survival',
+        difficulty: 'hard',
+        createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+      },
+    ];
+
+    worlds.forEach(world => this.minecraftWorlds.set(world.id, world));
+
+    // Create sample players
+    const players: MinecraftPlayer[] = [
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        playerName: 'Steve_Builder',
+        uuid: '069a79f4-44e9-4726-a5be-fca90e38aaf5',
+        isOnline: true,
+        isOp: false,
+        isBanned: false,
+        isWhitelisted: true,
+        playtime: 245 * 60 * 60 * 1000, // 245 hours
+        lastLogin: new Date(Date.now() - 30 * 60 * 1000), // 30 min ago
+        firstJoin: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        playerName: 'Alex_Architect',
+        uuid: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+        isOnline: true,
+        isOp: true,
+        isBanned: false,
+        isWhitelisted: true,
+        playtime: 180 * 60 * 60 * 1000, // 180 hours
+        lastLogin: new Date(Date.now() - 5 * 60 * 1000), // 5 min ago
+        firstJoin: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        playerName: 'Survivor123',
+        uuid: '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+        isOnline: false,
+        isOp: false,
+        isBanned: false,
+        isWhitelisted: true,
+        playtime: 95 * 60 * 60 * 1000, // 95 hours
+        lastLogin: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+        firstJoin: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000),
+      },
+    ];
+
+    players.forEach(player => this.minecraftPlayers.set(player.id, player));
+
+    // Create sample backups
+    const backups: MinecraftBackup[] = [
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        worldId: worlds[0].id,
+        backupName: 'Daily Backup - Creative',
+        backupType: 'full',
+        status: 'completed',
+        sizeBytes: 2.5 * 1024 * 1024 * 1024, // 2.5 GB
+        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        worldId: worlds[1].id,
+        backupName: 'Weekly Backup - Survival',
+        backupType: 'world',
+        status: 'completed',
+        sizeBytes: 1.8 * 1024 * 1024 * 1024, // 1.8 GB
+        createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        backupName: 'Plugin Backup',
+        backupType: 'plugins',
+        status: 'completed',
+        sizeBytes: 50 * 1024 * 1024, // 50 MB
+        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+      },
+    ];
+
+    backups.forEach(backup => this.minecraftBackups.set(backup.id, backup));
+
+    // Create sample logs
+    const logs: MinecraftLog[] = [
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        logLevel: 'INFO',
+        message: 'Server started successfully',
+        source: 'System',
+        timestamp: new Date(Date.now() - 30 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        logLevel: 'INFO',
+        message: 'Steve_Builder joined the game',
+        source: 'Player',
+        timestamp: new Date(Date.now() - 25 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        logLevel: 'INFO',
+        message: 'Alex_Architect joined the game',
+        source: 'Player',
+        timestamp: new Date(Date.now() - 20 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server1Id,
+        logLevel: 'WARN',
+        message: 'Player tried to use restricted command',
+        source: 'Security',
+        timestamp: new Date(Date.now() - 15 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server2Id,
+        logLevel: 'INFO',
+        message: 'Server stopped gracefully',
+        source: 'System',
+        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      },
+      {
+        id: randomUUID(),
+        serverId: server3Id,
+        logLevel: 'INFO',
+        message: 'Loading forge mods...',
+        source: 'Forge',
+        timestamp: new Date(Date.now() - 5 * 60 * 1000),
+      },
+    ];
+
+    logs.forEach(log => this.minecraftLogs.set(log.id, log));
   }
 }
 

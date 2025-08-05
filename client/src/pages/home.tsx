@@ -1,6 +1,7 @@
 import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
-import HeroSection from "@/components/hero-section";
+import ProfessionalHero from "@/components/professional-hero";
+import LiveChat from "@/components/live-chat";
 import TrustIndicators from "@/components/trust-indicators";
 import StatsSection from "@/components/stats-section";
 import GameCards from "@/components/game-cards";
@@ -27,7 +28,7 @@ export default function Home() {
       
       <PromoBanner />
       <Navigation />
-      <HeroSection />
+      <ProfessionalHero />
       <TrustIndicators />
       <StatsSection />
       <GameCards />
@@ -44,6 +45,7 @@ export default function Home() {
       <BlogSection />
       <CtaSection />
       <Footer />
+      <LiveChat />
     </div>
   );
 }
