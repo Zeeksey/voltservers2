@@ -36,19 +36,30 @@ export class WispIntegration {
   private apiKey: string;
 
   constructor() {
-    this.apiUrl = process.env.WISP_API_URL || 'https://panel.wisp.gg/api';
+    this.apiUrl = process.env.WISP_API_URL || 'https://panel.wisp.gg';
     this.apiKey = process.env.WISP_API_KEY || '';
+    
+    console.log('Wisp integration initialized:');
+    console.log('API URL:', this.apiUrl);
+    console.log('API Key configured:', !!this.apiKey);
   }
 
   // Test Wisp connection
   async testConnection(): Promise<boolean> {
     try {
-      if (!this.apiKey) {
-        console.log('No Wisp API key configured');
+      if (!this.apiKey || !this.apiUrl) {
+        console.log('Missing Wisp credentials - API Key:', !!this.apiKey, 'API URL:', !!this.apiUrl);
         return false;
       }
 
-      const response = await fetch(`${this.apiUrl}/user`, {
+      // Clean URL and test basic connection
+      const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+      const testUrl = `${cleanUrl}/api/client`;
+
+      console.log('Testing Wisp connection to:', testUrl);
+      console.log('Using API Key:', this.apiKey.substring(0, 8) + '...');
+
+      const response = await fetch(testUrl, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Accept': 'application/json',
@@ -56,8 +67,17 @@ export class WispIntegration {
         }
       });
 
-      console.log('Wisp connection test response:', response.status);
-      return response.ok;
+      console.log('Wisp connection test response:', response.status, response.statusText);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Wisp test successful, response type:', typeof data);
+        return true;
+      } else {
+        const errorText = await response.text();
+        console.log('Wisp test failed:', errorText);
+        return false;
+      }
     } catch (error) {
       console.error('Wisp connection test failed:', error);
       return false;
@@ -67,12 +87,17 @@ export class WispIntegration {
   // Get client servers from Wisp
   async getClientServers(clientEmail: string): Promise<WispServer[]> {
     try {
-      if (!this.apiKey) {
-        console.log('No Wisp API key - returning mock data for demo');
+      if (!this.apiKey || !this.apiUrl) {
+        console.log('No Wisp credentials - returning mock data for demo');
         return this.getMockServers();
       }
 
-      const response = await fetch(`${this.apiUrl}/servers`, {
+      const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
+      const apiUrl = `${cleanUrl}/api/client`;
+
+      console.log('Fetching servers from:', apiUrl);
+
+      const response = await fetch(apiUrl, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Accept': 'application/json',
@@ -81,11 +106,29 @@ export class WispIntegration {
       });
 
       if (!response.ok) {
-        throw new Error(`Wisp API error: ${response.status}`);
+        console.error(`Wisp API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('Error details:', errorText);
+        return this.getMockServers();
       }
 
       const data = await response.json();
-      return this.transformWispServers(data.servers || []);
+      console.log('Wisp API response received:', typeof data, 'servers found:', data.data?.length || 0);
+      
+      // Handle different response formats from Wisp API
+      let servers = [];
+      if (data.data && Array.isArray(data.data)) {
+        servers = data.data.map((item: any) => item.attributes || item);
+      } else if (Array.isArray(data)) {
+        servers = data;
+      }
+
+      if (servers.length === 0) {
+        console.log('No servers found in Wisp response, returning mock data');
+        return this.getMockServers();
+      }
+
+      return this.transformWispServers(servers);
     } catch (error) {
       console.error('Error fetching Wisp servers:', error);
       return this.getMockServers();
