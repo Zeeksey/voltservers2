@@ -2023,6 +2023,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // WHMCS Authentication
+  app.post("/api/whmcs/authenticate", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ 
+          success: false, 
+          error: "Email and password are required" 
+        });
+      }
+
+      const user = await whmcsIntegration.validateLogin(email, password);
+      
+      if (user) {
+        res.json({
+          success: true,
+          client: user
+        });
+      } else {
+        res.status(401).json({
+          success: false,
+          error: "Invalid email or password"
+        });
+      }
+    } catch (error) {
+      console.error("Authentication error:", error);
+      res.status(500).json({
+        success: false,
+        error: "Authentication failed"
+      });
+    }
+  });
+
   app.get("/api/whmcs/tickets", async (req, res) => {
     if (!whmcsIntegration) {
       return res.status(503).json({ message: "WHMCS integration not configured" });
