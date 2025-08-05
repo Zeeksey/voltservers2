@@ -1,0 +1,67 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="desert" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#CD853F;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="metal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#708090;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2F4F4F;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#desert)"/>
+  
+  <!-- Desert ground -->
+  <rect x="0" y="250" width="400" height="50" fill="#DEB887"/>
+  
+  <!-- Base structure -->
+  <rect x="150" y="200" width="100" height="50" fill="url(#metal)" stroke="#000" stroke-width="2"/>
+  
+  <!-- Walls -->
+  <rect x="140" y="150" width="20" height="50" fill="url(#metal)" stroke="#000" stroke-width="1"/>
+  <rect x="240" y="150" width="20" height="50" fill="url(#metal)" stroke="#000" stroke-width="1"/>
+  <rect x="160" y="140" width="80" height="10" fill="url(#metal)" stroke="#000" stroke-width="1"/>
+  
+  <!-- Door -->
+  <rect x="190" y="180" width="20" height="20" fill="#654321" stroke="#000" stroke-width="1"/>
+  
+  <!-- Windows -->
+  <rect x="170" y="160" width="15" height="15" fill="#87CEEB" stroke="#000" stroke-width="1"/>
+  <rect x="215" y="160" width="15" height="15" fill="#87CEEB" stroke="#000" stroke-width="1"/>
+  
+  <!-- Barbed wire -->
+  <path d="M100 220 L120 225 L140 220 L160 225 L180 220 L200 225 L220 220 L240 225 L260 220 L280 225 L300 220" stroke="#C0C0C0" stroke-width="2" fill="none"/>
+  <circle cx="110" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="130" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="150" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="170" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="190" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="210" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="230" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="250" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="270" r="2" cy="222" fill="#C0C0C0"/>
+  <circle cx="290" r="2" cy="222" fill="#C0C0C0"/>
+  
+  <!-- Player character -->
+  <rect x="300" y="200" width="20" height="20" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="300" y="220" width="20" height="30" fill="#8B4513" stroke="#000" stroke-width="1"/>
+  <rect x="290" y="225" width="10" height="15" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="320" y="225" width="10" height="15" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  
+  <!-- Weapon (AK47) -->
+  <rect x="330" y="215" width="20" height="5" fill="#2F4F4F" stroke="#000" stroke-width="1"/>
+  <rect x="345" y="210" width="5" height="15" fill="#2F4F4F" stroke="#000" stroke-width="1"/>
+  
+  <!-- Radiation symbol -->
+  <circle cx="50" cy="50" r="25" fill="#FFFF00" stroke="#000" stroke-width="2"/>
+  <path d="M50 30 L50 45 M50 55 L50 70 M35 42.5 L45 50 M55 50 L65 57.5 M35 57.5 L45 50" stroke="#000" stroke-width="3"/>
+  
+  <!-- Mountains -->
+  <polygon points="0,200 50,100 100,200" fill="#696969"/>
+  <polygon points="300,200 350,120 400,200" fill="#696969"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#FF4500" stroke="#000" stroke-width="1">RUST</text>
+</svg>

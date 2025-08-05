@@ -1,0 +1,63 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#A0522D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grass" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#32CD32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#228B22;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- Grass blocks -->
+  <rect x="0" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="40" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="80" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="120" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="160" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="200" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="240" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="280" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="320" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  <rect x="360" y="240" width="40" height="40" fill="url(#grass)" stroke="#2F4F2F" stroke-width="1"/>
+  
+  <!-- Dirt blocks -->
+  <rect x="0" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="40" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="80" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="120" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="160" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="200" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="240" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="280" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="320" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  <rect x="360" y="280" width="40" height="20" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  
+  <!-- Steve character -->
+  <rect x="150" y="180" width="30" height="30" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="150" y="210" width="30" height="40" fill="#0066CC" stroke="#000" stroke-width="1"/>
+  <rect x="140" y="220" width="10" height="20" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="180" y="220" width="10" height="20" fill="#F5DEB3" stroke="#000" stroke-width="1"/>
+  <rect x="155" y="250" width="10" height="20" fill="#654321" stroke="#000" stroke-width="1"/>
+  <rect x="175" y="250" width="10" height="20" fill="#654321" stroke="#000" stroke-width="1"/>
+  
+  <!-- Pickaxe -->
+  <rect x="190" y="210" width="15" height="5" fill="#C0C0C0" stroke="#000" stroke-width="1"/>
+  <rect x="205" y="210" width="5" height="20" fill="#8B4513" stroke="#000" stroke-width="1"/>
+  
+  <!-- Sun -->
+  <circle cx="350" cy="50" r="20" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+  
+  <!-- Clouds -->
+  <ellipse cx="100" cy="80" rx="25" ry="15" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="120" cy="75" rx="20" ry="12" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="250" cy="100" rx="30" ry="18" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="275" cy="95" rx="25" ry="15" fill="#FFFFFF" opacity="0.8"/>
+  
+  <!-- Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="#FFFFFF" stroke="#000" stroke-width="1">MINECRAFT</text>
+</svg>
