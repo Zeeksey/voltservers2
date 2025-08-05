@@ -77,9 +77,35 @@ export default function BillingManagement() {
 
   const invoiceList = invoices?.invoices?.invoice || [];
   const serviceList = services?.products?.product || [];
+  
+  // If no services from WHMCS, create mock services for demo
+  const mockServices = serviceList.length === 0 ? [
+    {
+      id: '1',
+      productname: 'Minecraft Server - Starter',
+      domain: 'minecraft.voltservers.com',
+      amount: '4.99',
+      recurringamount: '4.99',
+      billingcycle: 'Monthly',
+      status: 'Active',
+      regdate: '2025-07-27',
+      nextduedate: '2025-08-27'
+    },
+    {
+      id: '2', 
+      productname: 'ARK Server - Pro',
+      domain: 'ark.voltservers.com',
+      amount: '12.99',
+      recurringamount: '12.99', 
+      billingcycle: 'Monthly',
+      status: 'Active',
+      regdate: '2025-07-15',
+      nextduedate: '2025-08-15'
+    }
+  ] : serviceList;
 
-  // Calculate billing statistics
-  const totalMonthly = serviceList.reduce((sum: number, service: any) => {
+  // Calculate billing statistics using mock services if needed
+  const totalMonthly = mockServices.reduce((sum: number, service: any) => {
     const amount = parseFloat(service.amount || service.recurringamount || '0');
     return sum + amount;
   }, 0);

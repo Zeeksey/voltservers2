@@ -47,8 +47,8 @@ export default function ServerManagement() {
 
   // Fetch Wisp servers data
   const { data: servers, isLoading: serversLoading } = useQuery({
-    queryKey: ['/api/wisp/servers'],
-    enabled: !!loggedInClient?.id,
+    queryKey: [`/api/wisp/servers?user=${loggedInClient?.email}`],
+    enabled: !!loggedInClient?.email,
     staleTime: 30 * 1000 // 30 seconds
   });
 
