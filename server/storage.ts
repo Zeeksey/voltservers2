@@ -244,6 +244,7 @@ export class MemStorage implements IStorage {
     
     this.initializeData();
     this.initializeMinecraftData();
+    this.initializeBlogPosts();
   }
 
   private initializeData() {
@@ -859,6 +860,80 @@ export class MemStorage implements IStorage {
 
   async getPublishedBlogPosts(): Promise<BlogPost[]> {
     return Array.from(this.blogPosts.values()).filter(post => post.isPublished);
+  }
+
+  async updateBlogPost(id: string, updateData: Partial<InsertBlogPost>): Promise<BlogPost> {
+    const existingPost = this.blogPosts.get(id);
+    if (!existingPost) {
+      throw new Error(`Blog post with id ${id} not found`);
+    }
+    
+    const updatedPost: BlogPost = {
+      ...existingPost,
+      ...updateData,
+      id: existingPost.id, // Ensure ID doesn't change
+      publishedAt: existingPost.publishedAt // Keep original publish date
+    };
+    
+    this.blogPosts.set(id, updatedPost);
+    return updatedPost;
+  }
+
+  async deleteBlogPost(id: string): Promise<void> {
+    if (!this.blogPosts.has(id)) {
+      throw new Error(`Blog post with id ${id} not found`);
+    }
+    this.blogPosts.delete(id);
+  }
+
+  private initializeBlogPosts() {
+    // Initialize sample blog posts
+    const sampleBlogPosts = [
+      {
+        id: "fallback-1",
+        title: "Getting Started with GameHost Pro",
+        slug: "getting-started-gamehost-pro",
+        excerpt: "Learn how to set up your first game server with our comprehensive hosting platform.",
+        content: "# Getting Started with GameHost Pro\n\nWelcome to GameHost Pro! This comprehensive guide will help you get started with your first game server.\n\n## Creating Your Account\n\nFirst, create your account and verify your email address. This ensures secure access to your server management dashboard.\n\n## Choosing Your Game\n\nWe support popular games including:\n- Minecraft (Java & Bedrock)\n- Rust\n- ARK: Survival Evolved\n- CS2\n- Valheim\n- And many more!\n\n## Server Configuration\n\nOnce you've selected your game, choose your server specifications:\n- RAM allocation\n- Player slots\n- Server region\n- Additional features\n\n## Managing Your Server\n\nUse our intuitive control panel to:\n- Start/stop your server\n- Install mods and plugins\n- Monitor performance\n- Access server files\n- View logs\n\n## Support\n\nOur 24/7 support team is here to help with any questions or issues you may encounter.",
+        imageUrl: "/images/blog/minecraft-setup.svg",
+        author: "GameHost Team",
+        authorName: "GameHost Team",
+        publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+        isPublished: true,
+        tags: ["tutorial", "getting-started"],
+        readingTime: 5
+      },
+      {
+        id: "fallback-2",
+        title: "Minecraft Server Optimization Guide",
+        slug: "minecraft-server-optimization",
+        excerpt: "Maximize your Minecraft server performance with these proven optimization techniques.",
+        content: "# Minecraft Server Optimization Guide\n\nOptimizing your Minecraft server is crucial for providing the best experience for your players. Here's our comprehensive guide.\n\n## Server Hardware\n\nChoose the right specifications:\n- **CPU**: High single-core performance is key\n- **RAM**: At least 4GB for vanilla, 8GB+ for modded\n- **Storage**: SSD storage for faster world loading\n- **Network**: Low latency connection\n\n## Server Settings\n\nOptimize your server.properties:\n```\nview-distance=8\nmax-players=20\nsimulation-distance=6\nentity-broadcast-range-percentage=100\n```\n\n## Plugin Optimization\n\nEssential optimization plugins:\n- **Paper**: High-performance server software\n- **ClearLag**: Remove unnecessary entities\n- **WorldBorder**: Limit world size\n- **LimitPillagers**: Control mob spawning\n\n## World Management\n\n- Pre-generate chunks to reduce lag\n- Regular world cleanups\n- Backup management\n- Monitor world size\n\n## Monitoring Tools\n\nUse these tools to track performance:\n- Spark profiler\n- Server TPS monitoring\n- Memory usage tracking\n- Player connection analysis",
+        imageUrl: "/images/blog/server-optimization.svg",
+        author: "GameHost Team",
+        authorName: "GameHost Team",
+        publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+        isPublished: true,
+        tags: ["minecraft", "optimization", "performance"],
+        readingTime: 8
+      },
+      {
+        id: "fallback-3",
+        title: "Game Server Security Best Practices",
+        slug: "game-server-security-best-practices",
+        excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
+        content: "# Game Server Security Best Practices\n\nKeeping your game server secure is crucial for maintaining player trust and preventing attacks.\n\n## Basic Security Measures\n\n### Strong Authentication\n- Use complex passwords\n- Enable two-factor authentication\n- Regular password updates\n- Secure admin accounts\n\n### Network Security\n- Configure firewalls properly\n- Use secure protocols (SSH, HTTPS)\n- Regular security updates\n- Monitor network traffic\n\n## DDoS Protection\n\nProtect against attacks:\n- Use DDoS mitigation services\n- Configure rate limiting\n- Monitor unusual traffic patterns\n- Have incident response plans\n\n## Player Data Protection\n\n### Privacy Measures\n- Encrypt sensitive data\n- Secure database connections\n- Regular security audits\n- GDPR compliance\n\n### Backup Security\n- Encrypted backups\n- Secure storage locations\n- Regular backup testing\n- Off-site backup copies\n\n## Monitoring and Logging\n\nImplement comprehensive monitoring:\n- Security event logging\n- Access monitoring\n- Performance tracking\n- Automated alerts\n\n## Regular Maintenance\n\n- Security patches\n- Software updates\n- Configuration reviews\n- Vulnerability assessments",
+        imageUrl: "/images/blog/security-tips.svg",
+        author: "VoltServers Team",
+        authorName: "VoltServers Team",
+        publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        isPublished: true,
+        tags: ["security", "hosting", "best-practices"],
+        readingTime: 6
+      }
+    ];
+
+    sampleBlogPosts.forEach(post => this.blogPosts.set(post.id, post));
   }
 
   // Game pages methods

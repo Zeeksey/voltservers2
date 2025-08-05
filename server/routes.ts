@@ -346,48 +346,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(posts);
     } catch (error) {
       console.error("Blog fetch error:", error);
-      // Return fallback blog posts if database is unavailable
-      res.json([
-        {
-          id: "fallback-1",
-          title: "Getting Started with GameHost Pro",
-          slug: "getting-started-gamehost-pro",
-          excerpt: "Learn how to set up your first game server with our comprehensive hosting platform.",
-          content: "Welcome to GameHost Pro! This guide will help you get started...",
-          imageUrl: "/images/blog/server-optimization.svg",
-          authorName: "GameHost Team",
-          publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-          isPublished: true,
-          tags: ["tutorial", "getting-started"],
-          readingTime: 5
-        },
-        {
-          id: "fallback-2", 
-          title: "Minecraft Server Optimization Guide",
-          slug: "minecraft-server-optimization",
-          excerpt: "Maximize your Minecraft server performance with these proven optimization techniques.",
-          content: "Optimizing your Minecraft server is crucial for providing the best experience...",
-          imageUrl: "/images/blog/minecraft-setup.svg",
-          authorName: "GameHost Team",
-          publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-          isPublished: true,
-          tags: ["minecraft", "optimization", "performance"],
-          readingTime: 8
-        },
-        {
-          id: "fallback-3",
-          title: "Game Server Security Best Practices",
-          slug: "game-server-security-best-practices",
-          excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
-          content: "Keeping your game server secure is crucial for maintaining player trust and preventing attacks...",
-          imageUrl: "/images/blog/security-tips.svg",
-          authorName: "VoltServers Team",
-          publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          isPublished: true,
-          tags: ["security", "hosting", "best-practices"],
-          readingTime: 6
-        }
-      ]);
+      // Try memory storage as fallback
+      try {
+        const posts = await memStorage.getPublishedBlogPosts();
+        res.json(posts);
+      } catch (memError) {
+        // Return fallback blog posts if both storage systems fail
+        res.json([
+          {
+            id: "fallback-1",
+            title: "Getting Started with GameHost Pro",
+            slug: "getting-started-gamehost-pro",
+            excerpt: "Learn how to set up your first game server with our comprehensive hosting platform.",
+            content: "Welcome to GameHost Pro! This guide will help you get started...",
+            imageUrl: "/images/blog/server-optimization.svg",
+            authorName: "GameHost Team",
+            publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            isPublished: true,
+            tags: ["tutorial", "getting-started"],
+            readingTime: 5
+          },
+          {
+            id: "fallback-2", 
+            title: "Minecraft Server Optimization Guide",
+            slug: "minecraft-server-optimization",
+            excerpt: "Maximize your Minecraft server performance with these proven optimization techniques.",
+            content: "Optimizing your Minecraft server is crucial for providing the best experience...",
+            imageUrl: "/images/blog/minecraft-setup.svg",
+            authorName: "GameHost Team",
+            publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            isPublished: true,
+            tags: ["minecraft", "optimization", "performance"],
+            readingTime: 8
+          },
+          {
+            id: "fallback-3",
+            title: "Game Server Security Best Practices",
+            slug: "game-server-security-best-practices",
+            excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
+            content: "Keeping your game server secure is crucial for maintaining player trust and preventing attacks...",
+            imageUrl: "/images/blog/security-tips.svg",
+            authorName: "VoltServers Team",
+            publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            isPublished: true,
+            tags: ["security", "hosting", "best-practices"],
+            readingTime: 6
+          }
+        ]);
+      }
     }
   });
 
@@ -400,7 +406,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(post);
     } catch (error) {
       console.error("Individual blog fetch error:", error);
-      // Return fallback blog post if database is unavailable
+      // Try memory storage as fallback first
+      try {
+        const post = await memStorage.getBlogPostBySlug(req.params.slug);
+        if (post) {
+          return res.json(post);
+        }
+      } catch (memError) {
+        console.error("Memory storage blog fetch error:", memError);
+      }
+      
+      // Return fallback blog post if both storage systems fail
       const fallbackPosts = {
         "getting-started-gamehost-pro": {
           id: "fallback-1",
@@ -866,10 +882,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(post);
     } catch (error) {
       console.error("Create blog post error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Blog post not saved. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        const post = await memStorage.createBlogPost(req.body);
+        res.json(post);
+      } catch (memError) {
+        res.status(503).json({ 
+          message: "Database temporarily unavailable. Blog post not saved. Please try again later or contact support.",
+          error: "DATABASE_UNAVAILABLE" 
+        });
+      }
     }
   });
 
@@ -879,10 +901,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(post);
     } catch (error) {
       console.error("Update blog post error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Changes not saved. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        const post = await memStorage.updateBlogPost(req.params.id, req.body);
+        res.json(post);
+      } catch (memError) {
+        res.status(503).json({ 
+          message: "Database temporarily unavailable. Changes not saved. Please try again later or contact support.",
+          error: "DATABASE_UNAVAILABLE" 
+        });
+      }
     }
   });
 
@@ -892,10 +920,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ message: "Blog post deleted successfully" });
     } catch (error) {
       console.error("Delete blog post error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Blog post not deleted. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        await memStorage.deleteBlogPost(req.params.id);
+        res.json({ message: "Blog post deleted successfully" });
+      } catch (memError) {
+        res.status(503).json({ 
+          message: "Database temporarily unavailable. Blog post not deleted. Please try again later or contact support.",
+          error: "DATABASE_UNAVAILABLE" 
+        });
+      }
     }
   });
 
