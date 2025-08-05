@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
+import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
 
 export default function GameCards() {
@@ -54,12 +55,12 @@ export default function GameCards() {
             <Link key={game.id} href={`/games/${game.slug}`}>
               <Card className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full cursor-pointer">
                 <div className="relative">
-                  <img 
+                  <GameImage 
                     src={game.imageUrl} 
                     alt={`${game.name} server interface`} 
+                    gameSlug={game.slug}
                     className="w-full h-48 object-cover" 
                     loading="lazy"
-                    decoding="async"
                   />
                   {game.isPopular && (
                     <Badge className="absolute top-4 right-4 bg-gaming-green text-gaming-black">
