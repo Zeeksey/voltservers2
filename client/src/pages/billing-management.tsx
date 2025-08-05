@@ -294,23 +294,7 @@ export default function BillingManagement() {
           </TabsContent>
 
           <TabsContent value="services" className="space-y-6">
-            {/* WHMCS Services Discrepancy Alert */}
-            <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5" />
-                <div>
-                  <h4 className="text-yellow-400 font-semibold mb-1">Billing System Notice</h4>
-                  <p className="text-gaming-gray text-sm mb-2">
-                    WHMCS shows <strong>{serviceList.length} services</strong> but you have <strong>1 active server</strong> in the system.
-                    This indicates the server may not be properly linked to a billing product in WHMCS.
-                  </p>
-                  <p className="text-gaming-gray text-sm">
-                    Current monthly amount from WHMCS: <strong>${totalMonthly.toFixed(2)}</strong>
-                  </p>
-                </div>
-              </div>
-            </div>
-            
+
             <Card className="bg-gaming-dark border-gaming-green/20">
               <CardHeader>
                 <CardTitle className="text-gaming-white flex items-center gap-2">
@@ -327,19 +311,13 @@ export default function BillingManagement() {
                 ) : serviceList.length === 0 ? (
                   <div className="text-center py-8">
                     <TrendingUp className="w-12 h-12 text-gaming-gray mx-auto mb-4" />
-                    <h3 className="text-gaming-white font-semibold mb-2">No WHMCS Services Found</h3>
+                    <h3 className="text-gaming-white font-semibold mb-2">No Active Services</h3>
                     <p className="text-gaming-gray mb-4">
-                      WHMCS reports 0 active services, but you have 1 server running.
-                      The server may need to be linked to a billing product.
+                      If you believe this is an error, please contact support.
                     </p>
-                    <Link href="/server-management">
-                      <Button className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black mr-2">
-                        View Server
-                      </Button>
-                    </Link>
-                    <Link href="/games">
-                      <Button variant="outline" className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10">
-                        Browse Plans
+                    <Link href="/support">
+                      <Button className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black">
+                        Contact Support
                       </Button>
                     </Link>
                   </div>
