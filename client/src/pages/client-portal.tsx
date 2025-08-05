@@ -84,14 +84,14 @@ export default function ClientPortal() {
       icon: <Server className="w-6 h-6 text-gaming-green" />,
       title: "Manage Servers",
       description: "Control your game servers",
-      href: "/dashboard",
+      href: "/server-management",
       external: false
     },
     {
       icon: <CreditCard className="w-6 h-6 text-gaming-green" />,
       title: "Billing & Invoices",
       description: "View billing history",
-      href: "/pricing",
+      href: "/billing-management",
       external: false
     },
     {
@@ -105,7 +105,7 @@ export default function ClientPortal() {
       icon: <Settings className="w-6 h-6 text-gaming-green" />,
       title: "Account Settings",
       description: "Update your profile",
-      href: "/dashboard",
+      href: "/client-portal",
       external: false
     }
   ];

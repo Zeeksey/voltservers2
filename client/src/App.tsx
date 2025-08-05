@@ -33,6 +33,8 @@ const GamesPage = lazy(() => import("@/pages/games"));
 const MinecraftHostingPage = lazy(() => import("@/pages/minecraft-hosting"));
 const EnterprisePage = lazy(() => import("@/pages/enterprise"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
+const ServerManagementPage = lazy(() => import("@/pages/server-management"));
+const BillingManagementPage = lazy(() => import("@/pages/billing-management"));
 
 // Loading component for Suspense
 const PageLoader = () => (
@@ -71,6 +73,8 @@ function Router() {
       <Route path="/admin/login" component={(props) => <LazyWrapper Component={AdminLogin} {...props} />} />
       <Route path="/admin/games/:gameId/customize" component={(props) => <LazyWrapper Component={AdminGameCustomization} {...props} />} />
       <Route path="/admin" component={(props) => <LazyWrapper Component={AdminDashboard} {...props} />} />
+      <Route path="/server-management" component={(props) => <LazyWrapper Component={ServerManagementPage} {...props} />} />
+      <Route path="/billing-management" component={(props) => <LazyWrapper Component={BillingManagementPage} {...props} />} />
       <Route component={NotFound} />
     </Switch>
   );
