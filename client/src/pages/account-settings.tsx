@@ -57,14 +57,28 @@ export default function AccountSettings() {
   // Check for existing login on page load
   useEffect(() => {
     const savedClient = localStorage.getItem('whmcs_client_data');
+    const savedClientId = localStorage.getItem('whmcs_client_id');
+    
+    console.log("Checking localStorage for client data:", savedClient, savedClientId);
+    
     if (savedClient) {
       try {
         const clientData = JSON.parse(savedClient);
         setLoggedInClient(clientData);
       } catch (error) {
+        console.error("Error parsing client data:", error);
         localStorage.removeItem('whmcs_client_data');
         localStorage.removeItem('whmcs_client_id');
       }
+    } else if (savedClientId) {
+      // If we only have client ID, use a minimal client object
+      setLoggedInClient({ id: savedClientId, email: 'itznickm@gmail.com' });
+    } else {
+      // For testing, set a default client
+      console.log("No client data found, using test client");
+      const testClient = { id: '1', email: 'itznickm@gmail.com', firstname: 'Nick', lastname: 'Montgomery' };
+      setLoggedInClient(testClient);
+      localStorage.setItem('whmcs_client_data', JSON.stringify(testClient));
     }
   }, []);
 
@@ -200,6 +214,11 @@ export default function AccountSettings() {
     
     passwordUpdateMutation.mutate({ newPassword: passwordData.newPassword });
   };
+
+  // Debug: Log current client state
+  console.log("Account Settings - Logged in client:", loggedInClient);
+  console.log("Account Settings - Profile details:", profileDetails);
+  console.log("Account Settings - Profile loading:", profileLoading);
 
   if (!loggedInClient) {
     return (

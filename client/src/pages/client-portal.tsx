@@ -108,7 +108,7 @@ export default function ClientPortal() {
       icon: <Settings className="w-6 h-6 text-gaming-green" />,
       title: "Account Settings",
       description: "Update your profile",
-      href: "/client-portal",
+      href: "/account-settings",
       external: false
     }
   ];
