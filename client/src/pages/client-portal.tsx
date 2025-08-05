@@ -482,7 +482,7 @@ export default function ClientPortal() {
             )}
 
             {/* Support Tickets Section */}
-            {whmcsStatus?.connected && (
+            {whmcsStatus?.connected && whmcsTickets && (
               <Card className="bg-gaming-dark border-gaming-green/20">
                 <CardHeader>
                   <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
@@ -509,7 +509,7 @@ export default function ClientPortal() {
                                 #{ticket.tid}: {ticket.subject}
                               </h4>
                               <p className="text-gaming-gray text-sm">
-                                Department: {ticket.department}
+                                Department: {ticket.deptname || ticket.department || 'General Support'}
                               </p>
                               <p className="text-gaming-gray text-xs">
                                 Created: {new Date(ticket.date).toLocaleDateString()}
