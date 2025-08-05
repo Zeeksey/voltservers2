@@ -341,7 +341,11 @@ export class DatabaseStorage implements IStorage {
 
   // Demo servers methods
   async getAllDemoServers(): Promise<DemoServer[]> {
-    return await db.select().from(demoServers);
+    return await db
+      .select()
+      .from(demoServers)
+      .where(eq(demoServers.isEnabled, true))
+      .orderBy(asc(demoServers.sortOrder));
   }
 
   async getDemoServer(id: string): Promise<DemoServer | undefined> {
@@ -359,7 +363,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveDemoServers(): Promise<DemoServer[]> {
-    return await db.select().from(demoServers).where(eq(demoServers.isActive, true));
+    return await db.select().from(demoServers).where(eq(demoServers.isEnabled, true));
   }
 
   // Pricing details methods

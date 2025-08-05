@@ -1135,7 +1135,7 @@ export default function AdminDashboard() {
                     <Label className="text-gaming-white">Server Name</Label>
                     <Input 
                       placeholder="VoltServers Creative Hub"
-                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                      className="admin-input"
                     />
                   </div>
                   <div>
@@ -1159,7 +1159,7 @@ export default function AdminDashboard() {
                     <Label className="text-gaming-white">Server IP</Label>
                     <Input 
                       placeholder="demo.voltservers.com"
-                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                      className="admin-input"
                     />
                   </div>
                   <div>
@@ -1167,7 +1167,7 @@ export default function AdminDashboard() {
                     <Input 
                       type="number"
                       placeholder="25565"
-                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                      className="admin-input"
                     />
                   </div>
                 </div>
@@ -1177,14 +1177,14 @@ export default function AdminDashboard() {
                     <Input 
                       type="number"
                       placeholder="100"
-                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                      className="admin-input"
                     />
                   </div>
                   <div>
                     <Label className="text-gaming-white">Version</Label>
                     <Input 
                       placeholder="1.21.4"
-                      className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                      className="admin-input"
                     />
                   </div>
                   <div>
@@ -1205,7 +1205,7 @@ export default function AdminDashboard() {
                   <Label className="text-gaming-white">Description</Label>
                   <Textarea 
                     placeholder="Build anything you can imagine in our creative showcase server"
-                    className="bg-gaming-black border-gaming-black-light text-gaming-white"
+                    className="admin-input resize-none"
                   />
                 </div>
                 <div className="flex items-center space-x-2">
