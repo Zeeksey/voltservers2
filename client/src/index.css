@@ -1,0 +1,204 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Gaming theme colors */
+  --gaming-green: hsl(147, 100%, 50%);
+  --gaming-green-dark: hsl(147, 100%, 40%);
+  --gaming-black: hsl(220, 13%, 6%);
+  --gaming-black-light: hsl(220, 13%, 10%);
+  --gaming-black-lighter: hsl(220, 13%, 15%);
+  --gaming-gray: hsl(215, 16%, 57%);
+  --gaming-white: hsl(213, 31%, 97%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-gaming-black text-gaming-white;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer utilities {
+  .bg-gradient-gaming {
+    background: linear-gradient(135deg, var(--gaming-black) 0%, var(--gaming-black-light) 50%, var(--gaming-black-lighter) 100%);
+  }
+  
+  .bg-gradient-green {
+    background: linear-gradient(135deg, var(--gaming-green) 0%, var(--gaming-green-dark) 100%);
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(33, 38, 45, 0.3);
+    border: 1px solid rgba(0, 255, 136, 0.1);
+  }
+  
+  .text-gaming-green {
+    color: var(--gaming-green);
+  }
+  
+  .text-gaming-green-dark {
+    color: var(--gaming-green-dark);
+  }
+  
+  .text-gaming-black {
+    color: var(--gaming-black);
+  }
+  
+  .text-gaming-black-light {
+    color: var(--gaming-black-light);
+  }
+  
+  .text-gaming-black-lighter {
+    color: var(--gaming-black-lighter);
+  }
+  
+  .text-gaming-gray {
+    color: var(--gaming-gray);
+  }
+  
+  .text-gaming-white {
+    color: var(--gaming-white);
+  }
+  
+  .bg-gaming-green {
+    background-color: var(--gaming-green);
+  }
+  
+  .bg-gaming-green-dark {
+    background-color: var(--gaming-green-dark);
+  }
+  
+  .bg-gaming-black {
+    background-color: var(--gaming-black);
+  }
+  
+  .bg-gaming-black-light {
+    background-color: var(--gaming-black-light);
+  }
+  
+  .bg-gaming-black-lighter {
+    background-color: var(--gaming-black-lighter);
+  }
+  
+  .bg-gaming-gray {
+    background-color: var(--gaming-gray);
+  }
+  
+  .bg-gaming-white {
+    background-color: var(--gaming-white);
+  }
+  
+  .border-gaming-green {
+    border-color: var(--gaming-green);
+  }
+  
+  .border-gaming-green-dark {
+    border-color: var(--gaming-green-dark);
+  }
+  
+  .hover\:bg-gaming-green:hover {
+    background-color: var(--gaming-green);
+  }
+  
+  .hover\:bg-gaming-green-dark:hover {
+    background-color: var(--gaming-green-dark);
+  }
+  
+  .hover\:text-gaming-green:hover {
+    color: var(--gaming-green);
+  }
+  
+  .hover\:text-gaming-green-dark:hover {
+    color: var(--gaming-green-dark);
+  }
+  
+  .hover\:text-gaming-black:hover {
+    color: var(--gaming-black);
+  }
+  
+  .hover\:border-gaming-green:hover {
+    border-color: var(--gaming-green);
+  }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px var(--gaming-green), 0 0 10px var(--gaming-green), 0 0 15px var(--gaming-green); }
+  100% { box-shadow: 0 0 10px var(--gaming-green), 0 0 20px var(--gaming-green), 0 0 30px var(--gaming-green); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.server-online {
+  animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
