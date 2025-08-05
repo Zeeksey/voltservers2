@@ -27,10 +27,7 @@ export class WHMCSIntegration {
       url: process.env.WHMCS_API_URL!
     };
     
-    console.log('WHMCS Configuration loaded:');
-    console.log('- URL:', this.config.url);
-    console.log('- Identifier:', this.config.identifier?.substring(0, 8) + '...');
-    console.log('- Secret configured:', !!this.config.secret);
+
   }
 
   // Test WHMCS connection
