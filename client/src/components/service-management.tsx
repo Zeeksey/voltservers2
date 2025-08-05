@@ -24,7 +24,9 @@ import {
   Terminal,
   FileText,
   Archive,
-  Zap
+  Zap,
+  Eye,
+  EyeOff
 } from "lucide-react";
 
 interface ServerService {
@@ -36,6 +38,7 @@ interface ServerService {
   uptime: string;
   location: string;
   plan: string;
+  ip: string;
   resources: {
     cpu: number;
     ram: { used: number; total: number };
@@ -51,6 +54,7 @@ interface ServerService {
 
 export default function ServiceManagement() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [hideIPs, setHideIPs] = useState(false);
   
   const services: ServerService[] = [
     {
@@ -62,6 +66,7 @@ export default function ServiceManagement() {
       uptime: '15d 7h 23m',
       location: 'New York, US',
       plan: 'Iron Plan (4GB)',
+      ip: '198.51.100.42',
       resources: {
         cpu: 45,
         ram: { used: 2.1, total: 4.0 },
@@ -83,6 +88,7 @@ export default function ServiceManagement() {
       uptime: '0d 0h 0m',
       location: 'London, UK',
       plan: 'Diamond Plan (8GB)',
+      ip: '203.0.113.89',
       resources: {
         cpu: 0,
         ram: { used: 0, total: 8.0 },
@@ -114,6 +120,23 @@ export default function ServiceManagement() {
 
   return (
     <div className="space-y-6">
+      {/* Control Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h2 className="text-2xl font-bold text-gaming-white">Your Servers</h2>
+          <p className="text-gaming-gray">Manage and monitor your game servers</p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"  
+          onClick={() => setHideIPs(!hideIPs)}
+          className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+        >
+          {hideIPs ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+          {hideIPs ? 'Show IPs' : 'Hide IPs'}
+        </Button>
+      </div>
+
       {/* Service Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {services.map((service) => (
@@ -125,17 +148,18 @@ export default function ServiceManagement() {
                   {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
                 </Badge>
               </div>
-              <div className="flex items-center space-x-4 text-sm text-gaming-gray">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-gaming-gray">
                 <div className="flex items-center space-x-1">
-                  <Server className="w-4 h-4" />
+                  <Server className="w-3 h-3 md:w-4 md:h-4" />
                   <span>{service.game}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Globe className="w-4 h-4" />
-                  <span>{service.location}</span>
+                  <Globe className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="hidden sm:inline">{service.location}</span>
+                  <span className="sm:hidden">{service.location.split(',')[0]}</span>
                 </div>
                 <div className="flex items-center space-x-1">
-                  <Users className="w-4 h-4" />
+                  <Users className="w-3 h-3 md:w-4 md:h-4" />
                   <span>{service.players.current}/{service.players.max}</span>
                 </div>
               </div>
@@ -185,27 +209,24 @@ export default function ServiceManagement() {
                 
                 <div className="bg-gaming-black-lighter p-3 rounded-lg">
                   <div className="flex items-center space-x-2 text-gaming-gray mb-1">
-                    <Activity className="w-4 h-4" />
-                    <span>Network</span>
+                    <Server className="w-4 h-4" />
+                    <span>Server IP</span>
                   </div>
-                  <div className="text-gaming-white font-medium">
-                    <div className="flex items-center space-x-1">
-                      <Upload className="w-3 h-3" />
-                      <span>{service.network.upload}</span>
-                    </div>
+                  <div className="text-gaming-white font-mono text-xs">
+                    {hideIPs ? '•••.•••.•••.•••' : service.ip}
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex space-x-2 pt-2">
+              <div className="flex flex-wrap gap-2 pt-2">
                 {service.status === 'online' ? (
                   <>
                     <Button 
                       size="sm" 
                       variant="outline"
                       onClick={() => handleServerAction('stop', service.id)}
-                      className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                      className="border-red-500/30 text-red-400 hover:bg-red-500/10 flex-1 sm:flex-none"
                     >
                       <Pause className="w-4 h-4 mr-1" />
                       Stop
@@ -214,7 +235,7 @@ export default function ServiceManagement() {
                       size="sm" 
                       variant="outline"
                       onClick={() => handleServerAction('restart', service.id)}
-                      className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10"
+                      className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/10 flex-1 sm:flex-none"
                     >
                       <RotateCcw className="w-4 h-4 mr-1" />
                       Restart

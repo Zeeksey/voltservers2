@@ -3,7 +3,7 @@ import Navigation from "@/components/navigation";
 import ProfessionalHero from "@/components/professional-hero";
 import TrustIndicators from "@/components/trust-indicators";
 import GameCards from "@/components/game-cards";
-import GamePanelShowcase from "@/components/game-panel-showcase";
+import DemoGamesSection from "@/components/demo-games-section";
 import FeaturesSection from "@/components/features-section";
 import PricingSection from "@/components/pricing-section";
 import TestimonialsSection from "@/components/testimonials-section";
@@ -23,7 +23,7 @@ export default function Home() {
       <ProfessionalHero />
       <TrustIndicators />
       <GameCards />
-      <GamePanelShowcase />
+      <DemoGamesSection />
       <FeaturesSection />
       <PricingSection />
       <TestimonialsSection />
