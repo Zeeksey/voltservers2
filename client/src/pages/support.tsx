@@ -1,9 +1,15 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   HeadphonesIcon, 
-  MessageCircle, 
   Mail, 
   FileText, 
   Search,
@@ -12,70 +18,127 @@ import {
   Shield,
   BookOpen,
   ExternalLink,
-  HelpCircle
+  HelpCircle,
+  ChevronDown,
+  Send,
+  MessageSquare
 } from "lucide-react";
 import { Link } from "wouter";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import { apiRequest } from "@/lib/queryClient";
+import type { FaqCategory, FaqItem } from "@shared/schema";
 
 export default function SupportPage() {
+  const { toast } = useToast();
+  const [emailForm, setEmailForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+    priority: "normal"
+  });
+
   const supportChannels = [
-    {
-      icon: <MessageCircle className="w-8 h-8 text-gaming-green" />,
-      title: "Live Chat",
-      description: "Get instant help from our support team",
-      availability: "24/7 Available",
-      responseTime: "< 5 minutes",
-      action: "Start Chat"
-    },
     {
       icon: <HeadphonesIcon className="w-8 h-8 text-gaming-green" />,
       title: "Discord Support",
       description: "Join our community for help and discussions",
       availability: "Community Driven",
       responseTime: "Real-time",
-      action: "Join Discord"
+      action: "Join Discord",
+      link: "https://discord.gg/gamehost"
     },
     {
-      icon: <Mail className="w-8 h-8 text-gaming-green" />,
-      title: "Email Support",
-      description: "Send us detailed questions via email",
+      icon: <MessageSquare className="w-8 h-8 text-gaming-green" />,
+      title: "Contact Form",
+      description: "Send us your questions via our contact form",
       availability: "24/7 Available",
       responseTime: "< 4 hours",
-      action: "Send Email"
+      action: "Send Message",
+      formSection: true
     }
   ];
 
-  const faqCategories = [
-    {
-      title: "Getting Started",
-      questions: [
-        "How do I set up my first server?",
-        "What games do you support?",
-        "How do I connect to my server?",
-        "Can I change my server location?"
-      ]
+  // Fetch FAQ data from API with fallback
+  const { data: faqData = [], isLoading: isLoadingFaq } = useQuery({
+    queryKey: ['/api/faqs'],
+    select: (data) => data || [
+      {
+        id: "getting-started",
+        title: "Getting Started",
+        items: [
+          { id: "1", question: "How do I set up my first server?", answer: "Setting up your first server is easy. Simply choose your game, select a plan, and follow our quick-start guide." },
+          { id: "2", question: "What games do you support?", answer: "We support all popular games including Minecraft, CS2, Rust, ARK, and many more." },
+          { id: "3", question: "How do I connect to my server?", answer: "You'll receive connection details via email once your server is ready. Use your game client to connect using the provided IP address." },
+          { id: "4", question: "Can I change my server location?", answer: "Yes, you can change your server location from your control panel. Note that this may require server migration." }
+        ]
+      },
+      {
+        id: "billing-plans",
+        title: "Billing & Plans",  
+        items: [
+          { id: "5", question: "How does billing work?", answer: "We use monthly billing cycles. Your first payment covers the setup and first month of service." },
+          { id: "6", question: "Can I upgrade my plan?", answer: "Yes, you can upgrade or downgrade your plan at any time from your client portal." },
+          { id: "7", question: "What's your refund policy?", answer: "We offer a 7-day money-back guarantee for new customers. Contact support for refund requests." },
+          { id: "8", question: "Do you offer discounts?", answer: "Yes, we offer discounts for longer-term commitments and students. Check our pricing page for current offers." }
+        ]
+      },
+      {
+        id: "technical-support",
+        title: "Technical Support",
+        items: [
+          { id: "9", question: "My server won't start, what do I do?", answer: "First, check the server console for error messages. If you need help, contact our support team with the error details." },
+          { id: "10", question: "How do I install mods/plugins?", answer: "You can install mods and plugins through your server control panel or by uploading files directly via FTP." },
+          { id: "11", question: "How do I backup my world?", answer: "Automatic backups are included with all plans. You can also create manual backups from your control panel." },
+          { id: "12", question: "Why is my server lagging?", answer: "Server lag can be caused by many factors including high player count, resource-intensive plugins, or insufficient RAM. Contact support for optimization help." }
+        ]
+      }
+    ]
+  });
+
+  // Email form submission
+  const sendEmailMutation = useMutation({
+    mutationFn: async (formData: typeof emailForm) => {
+      return apiRequest('/api/contact', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
     },
-    {
-      title: "Billing & Plans",
-      questions: [
-        "How does billing work?",
-        "Can I upgrade my plan?",
-        "What's your refund policy?",
-        "Do you offer discounts?"
-      ]
+    onSuccess: () => {
+      toast({
+        title: "Message sent!",
+        description: "We'll get back to you within 4 hours.",
+      });
+      setEmailForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        priority: "normal"
+      });
     },
-    {
-      title: "Technical Support",
-      questions: [
-        "My server won't start, what do I do?",
-        "How do I install mods/plugins?",
-        "How do I backup my world?",
-        "Why is my server lagging?"
-      ]
+    onError: (error: any) => {
+      toast({
+        title: "Failed to send message",
+        description: error.message || "Please try again later.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailForm.name || !emailForm.email || !emailForm.subject || !emailForm.message) {
+      toast({
+        title: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
     }
-  ];
+    sendEmailMutation.mutate(emailForm);
+  };
 
   const resources = [
     {
@@ -164,13 +227,124 @@ export default function SupportPage() {
                     </Badge>
                   </div>
                   
-                  <Button className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold">
-                    {channel.action}
-                  </Button>
+                  {channel.formSection ? (
+                    <Button 
+                      className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold"
+                      onClick={() => document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth' })}
+                    >
+                      {channel.action}
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold"
+                      onClick={() => window.open(channel.link, '_blank')}
+                    >
+                      {channel.action}
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Contact Form Section */}
+      <section className="py-20 bg-gaming-black-light">
+        <div className="container mx-auto px-4">
+          <Card id="contact-form" className="max-w-4xl mx-auto bg-gaming-black-lighter border-gaming-black-lighter">
+            <CardHeader className="text-center">
+              <CardTitle className="text-3xl text-gaming-white flex items-center justify-center">
+                <Mail className="w-8 h-8 text-gaming-green mr-3" />
+                Send us a Message
+              </CardTitle>
+              <CardDescription className="text-gaming-gray text-lg">
+                Fill out the form below and we'll get back to you within 4 hours.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-8">
+              <form onSubmit={handleEmailSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="name" className="text-gaming-white text-sm font-medium mb-2 block">Name *</Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      required
+                      value={emailForm.name}
+                      onChange={(e) => setEmailForm({ ...emailForm, name: e.target.value })}
+                      className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
+                      placeholder="Your full name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="email" className="text-gaming-white text-sm font-medium mb-2 block">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      required
+                      value={emailForm.email}
+                      onChange={(e) => setEmailForm({ ...emailForm, email: e.target.value })}
+                      className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="subject" className="text-gaming-white text-sm font-medium mb-2 block">Subject *</Label>
+                  <Input
+                    id="subject"
+                    type="text"
+                    required
+                    value={emailForm.subject}
+                    onChange={(e) => setEmailForm({ ...emailForm, subject: e.target.value })}
+                    className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
+                    placeholder="Brief description of your inquiry"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="priority" className="text-gaming-white text-sm font-medium mb-2 block">Priority</Label>
+                  <select
+                    id="priority"
+                    value={emailForm.priority}
+                    onChange={(e) => setEmailForm({ ...emailForm, priority: e.target.value })}
+                    className="w-full px-3 py-2 bg-gaming-black border border-gaming-black-lighter rounded-md text-gaming-white focus:border-gaming-green focus:outline-none"
+                  >
+                    <option value="low">Low - General inquiry</option>
+                    <option value="normal">Normal - Standard support</option>
+                    <option value="high">High - Urgent issue</option>
+                    <option value="critical">Critical - Service down</option>
+                  </select>
+                </div>
+                <div>
+                  <Label htmlFor="message" className="text-gaming-white text-sm font-medium mb-2 block">Message *</Label>
+                  <Textarea
+                    id="message"
+                    required
+                    rows={6}
+                    value={emailForm.message}
+                    onChange={(e) => setEmailForm({ ...emailForm, message: e.target.value })}
+                    className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green resize-none"
+                    placeholder="Please provide detailed information about your question or issue..."
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  disabled={sendEmailMutation.isPending}
+                  className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold py-3"
+                >
+                  {sendEmailMutation.isPending ? (
+                    <>Sending...</>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      Send Message
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
@@ -185,19 +359,24 @@ export default function SupportPage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {faqCategories.map((category, index) => (
-              <Card key={index} className="bg-gaming-black-lighter border-gaming-black-lighter">
+            {faqData.map((category) => (
+              <Card key={category.id} className="bg-gaming-black-lighter border-gaming-black-lighter">
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold text-gaming-white mb-4">{category.title}</h3>
                   <div className="space-y-3">
-                    {category.questions.map((question, qIndex) => (
-                      <button
-                        key={qIndex}
-                        className="w-full text-left flex items-center gap-3 p-3 rounded-lg bg-gaming-black hover:bg-gaming-black-light transition-colors text-gaming-gray hover:text-gaming-white"
-                      >
-                        <HelpCircle className="w-4 h-4 text-gaming-green flex-shrink-0" />
-                        <span className="text-sm">{question}</span>
-                      </button>
+                    {category.items.map((item) => (
+                      <Collapsible key={item.id}>
+                        <CollapsibleTrigger className="w-full text-left flex items-center gap-3 p-3 rounded-lg bg-gaming-black hover:bg-gaming-black-light transition-colors text-gaming-gray hover:text-gaming-white">
+                          <HelpCircle className="w-4 h-4 text-gaming-green flex-shrink-0" />
+                          <span className="text-sm flex-1">{item.question}</span>
+                          <ChevronDown className="w-4 h-4 text-gaming-green" />
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="px-3 pb-3">
+                          <div className="bg-gaming-black/50 rounded-lg p-3 mt-2">
+                            <p className="text-sm text-gaming-gray">{item.answer}</p>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
                     ))}
                   </div>
                 </CardContent>
@@ -260,7 +439,7 @@ export default function SupportPage() {
               size="lg" 
               className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold"
             >
-              <MessageCircle className="w-5 h-5 mr-2" />
+              <MessageSquare className="w-5 h-5 mr-2" />
               Start Live Chat
             </Button>
             <Button 

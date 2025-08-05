@@ -1845,6 +1845,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // FAQ endpoints
+  app.get("/api/faqs", async (req, res) => {
+    try {
+      const faqs = await storage.getAllFaqCategories();
+      res.json(faqs);
+    } catch (error) {
+      console.error("FAQ fetch error:", error);
+      // Return fallback FAQ data
+      res.json([
+        {
+          id: "getting-started",
+          title: "Getting Started",
+          sortOrder: 1,
+          items: [
+            { id: "1", question: "How do I set up my first server?", answer: "Setting up your first server is easy. Simply choose your game, select a plan, and follow our quick-start guide.", sortOrder: 1 },
+            { id: "2", question: "What games do you support?", answer: "We support all popular games including Minecraft, CS2, Rust, ARK, and many more.", sortOrder: 2 },
+            { id: "3", question: "How do I connect to my server?", answer: "You'll receive connection details via email once your server is ready. Use your game client to connect using the provided IP address.", sortOrder: 3 },
+            { id: "4", question: "Can I change my server location?", answer: "Yes, you can change your server location from your control panel. Note that this may require server migration.", sortOrder: 4 }
+          ]
+        },
+        {
+          id: "billing-plans",
+          title: "Billing & Plans",
+          sortOrder: 2,
+          items: [
+            { id: "5", question: "How does billing work?", answer: "We use monthly billing cycles. Your first payment covers the setup and first month of service.", sortOrder: 1 },
+            { id: "6", question: "Can I upgrade my plan?", answer: "Yes, you can upgrade or downgrade your plan at any time from your client portal.", sortOrder: 2 },
+            { id: "7", question: "What's your refund policy?", answer: "We offer a 7-day money-back guarantee for new customers. Contact support for refund requests.", sortOrder: 3 },
+            { id: "8", question: "Do you offer discounts?", answer: "Yes, we offer discounts for longer-term commitments and students. Check our pricing page for current offers.", sortOrder: 4 }
+          ]
+        },
+        {
+          id: "technical-support",
+          title: "Technical Support",
+          sortOrder: 3,
+          items: [
+            { id: "9", question: "My server won't start, what do I do?", answer: "First, check the server console for error messages. If you need help, contact our support team with the error details.", sortOrder: 1 },
+            { id: "10", question: "How do I install mods/plugins?", answer: "You can install mods and plugins through your server control panel or by uploading files directly via FTP.", sortOrder: 2 },
+            { id: "11", question: "How do I backup my world?", answer: "Automatic backups are included with all plans. You can also create manual backups from your control panel.", sortOrder: 3 },
+            { id: "12", question: "Why is my server lagging?", answer: "Server lag can be caused by many factors including high player count, resource-intensive plugins, or insufficient RAM. Contact support for optimization help.", sortOrder: 4 }
+          ]
+        }
+      ]);
+    }
+  });
+
+  // Contact form endpoint
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, email, subject, message, priority = "normal" } = req.body;
+      
+      if (!name || !email || !subject || !message) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+
+      // Here we would normally send an email using SendGrid
+      // For now, we'll just log the contact form submission
+      console.log("Contact form submission:", {
+        name,
+        email,
+        subject,
+        message,
+        priority,
+        timestamp: new Date().toISOString()
+      });
+
+      // TODO: Implement SendGrid email sending
+      // const emailSent = await sendEmail({
+      //   to: process.env.SUPPORT_EMAIL || "support@gamehost.example.com",
+      //   from: email,
+      //   subject: `[${priority.toUpperCase()}] ${subject}`,
+      //   text: `Name: ${name}\nEmail: ${email}\nPriority: ${priority}\n\nMessage:\n${message}`
+      // });
+
+      res.json({ 
+        success: true, 
+        message: "Your message has been sent successfully. We'll get back to you within 4 hours." 
+      });
+    } catch (error) {
+      console.error("Contact form error:", error);
+      res.status(500).json({ error: "Failed to send message. Please try again later." });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

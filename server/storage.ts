@@ -98,6 +98,17 @@ export interface IStorage {
   updateGameFeature(id: string, updates: Partial<GameFeature>): Promise<GameFeature>;
   deleteGameFeature(id: string): Promise<void>;
   
+  // FAQ methods
+  getAllFaqCategories(): Promise<any[]>;
+  getFaqCategory(id: string): Promise<any | undefined>;
+  createFaqCategory(category: any): Promise<any>;
+  updateFaqCategory(id: string, updates: any): Promise<any>;
+  deleteFaqCategory(id: string): Promise<void>;
+  getFaqItems(categoryId: string): Promise<any[]>;
+  createFaqItem(item: any): Promise<any>;
+  updateFaqItem(id: string, updates: any): Promise<any>;
+  deleteFaqItem(id: string): Promise<void>;
+
   // Game methods
   getAllGames(): Promise<Game[]>;
   getGame(id: string): Promise<Game | undefined>;

@@ -37,6 +37,29 @@ export const promoSettings = pgTable("promo_settings", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const faqCategories = pgTable("faq_categories", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const faqItems = pgTable("faq_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  categoryId: varchar("category_id").notNull(),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isVisible: boolean("is_visible").notNull().default(true),
+  tags: text("tags").array().default(sql`'{}'::text[]`),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const games = pgTable("games", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
@@ -312,6 +335,18 @@ export const insertPromoSettingSchema = createInsertSchema(promoSettings).omit({
   updatedAt: true,
 });
 
+export const insertFaqCategorySchema = createInsertSchema(faqCategories).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertFaqItemSchema = createInsertSchema(faqItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertGameSchema = createInsertSchema(games).omit({
   id: true,
 });
@@ -392,6 +427,12 @@ export type SiteSetting = typeof siteSettings.$inferSelect;
 
 export type InsertPromoSetting = z.infer<typeof insertPromoSettingSchema>;
 export type PromoSetting = typeof promoSettings.$inferSelect;
+
+export type InsertFaqCategory = z.infer<typeof insertFaqCategorySchema>;
+export type FaqCategory = typeof faqCategories.$inferSelect;
+
+export type InsertFaqItem = z.infer<typeof insertFaqItemSchema>;
+export type FaqItem = typeof faqItems.$inferSelect;
 
 export type InsertGame = z.infer<typeof insertGameSchema>;
 export type Game = typeof games.$inferSelect;
