@@ -117,6 +117,9 @@ export const gamePages = pgTable("game_pages", {
   screenshots: text("screenshots").array().notNull(),
   setupGuide: text("setup_guide").notNull(),
   faq: text("faq").array().notNull(),
+  relatedArticles: text("related_articles").array().default(sql`'{}'::text[]`), // Array of blog post slugs
+  customSections: jsonb("custom_sections").default(sql`'[]'::jsonb`), // Custom admin-defined sections
+  lastUpdated: timestamp("last_updated").defaultNow(),
 });
 
 export const demoServers = pgTable("demo_servers", {

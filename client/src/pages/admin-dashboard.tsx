@@ -21,9 +21,11 @@ import {
   Gamepad2,
   BookOpen,
   Megaphone,
-  Users
+  Users,
+  Layout
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
+import GamePageAdmin from "@/components/game-page-admin";
 
 interface AdminUser {
   id: string;
@@ -364,6 +366,10 @@ export default function AdminDashboard() {
               <Gamepad2 className="w-4 h-4 mr-2" />
               Games
             </TabsTrigger>
+            <TabsTrigger value="game-pages" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
+              <Layout className="w-4 h-4 mr-2" />
+              Game Pages
+            </TabsTrigger>
             <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
               <BookOpen className="w-4 h-4 mr-2" />
               Blog
@@ -683,6 +689,11 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Game Pages Management */}
+          <TabsContent value="game-pages">
+            <GamePageAdmin />
           </TabsContent>
 
           {/* Promo Banner Management */}

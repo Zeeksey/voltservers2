@@ -334,4 +334,25 @@ export class DatabaseStorage implements IStorage {
     const [newDetail] = await db.insert(pricingDetails).values(detail).returning();
     return newDetail;
   }
+
+  // Game page customization methods
+  private gamePageCustomizations: Map<string, any> = new Map();
+
+  async getGamePageCustomization(gameId: string): Promise<any> {
+    return this.gamePageCustomizations.get(gameId) || {
+      relatedArticles: [],
+      customSections: []
+    };
+  }
+
+  async updateGamePageCustomization(gameId: string, data: any): Promise<any> {
+    const customization = {
+      gameId,
+      relatedArticles: data.relatedArticles || [],
+      customSections: data.customSections || [],
+      updatedAt: new Date()
+    };
+    this.gamePageCustomizations.set(gameId, customization);
+    return customization;
+  }
 }

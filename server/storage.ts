@@ -52,6 +52,10 @@ export interface IStorage {
   // Promo settings methods
   getPromoSettings(): Promise<PromoSetting | undefined>;
   updatePromoSettings(settings: InsertPromoSetting): Promise<PromoSetting>;
+
+  // Game page customization methods
+  getGamePageCustomization(gameId: string): Promise<any>;
+  updateGamePageCustomization(gameId: string, data: any): Promise<any>;
   
   // Game methods
   getAllGames(): Promise<Game[]>;

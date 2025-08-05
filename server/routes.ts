@@ -152,6 +152,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Related articles for game pages
+  app.get("/api/blog/related/:gameSlug", async (req, res) => {
+    try {
+      const gameSlug = req.params.gameSlug;
+      const posts = await storage.getPublishedBlogPosts();
+      
+      // Filter articles related to the game (by tags or content)
+      const relatedPosts = posts.filter(post => 
+        post.tags.some(tag => 
+          tag.toLowerCase().includes(gameSlug.toLowerCase()) ||
+          gameSlug.toLowerCase().includes(tag.toLowerCase())
+        ) ||
+        post.title.toLowerCase().includes(gameSlug.toLowerCase()) ||
+        post.content.toLowerCase().includes(gameSlug.toLowerCase())
+      ).slice(0, 3);
+      
+      res.json(relatedPosts);
+    } catch (error) {
+      console.error("Error fetching related articles:", error);
+      res.status(500).json({ error: "Failed to fetch related articles" });
+    }
+  });
+
   // Game pages endpoints
   app.get("/api/games/:gameId/details", async (req, res) => {
     try {
@@ -429,6 +452,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get public promo settings error:", error);
       res.status(500).json({ message: "Failed to get promo settings" });
+    }
+  });
+
+  // Game Page Customization Admin Routes
+  app.get("/api/admin/game-pages/:gameId", requireAdmin, async (req, res) => {
+    try {
+      const gameId = req.params.gameId;
+      const customization = await storage.getGamePageCustomization(gameId);
+      res.json(customization || {
+        relatedArticles: [],
+        customSections: []
+      });
+    } catch (error) {
+      console.error("Error fetching game page customization:", error);
+      res.status(500).json({ message: "Failed to fetch game page customization" });
+    }
+  });
+
+  app.put("/api/admin/game-pages/:gameId", requireAdmin, async (req, res) => {
+    try {
+      const gameId = req.params.gameId;
+      const customizationData = req.body;
+      
+      const customization = await storage.updateGamePageCustomization(gameId, customizationData);
+      res.json(customization);
+    } catch (error) {
+      console.error("Error updating game page customization:", error);
+      res.status(500).json({ message: "Failed to update game page customization" });
     }
   });
 

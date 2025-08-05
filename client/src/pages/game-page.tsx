@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Users, Shield, Server, Zap, HeadphonesIcon } from "lucide-react";
+import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
+import Footer from "@/components/footer";
 import { Game } from "@shared/schema";
 
 export default function GamePage() {
@@ -17,6 +18,17 @@ export default function GamePage() {
     queryFn: async () => {
       const response = await fetch(`/api/games/${slug}`);
       if (!response.ok) throw new Error("Game not found");
+      return response.json();
+    },
+    enabled: !!slug,
+  });
+
+  // Fetch related blog articles
+  const { data: relatedArticles } = useQuery({
+    queryKey: ["/api/blog/related", slug],
+    queryFn: async () => {
+      const response = await fetch(`/api/blog/related/${slug}`);
+      if (!response.ok) return [];
       return response.json();
     },
     enabled: !!slug,
@@ -237,6 +249,68 @@ export default function GamePage() {
         </section>
       )}
 
+      {/* Related Articles */}
+      {relatedArticles && relatedArticles.length > 0 && (
+        <section className="py-20 bg-gaming-black-light">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gaming-white mb-4">
+                Related <span className="text-gaming-green">Articles</span>
+              </h2>
+              <p className="text-gaming-gray text-lg">
+                Learn more about {game.name} server hosting and optimization
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {relatedArticles.slice(0, 3).map((article: any, index: number) => (
+                <Link key={index} href={`/blog/${article.slug}`}>
+                  <Card className="bg-gaming-black-lighter border-gaming-black-lighter hover:border-gaming-green/30 transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-0">
+                      <img 
+                        src={article.imageUrl} 
+                        alt={article.title}
+                        className="w-full h-48 object-cover rounded-t-lg"
+                      />
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 mb-3">
+                          <BookOpen className="w-4 h-4 text-gaming-green" />
+                          <span className="text-gaming-green text-sm font-medium">Guide</span>
+                        </div>
+                        <h3 className="text-xl font-semibold text-gaming-white mb-3 group-hover:text-gaming-green transition-colors line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <p className="text-gaming-gray text-sm mb-4 line-clamp-3">
+                          {article.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 text-gaming-gray text-xs">
+                            <Clock className="w-3 h-3" />
+                            <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                          </div>
+                          <ChevronRight className="w-4 h-4 text-gaming-gray group-hover:text-gaming-green transition-colors" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+            
+            <div className="text-center mt-12">
+              <Link href="/knowledgebase">
+                <Button 
+                  variant="outline"
+                  className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+                >
+                  View All Guides
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CTA Section */}
       <section className="py-20 bg-gradient-gaming">
         <div className="container mx-auto px-4 text-center">
@@ -254,6 +328,8 @@ export default function GamePage() {
           </Button>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }
