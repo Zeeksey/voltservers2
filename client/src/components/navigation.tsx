@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Gamepad2 } from "lucide-react";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [promoBannerVisible, setPromoBannerVisible] = useState(true);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -13,8 +14,25 @@ export default function Navigation() {
     setIsMenuOpen(false);
   };
 
+  useEffect(() => {
+    // Check if promo banner is visible by looking for the element
+    const checkPromoBanner = () => {
+      const promoBanner = document.querySelector('[data-promo-banner]');
+      setPromoBannerVisible(!!promoBanner);
+    };
+
+    // Initial check
+    checkPromoBanner();
+
+    // Set up observer to watch for banner removal
+    const observer = new MutationObserver(checkPromoBanner);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <nav className="fixed top-12 left-0 right-0 z-40 glass-effect">
+    <nav className={`fixed ${promoBannerVisible ? 'top-12' : 'top-0'} left-0 right-0 z-40 glass-effect transition-all duration-300`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2">
