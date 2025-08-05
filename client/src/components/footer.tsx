@@ -1,5 +1,6 @@
 import { Gamepad2, Twitter, MessageCircle, Youtube, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function Footer() {
   return (
@@ -65,13 +66,13 @@ export default function Footer() {
           </div>
           
           <div>
-            <h4 className="text-gaming-white font-bold mb-4">Support</h4>
+            <h4 className="text-gaming-white font-bold mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Knowledge Base</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Submit Ticket</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Live Chat</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Server Status</a></li>
-              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Community Forum</a></li>
+              <li><Link href="/about"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">About Us</span></Link></li>
+              <li><Link href="/hardware"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Hardware</span></Link></li>
+              <li><Link href="/support"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Support Center</span></Link></li>
+              <li><Link href="/contact"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Contact Us</span></Link></li>
+              <li><Link href="/client-portal"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Client Portal</span></Link></li>
             </ul>
           </div>
         </div>

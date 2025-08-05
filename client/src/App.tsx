@@ -10,6 +10,10 @@ import AdminLogin from "@/pages/admin-login";
 import AdminDashboard from "@/pages/admin-dashboard";
 import GamePage from "@/pages/game-page";
 import BlogPostPage from "@/pages/blog-post";
+import HardwarePage from "@/pages/hardware";
+import AboutPage from "@/pages/about";
+import SupportPage from "@/pages/support";
+import ContactPage from "@/pages/contact";
 
 function Router() {
   return (
@@ -18,6 +22,10 @@ function Router() {
       <Route path="/client-portal" component={ClientPortal} />
       <Route path="/games/:slug" component={GamePage} />
       <Route path="/blog/:slug" component={BlogPostPage} />
+      <Route path="/hardware" component={HardwarePage} />
+      <Route path="/about" component={AboutPage} />
+      <Route path="/support" component={SupportPage} />
+      <Route path="/contact" component={ContactPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
