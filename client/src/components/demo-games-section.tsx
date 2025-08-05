@@ -40,6 +40,9 @@ export default function DemoGamesSection() {
   // Fetch demo servers from API
   const { data: demoServers = [], isLoading } = useQuery<DemoServer[]>({
     queryKey: ['/api/demo-servers'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   // Query each server's live status

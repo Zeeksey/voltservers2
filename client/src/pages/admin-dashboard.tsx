@@ -352,6 +352,8 @@ export default function AdminDashboard() {
   const { data: demoServers = [] } = useQuery({
     queryKey: ['/api/demo-servers'],
     queryFn: () => apiRequest("/api/demo-servers"),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Initialize server location pings with static data

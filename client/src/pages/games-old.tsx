@@ -56,6 +56,9 @@ export default function GamesPage() {
   // Fetch games
   const { data: games = [], isLoading } = useQuery<Game[]>({
     queryKey: ['/api/games'],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   // Game categories

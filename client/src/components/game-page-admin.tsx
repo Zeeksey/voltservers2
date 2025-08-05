@@ -45,6 +45,8 @@ export default function GamePageAdmin() {
   // Fetch games
   const { data: games = [] } = useQuery<Game[]>({
     queryKey: ["/api/games"],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Fetch blog posts for related articles selection
