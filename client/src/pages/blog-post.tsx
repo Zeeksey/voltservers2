@@ -60,6 +60,20 @@ export default function BlogPostPage() {
 
   return (
     <div className="min-h-screen bg-gaming-black">
+      <title>{post.title} - VoltServers Blog</title>
+      <meta name="description" content={post.excerpt} />
+      
+      <meta property="og:title" content={post.title} />
+      <meta property="og:description" content={post.excerpt} />
+      <meta property="og:type" content="article" />
+      <meta property="og:image" content={post.imageUrl} />
+      <meta property="og:site_name" content="VoltServers" />
+      
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={post.title} />
+      <meta name="twitter:description" content={post.excerpt} />
+      <meta name="twitter:image" content={post.imageUrl} />
+      
       <PromoBanner />
       <Navigation />
       

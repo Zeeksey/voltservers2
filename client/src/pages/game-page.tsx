@@ -225,6 +225,20 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen bg-gaming-black">
+      <title>{game.name} Server Hosting - VoltServers</title>
+      <meta name="description" content={`Professional ${game.name} server hosting with 99.9% uptime guarantee. Deploy instantly with DDoS protection, NVMe SSD, and 24/7 support.`} />
+      
+      <meta property="og:title" content={`${game.name} Server Hosting - VoltServers`} />
+      <meta property="og:description" content={`Professional ${game.name} server hosting with 99.9% uptime guarantee. Deploy instantly with DDoS protection, NVMe SSD, and 24/7 support.`} />
+      <meta property="og:type" content="website" />
+      <meta property="og:image" content={game.imageUrl} />
+      <meta property="og:site_name" content="VoltServers" />
+      
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={`${game.name} Server Hosting`} />
+      <meta name="twitter:description" content={`Professional ${game.name} server hosting with 99.9% uptime guarantee.`} />
+      <meta name="twitter:image" content={game.imageUrl} />
+      
       <PromoBanner />
       <Navigation />
       

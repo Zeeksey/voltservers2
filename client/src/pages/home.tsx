@@ -19,6 +19,14 @@ export default function Home() {
       <meta name="description" content="Professional game server hosting with 99.9% uptime guarantee. Deploy Minecraft, CS2, Rust servers instantly. DDoS protection, NVMe SSD, 24/7 support. Starting at $2.99/mo." />
       <meta name="keywords" content="game server hosting, minecraft hosting, rust server, cs2 server, gaming servers, dedicated hosting, vps gaming" />
       
+      <meta property="og:title" content="VoltServers - Premium Game Server Hosting | 99.9% Uptime" />
+      <meta property="og:description" content="Professional game server hosting with 99.9% uptime guarantee. Deploy Minecraft, CS2, Rust servers instantly. DDoS protection, NVMe SSD, 24/7 support. Starting at $2.99/mo." />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="VoltServers" />
+      
+      <meta name="twitter:title" content="VoltServers - Premium Game Server Hosting" />
+      <meta name="twitter:description" content="Professional game server hosting with 99.9% uptime guarantee. Deploy Minecraft, CS2, Rust servers instantly. Starting at $2.99/mo." />
+      
       <PromoBanner />
       <Navigation />
       <ProfessionalHero />
