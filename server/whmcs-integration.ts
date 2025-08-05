@@ -181,6 +181,73 @@ export class WHMCSIntegration {
     }
   }
 
+  // Create support ticket
+  async createSupportTicket(params: {
+    clientid: string;
+    name?: string;
+    email?: string;
+    subject: string;
+    message: string;
+    priority?: 'Low' | 'Medium' | 'High';
+    deptid?: string;
+  }): Promise<any> {
+    try {
+      const ticketParams = {
+        clientid: params.clientid,
+        subject: params.subject,
+        message: params.message,
+        priority: params.priority || 'Medium',
+        ...params.name && { name: params.name },
+        ...params.email && { email: params.email },
+        ...params.deptid && { deptid: params.deptid }
+      };
+      
+      return await this.makeAPICall('OpenTicket', ticketParams);
+    } catch (error) {
+      console.error('Error creating support ticket:', error);
+      throw error;
+    }
+  }
+
+  // Get ticket details
+  async getTicketDetails(ticketId: string): Promise<any> {
+    try {
+      return await this.makeAPICall('GetTicket', { ticketid: ticketId });
+    } catch (error) {
+      console.error('Error fetching ticket details:', error);
+      return null;
+    }
+  }
+
+  // Reply to ticket
+  async replyToTicket(ticketId: string, message: string, clientId?: string): Promise<any> {
+    try {
+      const params: any = {
+        ticketid: ticketId,
+        message: message
+      };
+      
+      if (clientId) {
+        params.clientid = clientId;
+      }
+      
+      return await this.makeAPICall('AddTicketReply', params);
+    } catch (error) {
+      console.error('Error replying to ticket:', error);
+      throw error;
+    }
+  }
+
+  // Get support departments
+  async getSupportDepartments(): Promise<any> {
+    try {
+      return await this.makeAPICall('GetSupportDepartments');
+    } catch (error) {
+      console.error('Error fetching support departments:', error);
+      return null;
+    }
+  }
+
   // Get products/services catalog
   async getProducts(): Promise<any> {
     try {

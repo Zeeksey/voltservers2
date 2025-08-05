@@ -2238,5 +2238,94 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Support ticket routes
+  app.get('/api/whmcs/support/departments', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const departments = await whmcsIntegration.getSupportDepartments();
+      res.json(departments || { departments: [] });
+    } catch (error) {
+      console.error('Error fetching support departments:', error);
+      res.status(500).json({ error: 'Failed to fetch departments' });
+    }
+  });
+
+  app.post('/api/whmcs/support/tickets', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { name, email, subject, message, priority, deptid } = req.body;
+      
+      // Get client ID from email
+      let clientId = null;
+      if (email) {
+        const clientData = await whmcsIntegration.getClientByEmail(email);
+        if (clientData) {
+          clientId = clientData.userid;
+        }
+      }
+      
+      if (!clientId) {
+        return res.status(400).json({ error: 'Client not found. Please ensure you have an account with us.' });
+      }
+      
+      const ticket = await whmcsIntegration.createSupportTicket({
+        clientid: clientId,
+        name,
+        email,
+        subject,
+        message,
+        priority,
+        deptid
+      });
+      
+      res.json(ticket);
+    } catch (error) {
+      console.error('Error creating support ticket:', error);
+      res.status(500).json({ error: 'Failed to create ticket' });
+    }
+  });
+
+  app.get('/api/whmcs/support/tickets/:clientEmail', async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ error: 'WHMCS integration not configured' });
+    }
+    
+    try {
+      const { clientEmail } = req.params;
+      
+      // Convert email to client ID first
+      const clientData = await whmcsIntegration.getClientByEmail(clientEmail);
+      if (!clientData) {
+        // Return empty tickets structure instead of error for better UX
+        return res.json({ 
+          result: 'success',
+          tickets: { ticket: [] },
+          totalresults: 0 
+        });
+      }
+      
+      const tickets = await whmcsIntegration.getSupportTickets(clientData.userid);
+      res.json(tickets || { 
+        result: 'success',
+        tickets: { ticket: [] },
+        totalresults: 0 
+      });
+    } catch (error) {
+      console.error('Error fetching support tickets:', error);
+      // Return empty tickets structure instead of error for graceful handling
+      res.json({ 
+        result: 'success',
+        tickets: { ticket: [] },
+        totalresults: 0 
+      });
+    }
+  });
+
   return httpServer;
 }

@@ -18,7 +18,10 @@ import {
   ArrowRight,
   ExternalLink,
   User,
-  LogOut
+  LogOut,
+  MessageSquare,
+  Clock,
+  AlertCircle
 } from "lucide-react";
 import { Link } from "wouter";
 
@@ -63,8 +66,8 @@ export default function ClientPortal() {
   });
 
   const { data: whmcsTickets, isLoading: ticketsLoading } = useQuery({
-    queryKey: ['/api/whmcs/tickets'],
-    enabled: whmcsStatus?.connected === true && !!clientId,
+    queryKey: [`/api/whmcs/support/tickets/${loggedInClient?.email}`],
+    enabled: whmcsStatus?.connected === true && !!loggedInClient?.email,
     staleTime: 2 * 60 * 1000,
     retry: 1
   });
@@ -477,6 +480,149 @@ export default function ClientPortal() {
                 </CardContent>
               </Card>
             )}
+
+            {/* Support Tickets Section */}
+            {whmcsStatus?.connected && (
+              <Card className="bg-gaming-dark border-gaming-green/20">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white text-2xl flex items-center gap-2">
+                    <MessageSquare className="w-6 h-6" />
+                    Support Tickets
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {ticketsLoading ? (
+                    <div className="flex items-center gap-2 text-gaming-gray">
+                      <div className="w-4 h-4 border-2 border-gaming-green/20 border-t-gaming-green rounded-full animate-spin" />
+                      Loading support tickets...
+                    </div>
+                  ) : whmcsTickets?.tickets?.ticket ? (
+                    <div className="space-y-4">
+                      {(Array.isArray(whmcsTickets.tickets.ticket) ? whmcsTickets.tickets.ticket : [whmcsTickets.tickets.ticket])
+                        .slice(0, 5)
+                        .map((ticket: any) => (
+                        <div key={ticket.id} className="bg-gaming-black-lighter p-4 rounded-lg border border-gaming-green/20 hover:border-gaming-green/40 transition-colors">
+                          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                            {/* Ticket Details */}
+                            <div className="md:col-span-2">
+                              <h4 className="text-gaming-white font-semibold">
+                                #{ticket.tid}: {ticket.subject}
+                              </h4>
+                              <p className="text-gaming-gray text-sm">
+                                Department: {ticket.department}
+                              </p>
+                              <p className="text-gaming-gray text-xs">
+                                Created: {new Date(ticket.date).toLocaleDateString()}
+                              </p>
+                            </div>
+
+                            {/* Status & Priority */}
+                            <div className="text-center">
+                              <Badge className={`mb-2 ${
+                                ticket.status === 'Open' ? 'bg-gaming-green/20 text-gaming-green' :
+                                ticket.status === 'Answered' ? 'bg-blue-500/20 text-blue-400' :
+                                ticket.status === 'Customer-Reply' ? 'bg-yellow-500/20 text-yellow-400' :
+                                'bg-gaming-gray/20 text-gaming-gray'
+                              }`}>
+                                {ticket.status}
+                              </Badge>
+                              <div className="flex items-center justify-center gap-1">
+                                <AlertCircle className="w-3 h-3 text-gaming-gray" />
+                                <span className="text-gaming-white text-sm">{ticket.priority}</span>
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex gap-2 justify-end">
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10"
+                              >
+                                <MessageSquare className="w-4 h-4 mr-1" />
+                                View
+                              </Button>
+                              <Link href="/support">
+                                <Button 
+                                  size="sm"
+                                  className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+                                >
+                                  <MessageSquare className="w-4 h-4 mr-1" />
+                                  Reply
+                                </Button>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="flex justify-between items-center pt-4">
+                        <Link href="/support">
+                          <Button 
+                            className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-2" />
+                            Create New Ticket
+                          </Button>
+                        </Link>
+                        {whmcsTickets.tickets.ticket.length > 5 && (
+                          <Button variant="outline" className="border-gaming-green/20 text-gaming-white hover:bg-gaming-green/10">
+                            View All Tickets ({Array.isArray(whmcsTickets.tickets.ticket) ? whmcsTickets.tickets.ticket.length : 1})
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <MessageSquare className="w-12 h-12 text-gaming-gray mx-auto mb-4" />
+                      <div className="text-gaming-gray mb-2">No support tickets found.</div>
+                      <div className="text-gaming-gray text-sm mb-4">Create a ticket to get help from our support team.</div>
+                      <Link href="/support">
+                        <Button 
+                          className="bg-gaming-green hover:bg-gaming-green/80 text-gaming-black font-semibold"
+                        >
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Create Support Ticket
+                        </Button>
+                      </Link>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Quick Support Actions */}
+            <Card className="bg-gaming-dark border-gaming-green/20">
+              <CardHeader>
+                <CardTitle className="text-gaming-white text-2xl">Need Help?</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Link href="/support">
+                    <div className="bg-gaming-black-lighter border border-gaming-green/20 rounded-lg p-4 text-center hover:border-gaming-green/40 transition-colors group cursor-pointer">
+                      <MessageSquare className="w-8 h-8 text-gaming-green mx-auto mb-2" />
+                      <h4 className="text-gaming-white font-semibold mb-1">Create Ticket</h4>
+                      <p className="text-gaming-gray text-sm">Get technical support</p>
+                    </div>
+                  </Link>
+                  <Link href="/knowledgebase">
+                    <div className="bg-gaming-black-lighter border border-gaming-green/20 rounded-lg p-4 text-center hover:border-gaming-green/40 transition-colors group cursor-pointer">
+                      <FileText className="w-8 h-8 text-gaming-green mx-auto mb-2" />
+                      <h4 className="text-gaming-white font-semibold mb-1">Knowledge Base</h4>
+                      <p className="text-gaming-gray text-sm">Browse help articles</p>
+                    </div>
+                  </Link>
+                  <div 
+                    className="bg-gaming-black-lighter border border-gaming-green/20 rounded-lg p-4 text-center hover:border-gaming-green/40 transition-colors group cursor-pointer"
+                    onClick={() => window.open('https://discord.gg/gamehost', '_blank')}
+                  >
+                    <Users className="w-8 h-8 text-gaming-green mx-auto mb-2" />
+                    <h4 className="text-gaming-white font-semibold mb-1">Discord</h4>
+                    <p className="text-gaming-gray text-sm">Join our community</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

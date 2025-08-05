@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +37,67 @@ export default function SupportPage() {
     email: "",
     subject: "",
     message: "",
-    priority: "normal"
+    priority: "Medium"
+  });
+
+  const [loggedInClient, setLoggedInClient] = useState<any>(null);
+
+  // Get logged in client for WHMCS integration
+  useEffect(() => {
+    const savedClient = localStorage.getItem('whmcs_client_data');
+    if (savedClient) {
+      try {
+        setLoggedInClient(JSON.parse(savedClient));
+      } catch (error) {
+        console.error('Error parsing client data:', error);
+      }
+    }
+  }, []);
+
+  // Create support ticket mutation
+  const createTicketMutation = useMutation({
+    mutationFn: async (ticketData: {
+      name: string;
+      email: string;
+      subject: string;
+      message: string;
+      priority: string;
+    }) => {
+      return apiRequest('/api/whmcs/support/tickets', {
+        method: 'POST',
+        body: JSON.stringify(ticketData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Support Ticket Created",
+        description: "Your ticket has been submitted. We'll respond within 4 hours.",
+      });
+      setEmailForm({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+        priority: "Medium"
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create support ticket",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Get user's support tickets
+  const { data: userTickets } = useQuery({
+    queryKey: [`/api/whmcs/support/tickets/${loggedInClient?.email}`],
+    enabled: !!loggedInClient?.email,
+    staleTime: 60 * 1000
   });
 
   const supportChannels = [
@@ -52,11 +112,11 @@ export default function SupportPage() {
     },
     {
       icon: <MessageSquare className="w-8 h-8 text-gaming-green" />,
-      title: "Contact Form",
-      description: "Send us your questions via our contact form",
+      title: "Support Tickets",
+      description: "Create WHMCS support tickets for technical issues",
       availability: "24/7 Available",
       responseTime: "< 4 hours",
-      action: "Send Message",
+      action: "Create Ticket",
       formSection: true
     }
   ];
@@ -116,7 +176,7 @@ export default function SupportPage() {
         email: "",
         subject: "",
         message: "",
-        priority: "normal"
+        priority: "Medium"
       });
     },
     onError: (error: any) => {
@@ -128,8 +188,9 @@ export default function SupportPage() {
     },
   });
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleTicketSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!emailForm.name || !emailForm.email || !emailForm.subject || !emailForm.message) {
       toast({
         title: "Please fill in all fields",
@@ -137,7 +198,18 @@ export default function SupportPage() {
       });
       return;
     }
-    sendEmailMutation.mutate(emailForm);
+    
+    // Use logged in client email if available, otherwise use form email
+    const submitEmail = loggedInClient?.email || emailForm.email;
+    const submitName = loggedInClient ? `${loggedInClient.firstname} ${loggedInClient.lastname}` : emailForm.name;
+    
+    createTicketMutation.mutate({
+      name: submitName,
+      email: submitEmail,
+      subject: emailForm.subject,
+      message: emailForm.message,
+      priority: emailForm.priority
+    });
   };
 
   const resources = [
@@ -263,7 +335,7 @@ export default function SupportPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="p-8">
-              <form onSubmit={handleEmailSubmit} className="space-y-6">
+              <form onSubmit={handleTicketSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="name" className="text-gaming-white text-sm font-medium mb-2 block">Name *</Label>
@@ -310,10 +382,9 @@ export default function SupportPage() {
                     onChange={(e) => setEmailForm({ ...emailForm, priority: e.target.value })}
                     className="w-full px-3 py-2 bg-gaming-black border border-gaming-black-lighter rounded-md text-gaming-white focus:border-gaming-green focus:outline-none"
                   >
-                    <option value="low">Low - General inquiry</option>
-                    <option value="normal">Normal - Standard support</option>
-                    <option value="high">High - Urgent issue</option>
-                    <option value="critical">Critical - Service down</option>
+                    <option value="Low">Low - General inquiry</option>
+                    <option value="Medium">Medium - Standard support</option>
+                    <option value="High">High - Urgent issue</option>
                   </select>
                 </div>
                 <div>
@@ -330,15 +401,15 @@ export default function SupportPage() {
                 </div>
                 <Button 
                   type="submit" 
-                  disabled={sendEmailMutation.isPending}
+                  disabled={createTicketMutation.isPending}
                   className="w-full bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold py-3"
                 >
-                  {sendEmailMutation.isPending ? (
-                    <>Sending...</>
+                  {createTicketMutation.isPending ? (
+                    <>Creating Ticket...</>
                   ) : (
                     <>
                       <Send className="w-5 h-5 mr-2" />
-                      Send Message
+                      Create Support Ticket
                     </>
                   )}
                 </Button>
