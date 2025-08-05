@@ -77,7 +77,12 @@ export default function BlogSection() {
                   <div className="flex items-center space-x-4 text-sm text-gaming-gray mb-4">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4" />
-                      <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(post.publishedAt).toLocaleDateString()}
+                        {post.updatedAt && new Date(post.updatedAt).getTime() !== new Date(post.publishedAt).getTime() && (
+                          <span className="text-gaming-blue ml-2">(Updated: {new Date(post.updatedAt).toLocaleDateString()})</span>
+                        )}
+                      </span>
                     </div>
                     <div className="flex items-center space-x-1">
                       <User className="h-4 w-4" />

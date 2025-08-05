@@ -346,53 +346,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(posts);
     } catch (error) {
       console.error("Blog fetch error:", error);
-      // Try memory storage as fallback
+      // Try memory storage as fallback only if database completely fails
       try {
         const posts = await memStorage.getPublishedBlogPosts();
         res.json(posts);
       } catch (memError) {
-        // Return fallback blog posts if both storage systems fail
-        res.json([
-          {
-            id: "fallback-1",
-            title: "Getting Started with GameHost Pro",
-            slug: "getting-started-gamehost-pro",
-            excerpt: "Learn how to set up your first game server with our comprehensive hosting platform.",
-            content: "Welcome to GameHost Pro! This guide will help you get started...",
-            imageUrl: "/images/blog/server-optimization.svg",
-            authorName: "GameHost Team",
-            publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
-            isPublished: true,
-            tags: ["tutorial", "getting-started"],
-            readingTime: 5
-          },
-          {
-            id: "fallback-2", 
-            title: "Minecraft Server Optimization Guide",
-            slug: "minecraft-server-optimization",
-            excerpt: "Maximize your Minecraft server performance with these proven optimization techniques.",
-            content: "Optimizing your Minecraft server is crucial for providing the best experience...",
-            imageUrl: "/images/blog/minecraft-setup.svg",
-            authorName: "GameHost Team",
-            publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-            isPublished: true,
-            tags: ["minecraft", "optimization", "performance"],
-            readingTime: 8
-          },
-          {
-            id: "fallback-3",
-            title: "Game Server Security Best Practices",
-            slug: "game-server-security-best-practices",
-            excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
-            content: "Keeping your game server secure is crucial for maintaining player trust and preventing attacks...",
-            imageUrl: "/images/blog/security-tips.svg",
-            authorName: "VoltServers Team",
-            publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-            isPublished: true,
-            tags: ["security", "hosting", "best-practices"],
-            readingTime: 6
-          }
-        ]);
+        console.error("Memory storage also failed:", memError);
+        res.status(500).json({ error: "Failed to load blog posts" });
       }
     }
   });
@@ -876,6 +836,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Admin CRUD Routes for Blog Posts
+  app.get("/api/admin/blog", requireAdmin, async (req, res) => {
+    try {
+      const posts = await storage.getAllBlogPosts();
+      res.json(posts);
+    } catch (error) {
+      console.error("Get all blog posts error:", error);
+      // Try memory storage as fallback
+      try {
+        const posts = await memStorage.getAllBlogPosts();
+        res.json(posts);
+      } catch (memError) {
+        res.status(503).json({ 
+          message: "Database temporarily unavailable. Blog posts not loaded. Please try again later or contact support.",
+          error: "DATABASE_UNAVAILABLE" 
+        });
+      }
+    }
+  });
+
   app.post("/api/admin/blog", requireAdmin, async (req, res) => {
     try {
       const post = await storage.createBlogPost(req.body);

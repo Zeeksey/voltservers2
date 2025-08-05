@@ -285,6 +285,7 @@ export const blogPosts = pgTable("blog_posts", {
   imageUrl: text("image_url").notNull(),
   author: text("author").notNull(),
   publishedAt: timestamp("published_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
   tags: text("tags").array().notNull(),
   isPublished: boolean("is_published").notNull().default(true),
 });

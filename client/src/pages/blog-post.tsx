@@ -130,11 +130,22 @@ export default function BlogPostPage() {
               </div>
               <div className="flex items-center gap-2 text-gaming-gray">
                 <Calendar className="w-4 h-4" />
-                <span>{new Date(post.publishedAt).toLocaleDateString('en-US', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric' 
-                })}</span>
+                <span>
+                  {new Date(post.publishedAt).toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                  {post.updatedAt && new Date(post.updatedAt).getTime() !== new Date(post.publishedAt).getTime() && (
+                    <span className="text-gaming-blue ml-2 block text-sm">
+                      Updated: {new Date(post.updatedAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="flex items-center gap-2 text-gaming-gray">
                 <Clock className="w-4 h-4" />
