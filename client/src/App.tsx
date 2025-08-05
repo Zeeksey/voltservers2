@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import HolidayEffects from "@/components/holiday-effects";
 import CookieBanner from "@/components/cookie-banner";
 
@@ -76,29 +77,37 @@ function Router() {
 }
 
 function App() {
-  const [holidayTheme, setHolidayTheme] = useState<'none' | 'snow' | 'halloween' | 'easter' | 'christmas'>('none');
-
   useEffect(() => {
     // Remove initial loader when React app is ready
     const loader = document.getElementById('initial-loader');
     if (loader) {
       loader.remove();
     }
-
-    // Check for stored holiday theme
-    const storedTheme = localStorage.getItem('holidayTheme') as typeof holidayTheme || 'none';
-    setHolidayTheme(storedTheme);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <HolidayEffects theme={holidayTheme} />
-        <Toaster />
-        <Router />
-        <CookieBanner />
+        <AppContent />
       </TooltipProvider>
     </QueryClientProvider>
+  );
+}
+
+function AppContent() {
+  const { data: themeSettings } = useQuery({
+    queryKey: ["/api/theme-settings"],
+  });
+
+  const holidayTheme = (themeSettings?.holidayTheme || 'none') as 'none' | 'snow' | 'halloween' | 'easter' | 'christmas';
+
+  return (
+    <>
+      <HolidayEffects theme={holidayTheme} />
+      <Toaster />
+      <Router />
+      <CookieBanner />
+    </>
   );
 }
 
