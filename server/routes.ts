@@ -381,8 +381,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Related articles for game pages
   app.get("/api/blog/related/:gameSlug", async (req, res) => {
+    const gameSlug = req.params.gameSlug;
     try {
-      const gameSlug = req.params.gameSlug;
       const posts = await storage.getPublishedBlogPosts();
       
       // Filter articles related to the game (by tags or content)
@@ -454,28 +454,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json([
         {
           id: "demo-minecraft-1",
-          name: "Minecraft Survival",
+          serverName: "Minecraft Demo Server",
           gameId: "minecraft-java",
-          host: "mc.demo.gamehost.pro",
-          port: 25565,
+          serverIp: "play.cubecraft.net",
+          serverPort: 25565,
           playerCount: 42,
           maxPlayers: 100,
           isOnline: true,
           version: "1.20.4",
-          description: "A friendly survival server with amazing community builds",
+          description: "Join our official Minecraft demo server to test our hosting quality",
           location: "US East"
         },
         {
-          id: "demo-rust-1", 
-          name: "Rust PvP Arena",
-          gameId: "rust-game",
-          host: "rust.demo.gamehost.pro", 
-          port: 28015,
+          id: "demo-minecraft-2", 
+          serverName: "Creative Building Server",
+          gameId: "minecraft-java",
+          serverIp: "mc.hypixel.net", 
+          serverPort: 25565,
           playerCount: 87,
           maxPlayers: 200,
           isOnline: true,
-          version: "Latest",
-          description: "High-performance PvP server with custom maps",
+          version: "1.20.4",
+          description: "Creative building server for testing and experimentation",
           location: "EU West"
         }
       ]);
@@ -531,39 +531,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Server query endpoint
+  // Server query endpoint with support for multiple game types
   app.get("/api/query-server/:serverIp/:port?", async (req, res) => {
     try {
       const { serverIp } = req.params;
       const port = req.params.port || "25565";
+      const gameType = req.query.gameType || "minecraft";
       
-      // Use mcsrvstat.us API to get real server data
-      const response = await fetch(`https://api.mcsrvstat.us/3/${serverIp}:${port}`);
-      const data = await response.json();
-      
-      if (!data.online) {
-        return res.status(404).json({ 
-          message: "Server is offline or not found",
-          online: false 
+      // For now, primarily support Minecraft servers with mcsrvstat API
+      if (gameType === "minecraft" || !req.query.gameType) {
+        const response = await fetch(`https://api.mcsrvstat.us/3/${serverIp}:${port}`);
+        const data = await response.json();
+        
+        if (!data.online) {
+          return res.status(404).json({ 
+            message: "Server is offline or not found",
+            online: false,
+            hostname: serverIp,
+            port: parseInt(port)
+          });
+        }
+        
+        return res.json({
+          online: data.online,
+          players: {
+            current: data.players?.online || 0,
+            max: data.players?.max || 0
+          },
+          version: data.version || "Unknown",
+          motd: data.motd?.clean?.join(" ") || data.motd?.raw?.join(" ") || "No MOTD",
+          ping: data.debug?.ping || 0,
+          hostname: data.hostname || serverIp,
+          port: data.port || parseInt(port),
+          software: data.software || "Minecraft"
         });
       }
       
-      res.json({
-        online: data.online,
-        players: {
-          current: data.players?.online || 0,
-          max: data.players?.max || 0
-        },
-        version: data.version || "Unknown",
-        motd: data.motd?.clean?.join(" ") || data.motd?.raw?.join(" ") || "No MOTD",
-        ping: data.debug?.ping || 0,
-        hostname: data.hostname || serverIp,
-        port: data.port || parseInt(port),
-        software: data.software || "Unknown"
+      // For other game types, return a basic offline response for now
+      // In production, you'd implement game-specific query protocols
+      res.status(404).json({ 
+        message: "Server query not supported for this game type yet",
+        online: false,
+        hostname: serverIp,
+        port: parseInt(port)
       });
+      
     } catch (error) {
       console.error("Server query error:", error);
-      res.status(500).json({ message: "Failed to query server" });
+      res.status(404).json({ 
+        message: "Server is offline or unreachable",
+        online: false,
+        hostname: req.params.serverIp,
+        port: parseInt(req.params.port || "25565")
+      });
     }
   });
 
