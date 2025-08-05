@@ -39,7 +39,7 @@ export default function HeroSection() {
                 size="lg"
               >
                 <Rocket className="mr-2" />
-                Start Now - From $2.99/mo
+                Get Started - From $2.99/mo
               </Button>
               <Button 
                 variant="outline"

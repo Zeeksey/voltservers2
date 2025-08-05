@@ -79,6 +79,8 @@ export interface IStorage {
   getAllServerLocations(): Promise<ServerLocation[]>;
   getServerLocation(id: string): Promise<ServerLocation | undefined>;
   createServerLocation(location: InsertServerLocation): Promise<ServerLocation>;
+  updateServerLocation(id: string, updateData: Partial<ServerLocation>): Promise<ServerLocation | undefined>;
+  deleteServerLocation(id: string): Promise<void>;
   
   // Minecraft tools methods
   getAllMinecraftTools(): Promise<MinecraftTool[]>;

@@ -17,27 +17,27 @@ export default function FeaturesSection() {
     {
       icon: <Shield className="text-gaming-green text-2xl" />,
       title: "DDoS Protection",
-      description: "Enterprise-grade DDoS protection keeps your server online even during attacks."
+      description: "Enterprise-grade DDoS protection keeps your server online even during the largest attacks."
     },
     {
       icon: <Headphones className="text-gaming-green text-2xl" />,
-      title: "24/7 Support",
-      description: "Our gaming experts are available around the clock to help with any issues."
+      title: "24/7 Expert Support",
+      description: "Our gaming specialists are available around the clock with average response time under 5 minutes."
     },
     {
       icon: <HardDrive className="text-gaming-green text-2xl" />,
       title: "NVMe SSD Storage",
-      description: "Ultra-fast NVMe SSDs ensure lightning-quick world loading and chunk generation."
+      description: "Ultra-fast NVMe SSDs with 10x faster read/write speeds than traditional storage."
     },
     {
       icon: <CloudUpload className="text-gaming-green text-2xl" />,
       title: "Automatic Backups",
-      description: "Daily automated backups keep your worlds safe. Restore with one click anytime."
+      description: "Hourly automated backups with 30-day retention. Restore any version with one click."
     },
     {
       icon: <Globe className="text-gaming-green text-2xl" />,
       title: "Global Network",
-      description: "Servers in 8+ locations worldwide for optimal latency no matter where you are."
+      description: "8 strategic locations worldwide with premium network carriers for ultra-low latency."
     }
   ];
 
@@ -46,10 +46,10 @@ export default function FeaturesSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            Why Choose <span className="text-gaming-green">GameHost Pro</span>?
+            <span className="text-gaming-green">Enterprise-Grade</span> Features
           </h2>
           <p className="text-xl text-gaming-gray max-w-3xl mx-auto">
-            We provide enterprise-grade infrastructure with gaming-focused optimizations to deliver the best possible experience for your players.
+            We provide enterprise-grade infrastructure with gaming-focused optimizations to deliver the best possible experience for your players worldwide.
           </p>
         </div>
         

@@ -92,6 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const locations = await storage.getAllServerLocations();
       res.json(locations);
     } catch (error) {
+      console.error("Error fetching server locations:", error);
       res.status(500).json({ message: "Failed to fetch server locations" });
     }
   });
@@ -104,6 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json(location);
     } catch (error) {
+      console.error("Error fetching server location:", error);
       res.status(500).json({ message: "Failed to fetch server location" });
     }
   });

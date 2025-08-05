@@ -217,6 +217,19 @@ export class DatabaseStorage implements IStorage {
     return newLocation;
   }
 
+  async updateServerLocation(id: string, updates: Partial<ServerLocation>): Promise<ServerLocation> {
+    const [updatedLocation] = await db
+      .update(serverLocations)
+      .set(updates)
+      .where(eq(serverLocations.id, id))
+      .returning();
+    return updatedLocation;
+  }
+
+  async deleteServerLocation(id: string): Promise<void> {
+    await db.delete(serverLocations).where(eq(serverLocations.id, id));
+  }
+
   // Minecraft tools methods
   async getAllMinecraftTools(): Promise<MinecraftTool[]> {
     return await db.select().from(minecraftTools);
