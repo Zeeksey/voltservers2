@@ -1,0 +1,55 @@
+<svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="serverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D084;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00A86B;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1A1D29;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0F1016;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="240" fill="url(#bgGradient)"/>
+  
+  <!-- Server Racks -->
+  <rect x="50" y="60" width="80" height="120" rx="4" fill="#2A2D3A" stroke="url(#serverGradient)" stroke-width="2"/>
+  <rect x="150" y="60" width="80" height="120" rx="4" fill="#2A2D3A" stroke="url(#serverGradient)" stroke-width="2"/>
+  <rect x="250" y="60" width="80" height="120" rx="4" fill="#2A2D3A" stroke="url(#serverGradient)" stroke-width="2"/>
+  
+  <!-- Server Lights -->
+  <circle cx="70" cy="80" r="3" fill="url(#serverGradient)"/>
+  <circle cx="110" cy="80" r="3" fill="url(#serverGradient)"/>
+  <circle cx="170" cy="80" r="3" fill="url(#serverGradient)"/>
+  <circle cx="210" cy="80" r="3" fill="url(#serverGradient)"/>
+  <circle cx="270" cy="80" r="3" fill="url(#serverGradient)"/>
+  <circle cx="310" cy="80" r="3" fill="url(#serverGradient)"/>
+  
+  <!-- Performance Bars -->
+  <rect x="60" y="100" width="60" height="4" rx="2" fill="#404040"/>
+  <rect x="60" y="100" width="45" height="4" rx="2" fill="url(#serverGradient)"/>
+  
+  <rect x="160" y="100" width="60" height="4" rx="2" fill="#404040"/>
+  <rect x="160" y="100" width="50" height="4" rx="2" fill="url(#serverGradient)"/>
+  
+  <rect x="260" y="100" width="60" height="4" rx="2" fill="#404040"/>
+  <rect x="260" y="100" width="40" height="4" rx="2" fill="url(#serverGradient)"/>
+  
+  <!-- Connection Lines -->
+  <path d="M130 120 L150 120" stroke="url(#serverGradient)" stroke-width="2" fill="none"/>
+  <path d="M230 120 L250 120" stroke="url(#serverGradient)" stroke-width="2" fill="none"/>
+  
+  <!-- Performance Chart -->
+  <polyline points="60,140 80,135 100,130 120,125 140,130 160,125 180,120 200,125 220,120 240,115 260,120 280,115 300,110 320,115" 
+            stroke="url(#serverGradient)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Title -->
+  <text x="200" y="30" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Server Optimization</text>
+  <text x="200" y="50" text-anchor="middle" fill="#9CA3AF" font-family="Arial, sans-serif" font-size="12">Maximizing Game Server Performance</text>
+  
+  <!-- Performance Indicators -->
+  <text x="90" y="115" text-anchor="middle" fill="#00D084" font-family="Arial, sans-serif" font-size="10">CPU 75%</text>
+  <text x="190" y="115" text-anchor="middle" fill="#00D084" font-family="Arial, sans-serif" font-size="10">RAM 83%</text>
+  <text x="290" y="115" text-anchor="middle" fill="#00D084" font-family="Arial, sans-serif" font-size="10">NET 67%</text>
+</svg>

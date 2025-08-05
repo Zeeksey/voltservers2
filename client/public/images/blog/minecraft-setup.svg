@@ -1,0 +1,76 @@
+<svg viewBox="0 0 400 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2E7D32;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="stoneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#78909C;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#546E7A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976D2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0D47A1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky Background -->
+  <rect width="400" height="140" fill="url(#skyGradient)"/>
+  
+  <!-- Ground -->
+  <rect x="0" y="140" width="400" height="100" fill="url(#grassGradient)"/>
+  
+  <!-- Minecraft Blocks -->
+  <!-- Grass blocks -->
+  <rect x="50" y="120" width="20" height="20" fill="url(#grassGradient)" stroke="#2E7D32" stroke-width="1"/>
+  <rect x="70" y="120" width="20" height="20" fill="url(#grassGradient)" stroke="#2E7D32" stroke-width="1"/>
+  <rect x="90" y="120" width="20" height="20" fill="url(#grassGradient)" stroke="#2E7D32" stroke-width="1"/>
+  <rect x="110" y="120" width="20" height="20" fill="url(#grassGradient)" stroke="#2E7D32" stroke-width="1"/>
+  
+  <!-- Stone blocks -->
+  <rect x="50" y="140" width="20" height="20" fill="url(#stoneGradient)" stroke="#37474F" stroke-width="1"/>
+  <rect x="70" y="140" width="20" height="20" fill="url(#stoneGradient)" stroke="#37474F" stroke-width="1"/>
+  <rect x="90" y="140" width="20" height="20" fill="url(#stoneGradient)" stroke="#37474F" stroke-width="1"/>
+  <rect x="110" y="140" width="20" height="20" fill="url(#stoneGradient)" stroke="#37474F" stroke-width="1"/>
+  
+  <!-- Simple Minecraft House -->
+  <rect x="200" y="80" width="60" height="60" fill="#8D6E63" stroke="#5D4037" stroke-width="2"/>
+  <!-- Roof -->
+  <polygon points="190,80 270,80 230,50" fill="#D32F2F" stroke="#B71C1C" stroke-width="2"/>
+  <!-- Door -->
+  <rect x="220" y="110" width="20" height="30" fill="#3E2723"/>
+  <!-- Windows -->
+  <rect x="205" y="95" width="10" height="10" fill="#81C784"/>
+  <rect x="245" y="95" width="10" height="10" fill="#81C784"/>
+  
+  <!-- Minecraft Character (Simple) -->
+  <rect x="300" y="90" width="16" height="24" fill="#F4C2A1" stroke="#8D6E63" stroke-width="1"/>
+  <!-- Head -->
+  <rect x="304" y="78" width="8" height="8" fill="#F4C2A1" stroke="#8D6E63" stroke-width="1"/>
+  <!-- Arms -->
+  <rect x="296" y="95" width="6" height="15" fill="#2196F3"/>
+  <rect x="318" y="95" width="6" height="15" fill="#2196F3"/>
+  <!-- Legs -->
+  <rect x="302" y="114" width="4" height="12" fill="#424242"/>
+  <rect x="310" y="114" width="4" height="12" fill="#424242"/>
+  
+  <!-- Server Elements -->
+  <rect x="340" y="160" width="50" height="30" rx="2" fill="#2A2D3A" stroke="#00D084" stroke-width="2"/>
+  <circle cx="350" cy="170" r="2" fill="#00D084"/>
+  <circle cx="360" cy="170" r="2" fill="#00D084"/>
+  <circle cx="370" cy="170" r="2" fill="#00D084"/>
+  <text x="365" y="185" text-anchor="middle" fill="#00D084" font-family="Arial, sans-serif" font-size="8">SERVER</text>
+  
+  <!-- Connection Line -->
+  <path d="M310 100 Q330 120 340 170" stroke="#00D084" stroke-width="2" fill="none" stroke-dasharray="3,3"/>
+  
+  <!-- Title -->
+  <text x="200" y="25" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="18" font-weight="bold">Minecraft Server Setup</text>
+  <text x="200" y="40" text-anchor="middle" fill="#E3F2FD" font-family="Arial, sans-serif" font-size="12">Complete Setup Guide</text>
+  
+  <!-- Clouds -->
+  <ellipse cx="80" cy="40" rx="15" ry="8" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="95" cy="45" rx="12" ry="6" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="320" cy="35" rx="18" ry="10" fill="#FFFFFF" opacity="0.8"/>
+  <ellipse cx="340" cy="40" rx="15" ry="7" fill="#FFFFFF" opacity="0.8"/>
+</svg>

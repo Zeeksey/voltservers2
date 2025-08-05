@@ -1,43 +1,44 @@
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowRight, BookOpen } from "lucide-react";
 import { Link } from "wouter";
-import type { BlogPost } from "@shared/schema";
 
-export default function BlogSection() {
-  const { data: blogPosts, isLoading } = useQuery<BlogPost[]>({
-    queryKey: ['/api/blog'],
-  });
-
-  if (isLoading) {
-    return (
-      <section className="py-20 bg-gaming-black-light">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              Latest <span className="text-gaming-green">News</span>
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-gaming-black-lighter rounded-xl overflow-hidden animate-pulse">
-                <div className="w-full h-48 bg-gaming-black" />
-                <div className="p-6">
-                  <div className="h-4 bg-gaming-black rounded mb-4" />
-                  <div className="h-6 bg-gaming-black rounded mb-4" />
-                  <div className="h-3 bg-gaming-black rounded mb-4" />
-                  <div className="h-8 bg-gaming-black rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+// Static blog posts for deployment
+const staticBlogPosts = [
+  {
+    id: 1,
+    title: "Optimizing Your Game Server Performance",
+    slug: "optimizing-game-server-performance",
+    excerpt: "Discover proven techniques to boost your game server's performance and reduce lag for your players.",
+    author: "GameHost Team",
+    publishedAt: "2024-01-15T10:00:00Z",
+    imageUrl: "/images/blog/server-optimization.svg",
+    tags: ["Performance", "Optimization"]
+  },
+  {
+    id: 2,
+    title: "Setting Up Your First Minecraft Server",
+    slug: "setting-up-minecraft-server",
+    excerpt: "Everything you need to know to get your Minecraft server up and running in minutes.",
+    author: "Mike Johnson",
+    publishedAt: "2024-01-10T14:30:00Z",
+    imageUrl: "/images/blog/minecraft-setup.svg",
+    tags: ["Minecraft", "Setup"]
+  },
+  {
+    id: 3,
+    title: "Essential Security Tips for Game Servers",
+    slug: "essential-security-tips",
+    excerpt: "Learn how to secure your game server and protect your community from malicious attacks.",
+    author: "Sarah Davis",
+    publishedAt: "2024-01-05T09:15:00Z",
+    imageUrl: "/images/blog/security-tips.svg",
+    tags: ["Security", "Tips"]
   }
+];
 
+export default function StaticBlogSection() {
   return (
     <section className="py-20 bg-gaming-black-light">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,18 +52,14 @@ export default function BlogSection() {
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts?.slice(0, 3).map((post) => (
+          {staticBlogPosts.map((post) => (
             <Link key={post.id} href={`/blog/${post.slug}`}>
               <Card className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden cursor-pointer">
                 <div className="relative">
                   <img 
-                    src={post.imageUrl || '/images/blog/server-optimization.svg'} 
+                    src={post.imageUrl} 
                     alt={post.title} 
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/images/blog/server-optimization.svg';
-                    }}
                   />
                   <div className="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300" />
                   <div className="absolute top-4 left-4">
