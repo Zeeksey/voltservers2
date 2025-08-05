@@ -2613,6 +2613,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Wisp Server List API route by user email
+  app.get('/api/wisp/servers/:email', async (req, res) => {
+    try {
+      const { email } = req.params;
+      console.log('Fetching Wisp servers for user email:', email);
+      
+      const wispClient = new WispIntegration();
+      const servers = await wispClient.getServersByUserEmail(email);
+      
+      res.json(servers);
+    } catch (error) {
+      console.error('Error fetching Wisp servers for user:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to fetch user servers from Wisp'
+      });
+    }
+  });
+
   // Wisp Server Details API route
   app.get('/api/wisp/server/:serverId', async (req, res) => {
     try {

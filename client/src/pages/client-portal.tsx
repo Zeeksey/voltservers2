@@ -75,37 +75,49 @@ export default function ClientPortal() {
     retry: 1
   });
 
-  // Fetch Wisp server details for each WHMCS service
+  // Fetch Wisp server details for the logged-in user
   useEffect(() => {
     const fetchWispDetails = async () => {
-      if (whmcsServices?.products?.product) {
-        const serverDetails: Record<string, any> = {};
-        
-        for (const service of whmcsServices.products.product) {
-          if (service.serverid) {
-            try {
-              const response = await fetch(`/api/wisp/server/${service.serverid}`);
-              if (response.ok) {
-                const data = await response.json();
-                if (data.success && data.server) {
-                  serverDetails[service.serverid] = data.server;
-                  console.log(`Wisp server ${service.serverid}:`, data.server.name);
-                }
+      if (loggedInClient?.email && whmcsServices?.products?.product) {
+        try {
+          console.log('Fetching Wisp servers for:', loggedInClient.email);
+          const response = await fetch(`/api/wisp/servers/${loggedInClient.email}`);
+          
+          if (response.ok) {
+            const wispServers = await response.json();
+            console.log('Wisp servers received:', wispServers);
+            
+            // Match Wisp servers to WHMCS services by IP or other criteria
+            const serverDetails: Record<string, any> = {};
+            
+            whmcsServices.products.product.forEach((service: any) => {
+              // Try to match by IP address
+              const serviceIp = service.dedicatedip?.split(':')[0]; // Remove port
+              const matchingWispServer = wispServers.find((wispServer: any) => 
+                wispServer.ip === serviceIp || 
+                (wispServer.name.toLowerCase().includes('minecraft') && service.groupname?.toLowerCase().includes('minecraft'))
+              );
+              
+              if (matchingWispServer) {
+                serverDetails[service.id] = matchingWispServer;
+                console.log(`Matched WHMCS service ${service.id} to Wisp server:`, matchingWispServer.name);
               }
-            } catch (error) {
-              console.log(`Failed to fetch Wisp details for server ${service.serverid}:`, error);
-            }
+            });
+            
+            setWispServerDetails(serverDetails);
+          } else {
+            console.log('Failed to fetch Wisp servers:', response.status);
           }
+        } catch (error) {
+          console.log('Error fetching Wisp servers:', error);
         }
-        
-        setWispServerDetails(serverDetails);
       }
     };
 
-    if (whmcsServices && !servicesLoading) {
+    if (loggedInClient?.email && whmcsServices && !servicesLoading) {
       fetchWispDetails();
     }
-  }, [whmcsServices, servicesLoading]);
+  }, [loggedInClient?.email, whmcsServices, servicesLoading]);
 
   const handleLoginSuccess = (clientData: any) => {
     setLoggedInClient(clientData);
@@ -279,8 +291,8 @@ export default function ClientPortal() {
                                 <div>
                                   <h4 className="text-gaming-white font-bold text-lg">
                                     {(() => {
-                                      // First try to get server name from Wisp
-                                      const wispServer = wispServerDetails[service.serverid];
+                                      // First try to get server name from Wisp using service ID
+                                      const wispServer = wispServerDetails[service.id];
                                       if (wispServer?.name) {
                                         return wispServer.name;
                                       }
@@ -299,10 +311,13 @@ export default function ClientPortal() {
                                     {service.domain || service.dedicatedip || 'Server Domain'}
                                   </p>
                                   {/* Show Wisp server info or custom field info */}
-                                  {wispServerDetails[service.serverid] ? (
+                                  {wispServerDetails[service.id] ? (
                                     <div className="mt-2 text-xs text-gaming-green">
                                       <span className="block">
                                         ✓ Live server from Wisp panel
+                                      </span>
+                                      <span className="block text-gaming-gray">
+                                        Game: {wispServerDetails[service.id].game}
                                       </span>
                                     </div>
                                   ) : service.customfields?.customfield && service.customfields.customfield.length > 0 && (

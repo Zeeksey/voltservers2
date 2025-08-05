@@ -44,20 +44,21 @@ export class WispIntegration {
     console.log('API Key configured:', !!this.apiKey);
   }
 
-  // Get server details by server ID
-  async getServerById(serverId: string): Promise<WispServer | null> {
+  // Get all servers for a user by email
+  async getServersByUserEmail(email: string): Promise<WispServer[]> {
     try {
       if (!this.apiKey || !this.apiUrl) {
         console.log('Missing Wisp credentials for server fetch');
-        return null;
+        return [];
       }
 
+      console.log('Fetching servers for user:', email);
+
+      // First get user by email
       const cleanUrl = this.apiUrl.endsWith('/') ? this.apiUrl.slice(0, -1) : this.apiUrl;
-      const serverUrl = `${cleanUrl}/api/application/servers/${serverId}`;
+      const usersUrl = `${cleanUrl}/api/application/users`;
 
-      console.log('Fetching Wisp server:', serverUrl);
-
-      const response = await fetch(serverUrl, {
+      const usersResponse = await fetch(usersUrl, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Accept': 'application/json',
@@ -65,44 +66,99 @@ export class WispIntegration {
         }
       });
 
-      if (!response.ok) {
-        console.log('Wisp server fetch failed:', response.status, response.statusText);
-        return null;
+      if (!usersResponse.ok) {
+        console.log('Wisp users fetch failed:', usersResponse.status, usersResponse.statusText);
+        return [];
       }
 
-      const data = await response.json();
-      console.log('Wisp server data received:', data?.attributes?.name);
+      const usersData = await usersResponse.json();
+      const user = usersData?.data?.find((u: any) => u.attributes?.email === email);
+      
+      if (!user) {
+        console.log('User not found in Wisp:', email);
+        return [];
+      }
 
-      if (data?.attributes) {
+      const userId = user.id;
+      console.log('Found user ID', userId, 'for email', email);
+
+      // Now get servers for this user
+      const serversUrl = `${cleanUrl}/api/application/servers`;
+      const serversResponse = await fetch(serversUrl, {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!serversResponse.ok) {
+        console.log('Wisp servers fetch failed:', serversResponse.status, serversResponse.statusText);
+        return [];
+      }
+
+      const serversData = await serversResponse.json();
+      console.log('Wisp API response received:', typeof serversData, 'total servers found:', serversData?.data?.length || 0);
+
+      if (!serversData?.data) {
+        return [];
+      }
+
+      // Filter servers for this user
+      const userServers = serversData.data.filter((server: any) => 
+        server.attributes?.user === parseInt(userId)
+      );
+
+      console.log('Filtered to', userServers.length, 'servers for user', userId);
+
+      return userServers.map((server: any) => {
+        console.log('Transforming server:', server.attributes?.name, 'egg:', server.attributes?.egg, 'nest:', server.attributes?.nest);
+        
         return {
-          id: data.attributes.id?.toString() || serverId,
-          name: data.attributes.name || 'Unknown Server',
-          game: data.attributes.nest?.name || 'Unknown',
-          status: this.mapWispStatus(data.attributes.status),
-          ip: data.attributes.allocation?.ip || '',
-          port: data.attributes.allocation?.port || 0,
-          maxPlayers: data.attributes.limits?.players || 0,
-          currentPlayers: 0, // Would need separate query for current players
-          cpu: data.attributes.limits?.cpu || 0,
+          id: server.attributes?.uuid || server.id,
+          name: server.attributes?.name || 'Unknown Server',
+          game: this.getGameFromEgg(server.attributes?.egg) || 'Unknown',
+          status: this.mapWispStatus(server.attributes?.status),
+          ip: server.attributes?.allocation?.ip || '',
+          port: server.attributes?.allocation?.port || 0,
+          maxPlayers: server.attributes?.limits?.players || 0,
+          currentPlayers: 0,
+          cpu: 0,
           memory: {
             used: 0,
-            total: data.attributes.limits?.memory || 0
+            total: server.attributes?.limits?.memory || 0
           },
           disk: {
             used: 0,
-            total: data.attributes.limits?.disk || 0
+            total: server.attributes?.limits?.disk || 0
           },
-          node: data.attributes.node?.name || 'Unknown',
-          location: data.attributes.node?.location || 'Unknown',
+          node: server.attributes?.node?.name || 'Unknown',
+          location: server.attributes?.node?.location || 'Unknown',
           uptime: 0
         };
-      }
+      });
 
-      return null;
     } catch (error) {
-      console.error('Error fetching Wisp server:', error);
-      return null;
+      console.error('Error fetching Wisp servers:', error);
+      return [];
     }
+  }
+
+  // Map egg ID to game name
+  private getGameFromEgg(eggId: number): string {
+    const eggMap: Record<number, string> = {
+      1: 'Minecraft Java Edition',
+      2: 'Minecraft Bedrock',
+      3: 'Counter-Strike 2',
+      4: 'Rust',
+      5: 'Garry\'s Mod',
+      6: 'ARK: Survival Evolved',
+      7: 'Valheim',
+      8: 'Palworld',
+      9: 'Satisfactory'
+    };
+    
+    return eggMap[eggId] || 'Unknown Game';
   }
 
   // Map Wisp status to our status format
@@ -121,7 +177,7 @@ export class WispIntegration {
     }
   }
 
-  // Test Wisp connection
+  // Test Wisp connection and list servers
   async testConnection(): Promise<boolean> {
     try {
       if (!this.apiKey || !this.apiUrl) {
@@ -149,6 +205,14 @@ export class WispIntegration {
       if (response.ok) {
         const data = await response.json();
         console.log('Wisp test successful, response type:', typeof data);
+        
+        // Log available servers for debugging
+        if (data?.data) {
+          console.log('Available Wisp servers:');
+          data.data.forEach((server: any) => {
+            console.log(`- Server ID: ${server.id}, Name: ${server.attributes?.name}, UUID: ${server.attributes?.uuid}`);
+          });
+        }
         return true;
       } else {
         const errorText = await response.text();
