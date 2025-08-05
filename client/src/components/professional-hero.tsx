@@ -41,8 +41,8 @@ export default function ProfessionalHero() {
       </div>
 
       <div className="relative container mx-auto px-4 pt-32 pb-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Content */}
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Content */}
           <div className="space-y-8">
             {/* Trust Badge */}
             <div className="flex items-center space-x-2">
@@ -112,58 +112,7 @@ export default function ProfessionalHero() {
             </div>
           </div>
 
-          {/* Right Column - Visual */}
-          <div className="relative">
-            {/* Main Dashboard Preview */}
-            <Card className="bg-gaming-dark/80 backdrop-blur-sm border-gaming-green/20 shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-end mb-4">
-                  <Badge className="bg-green-500/20 text-green-400">Online</Badge>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-gaming-white font-medium">Minecraft Server #1</span>
-                    <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4 text-gaming-green" />
-                      <span className="text-gaming-green">24/50</span>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gaming-black/50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gaming-gray text-sm">CPU Usage</span>
-                      <span className="text-gaming-green text-sm">23%</span>
-                    </div>
-                    <div className="w-full bg-gaming-black rounded-full h-2">
-                      <div className="bg-gradient-to-r from-gaming-green to-green-400 h-2 rounded-full" style={{width: '23%'}}></div>
-                    </div>
-                  </div>
 
-                  <div className="bg-gaming-black/50 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gaming-gray text-sm">RAM Usage</span>
-                      <span className="text-gaming-green text-sm">1.2GB / 4GB</span>
-                    </div>
-                    <div className="w-full bg-gaming-black rounded-full h-2">
-                      <div className="bg-gradient-to-r from-gaming-green to-green-400 h-2 rounded-full" style={{width: '30%'}}></div>
-                    </div>
-                  </div>
-
-                  <div className="flex space-x-2">
-                    <Button size="sm" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black flex-1">
-                      Start
-                    </Button>
-                    <Button size="sm" variant="outline" className="border-gaming-green/30 text-gaming-green flex-1">
-                      Restart
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-
-          </div>
         </div>
 
         {/* Bottom Features Bar */}
