@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -123,6 +122,7 @@ const featuredTools = minecraftTools.filter(tool => tool.featured);
 export default function MinecraftToolsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedPlatform, setSelectedPlatform] = useState('All');
 
 
   const getIcon = (iconName: string) => {
@@ -143,8 +143,9 @@ export default function MinecraftToolsPage() {
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || tool.category === selectedCategory;
+    const matchesPlatform = selectedPlatform === 'All' || tool.platforms.includes(selectedPlatform);
     
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory && matchesPlatform;
   });
 
   return (
@@ -272,22 +273,7 @@ export default function MinecraftToolsPage() {
               </TabsList>
             </Tabs>
 
-            <div className="mt-4 flex gap-2 justify-center flex-wrap">
-              {['All', 'PC', 'Console', 'Mobile', 'Crossplay'].map((platform) => (
-                <Button
-                  key={platform}
-                  variant={selectedPlatform === platform ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedPlatform(platform)}
-                  className={selectedPlatform === platform ? 
-                    "bg-gaming-green text-gaming-black hover:bg-gaming-green-dark" : 
-                    "border-gaming-green/20 text-gaming-gray hover:text-gaming-white"
-                  }
-                >
-                  {platform}
-                </Button>
-              ))}
-            </div>
+
           </div>
 
           {/* Tools Grid */}

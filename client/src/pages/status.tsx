@@ -35,18 +35,18 @@ export default function StatusPage() {
   ];
 
   const locations = [
-    { name: "Virginia, US", status: "operational", ping: "13ms", players: "2,847" },
-    { name: "Quebec, Canada", status: "operational", ping: "36ms", players: "1,623" },
-    { name: "Florida, US", status: "operational", ping: "42ms", players: "1,945" },
-    { name: "Texas, US", status: "operational", ping: "46ms", players: "2,156" },
-    { name: "California, US", status: "operational", ping: "86ms", players: "3,214" },
-    { name: "Oregon, US", status: "operational", ping: "91ms", players: "1,789" },
-    { name: "United Kingdom", status: "operational", ping: "86ms", players: "2,634" },
-    { name: "Germany", status: "operational", ping: "99ms", players: "3,521" },
-    { name: "Netherlands", status: "operational", ping: "102ms", players: "2,967" },
-    { name: "France", status: "operational", ping: "97ms", players: "2,145" },
-    { name: "Australia", status: "operational", ping: "221ms", players: "1,456" },
-    { name: "Singapore", status: "operational", ping: "252ms", players: "1,789" }
+    { name: "Virginia, US", status: "operational", ping: "13ms", players: "2,847", ip: "198.51.100.42" },
+    { name: "Quebec, Canada", status: "operational", ping: "36ms", players: "1,623", ip: "203.0.113.89" },
+    { name: "Florida, US", status: "operational", ping: "42ms", players: "1,945", ip: "192.0.2.156" },
+    { name: "Texas, US", status: "operational", ping: "46ms", players: "2,156", ip: "198.51.100.73" },
+    { name: "California, US", status: "operational", ping: "86ms", players: "3,214", ip: "203.0.113.201" },
+    { name: "Oregon, US", status: "operational", ping: "91ms", players: "1,789", ip: "192.0.2.88" },
+    { name: "United Kingdom", status: "operational", ping: "86ms", players: "2,634", ip: "198.51.100.134" },
+    { name: "Germany", status: "operational", ping: "99ms", players: "3,521", ip: "203.0.113.67" },
+    { name: "Netherlands", status: "operational", ping: "102ms", players: "2,967", ip: "192.0.2.192" },
+    { name: "France", status: "operational", ping: "97ms", players: "2,145", ip: "198.51.100.205" },
+    { name: "Australia", status: "operational", ping: "221ms", players: "1,456", ip: "203.0.113.123" },
+    { name: "Singapore", status: "operational", ping: "252ms", players: "1,789", ip: "192.0.2.45" }
   ];
 
   const incidents = [
@@ -191,16 +191,29 @@ export default function StatusPage() {
               Server <span className="text-gaming-green">Locations</span>
             </h2>
             <p className="text-gaming-gray text-lg">Performance metrics from our global data centers</p>
+            
+            {/* IP Visibility Toggle */}
+            <div className="flex justify-center mb-8">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setHideIPs(!hideIPs)}
+                className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+              >
+                {hideIPs ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
+                {hideIPs ? 'Show IPs' : 'Hide IPs'}
+              </Button>
+            </div>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {locations.map((location, index) => (
               <Card key={index} className="bg-gaming-black-lighter border-gaming-black-lighter hover:border-gaming-green/30 transition-colors">
-                <CardContent className="p-6">
+                <CardContent className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-gaming-green" />
-                      <h3 className="text-gaming-white font-semibold">{location.name}</h3>
+                      <h3 className="text-gaming-white font-semibold text-sm sm:text-base">{location.name}</h3>
                     </div>
                     {getStatusIcon(location.status)}
                   </div>
@@ -209,17 +222,27 @@ export default function StatusPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Wifi className="w-4 h-4 text-gaming-gray" />
-                        <span className="text-gaming-gray text-sm">Ping</span>
+                        <span className="text-gaming-gray text-xs sm:text-sm">Ping</span>
                       </div>
-                      <span className="text-gaming-green font-semibold">{location.ping}</span>
+                      <span className="text-gaming-green font-semibold text-sm">{location.ping}</span>
                     </div>
                     
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Activity className="w-4 h-4 text-gaming-gray" />
-                        <span className="text-gaming-gray text-sm">Active Players</span>
+                        <span className="text-gaming-gray text-xs sm:text-sm">Players</span>
                       </div>
-                      <span className="text-gaming-white font-semibold">{location.players}</span>
+                      <span className="text-gaming-white font-semibold text-sm">{location.players}</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Server className="w-4 h-4 text-gaming-gray" />
+                        <span className="text-gaming-gray text-xs sm:text-sm">IP</span>
+                      </div>
+                      <span className="text-gaming-white font-mono text-sm">
+                        {hideIPs ? '•••.•••.•••.•••' : location.ip}
+                      </span>
                     </div>
                   </div>
                 </CardContent>

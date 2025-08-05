@@ -115,12 +115,12 @@ export default function ServiceManagement() {
   return (
     <div className="space-y-6">
       {/* Service Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {services.map((service) => (
           <Card key={service.id} className="bg-gaming-dark border-gaming-green/20">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-gaming-white text-lg">{service.name}</CardTitle>
+                <CardTitle className="text-gaming-white text-base md:text-lg">{service.name}</CardTitle>
                 <Badge className={getStatusColor(service.status)}>
                   {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
                 </Badge>

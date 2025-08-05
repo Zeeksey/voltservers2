@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Gamepad2 } from "lucide-react";
+import { Menu, X, Zap, Gamepad2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 export default function Navigation() {
@@ -26,7 +26,7 @@ export default function Navigation() {
           <Link href="/">
             <div className="flex items-center space-x-2 cursor-pointer">
               <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
-                <Gamepad2 className="text-gaming-black text-xl" />
+                <Zap className="text-gaming-black text-xl" />
               </div>
               <span className="text-2xl font-bold text-gaming-green">VoltServers</span>
             </div>
