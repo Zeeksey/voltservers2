@@ -1,351 +1,358 @@
-import PromoBanner from "@/components/promo-banner";
-import Navigation from "@/components/navigation";
-import Footer from "@/components/footer";
-import LiveChat from "@/components/live-chat";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Server,
-  Users,
-  Cpu,
-  HardDrive,
-  Wifi,
-  Shield,
-  Clock,
-  CheckCircle,
-  Star,
-  Gift,
-  Gamepad2,
-  Code,
-  Database,
-  Wrench,
-  Target,
-  MonitorSpeaker,
-  MousePointer,
-  Layers,
-  Package,
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { 
+  Check, 
+  Users, 
+  Server, 
   Globe,
-  Zap,
   Download,
   Settings,
-  Play,
-  Crown,
-  ArrowRight,
-  ChevronRight,
-  Heart,
-  Award
-} from "lucide-react";
+  PlayCircle,
+  Gamepad2,
+  Database,
+  Cpu,
+  HardDrive,
+  Lock
+} from 'lucide-react';
+import Navigation from '@/components/navigation';
+import PromoBanner from '@/components/promo-banner';
+import Footer from '@/components/footer';
+import { Link } from 'wouter';
 
 export default function MinecraftHostingPage() {
-  const pricingPlans = [
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'biannual' | 'annual'>('monthly');
+
+  const minecraftPlans = [
     {
-      name: "Budget",
-      price: "2.99",
-      description: "Perfect for small groups with few plugins",
+      id: 'budget',
+      name: 'Budget',
+      description: 'Perfect for small groups',
+      players: 10,
+      ram: '2GB',
+      storage: '20GB',
+      monthly: 4.99,
+      biannual: 4.24,
+      annual: 3.74,
       features: [
-        "1GB RAM",
-        "Unlimited player slots",
-        "Unlimited SSD storage",
-        "Free subdomain",
-        "DDoS protection",
-        "24/7 support"
+        'Instant Setup',
+        'Full FTP Access', 
+        'DDoS Protection',
+        'Plugin Support',
+        'Basic Support',
+        'Automatic Backups'
       ],
-      recommended: false,
       popular: false
     },
     {
-      name: "Starter",
-      price: "5.99",
-      description: "Great for friends and small communities",
+      id: 'standard',
+      name: 'Standard', 
+      description: 'Most popular choice',
+      players: 20,
+      ram: '4GB',
+      storage: '40GB',
+      monthly: 9.99,
+      biannual: 8.49,
+      annual: 7.49,
       features: [
-        "2GB RAM",
-        "Unlimited player slots",
-        "Unlimited SSD storage",
-        "Free subdomain",
-        "DDoS protection",
-        "Priority support"
+        'Everything in Budget',
+        'Mod Support',
+        'Advanced DDoS Protection',
+        'Priority Support',
+        'Custom JAR Files',
+        'Scheduled Restarts'
       ],
-      recommended: false,
-      popular: false
-    },
-    {
-      name: "Premium",
-      price: "9.99",
-      description: "Recommended for modpacks and plugins",
-      features: [
-        "4GB RAM",
-        "Unlimited player slots",
-        "Unlimited SSD storage",
-        "Free subdomain",
-        "DDoS protection",
-        "Priority support",
-        "Advanced control panel"
-      ],
-      recommended: true,
       popular: true
     },
     {
-      name: "Extreme",
-      price: "19.99",
-      description: "For large servers with many plugins",
+      id: 'premium',
+      name: 'Premium',
+      description: 'For serious communities',
+      players: 50,
+      ram: '8GB', 
+      storage: '80GB',
+      monthly: 19.99,
+      biannual: 16.99,
+      annual: 14.99,
       features: [
-        "8GB RAM",
-        "Unlimited player slots",
-        "Unlimited SSD storage",
-        "Free subdomain",
-        "DDoS protection",
-        "Premium support",
-        "Dedicated IP",
-        "Custom JAR support"
+        'Everything in Standard',
+        'BungeeCord Support',
+        'Dedicated IP',
+        'Advanced Plugin Manager',
+        '24/7 Priority Support',
+        'Custom Startup Parameters'
       ],
-      recommended: false,
+      popular: false
+    },
+    {
+      id: 'extreme',
+      name: 'Extreme',
+      description: 'Maximum performance',
+      players: 100,
+      ram: '16GB',
+      storage: '160GB', 
+      monthly: 39.99,
+      biannual: 33.99,
+      annual: 29.99,
+      features: [
+        'Everything in Premium',
+        'NVMe SSD Storage',
+        'Dedicated Resources',
+        'Advanced Monitoring',
+        'Custom Control Panel',
+        'Migration Assistance'
+      ],
       popular: false
     }
   ];
 
-  const controlPanelFeatures = [
+  const minecraftFeatures = [
     {
-      icon: <MonitorSpeaker className="w-8 h-8 text-gaming-green" />,
-      title: "Smooth Instant Console",
-      description: "Real-time console with message highlighting and log sharing capabilities"
+      icon: <PlayCircle className="w-6 h-6" />,
+      title: 'Instant Setup',
+      description: 'Server ready in under 60 seconds'
     },
     {
-      icon: <Package className="w-8 h-8 text-gaming-green" />,
-      title: "One-Click Modpack Installer",
-      description: "2000+ modpacks available with instant installation from CurseForge"
-    },
-    {
-      icon: <Layers className="w-8 h-8 text-gaming-green" />,
-      title: "Server Instances",
-      description: "Swap between different server configurations instantly"
-    },
-    {
-      icon: <Database className="w-8 h-8 text-gaming-green" />,
-      title: "Built-in File Manager",
-      description: "Upload, download, and edit files directly from your browser"
-    },
-    {
-      icon: <Shield className="w-8 h-8 text-gaming-green" />,
-      title: "Automatic Backups",
-      description: "Scheduled backups with one-click restore functionality"
-    },
-    {
-      icon: <Wrench className="w-8 h-8 text-gaming-green" />,
-      title: "Plugin Manager",
-      description: "Browse and install plugins with advanced filtering options"
-    }
-  ];
-
-  const serverTypes = [
-    {
-      name: "Vanilla",
-      icon: <Gamepad2 className="w-6 h-6" />,
-      description: "Pure Minecraft experience"
-    },
-    {
-      name: "Paper",
-      icon: <Code className="w-6 h-6" />,
-      description: "Optimized for performance"
-    },
-    {
-      name: "Forge",
-      icon: <Wrench className="w-6 h-6" />,
-      description: "For modded servers"
-    },
-    {
-      name: "Fabric",
-      icon: <Layers className="w-6 h-6" />,
-      description: "Lightweight modding"
-    },
-    {
-      name: "Bedrock",
-      icon: <Globe className="w-6 h-6" />,
-      description: "Cross-platform play"
-    },
-    {
-      name: "Custom",
       icon: <Settings className="w-6 h-6" />,
-      description: "Upload your own JAR"
+      title: 'Full Control Panel',
+      description: 'Manage your server with ease'
+    },
+    {
+      icon: <Download className="w-6 h-6" />,
+      title: 'Mod & Plugin Support',
+      description: 'Install mods and plugins with one click'
+    },
+    {
+      icon: <Globe className="w-6 h-6" />,
+      title: 'Global Locations',
+      description: 'Servers in 12+ worldwide locations'
+    },
+    {
+      icon: <Database className="w-6 h-6" />,
+      title: 'Automatic Backups',
+      description: 'Daily backups to keep your world safe'
+    },
+    {
+      icon: <Lock className="w-6 h-6" />,
+      title: 'DDoS Protection',
+      description: 'Enterprise-grade protection included'
     }
   ];
 
-  const features = [
-    {
-      icon: <Zap className="w-6 h-6 text-gaming-green" />,
-      title: "Instant Setup",
-      description: "Your server is ready in under 60 seconds"
-    },
-    {
-      icon: <Shield className="w-6 h-6 text-gaming-green" />,
-      title: "DDoS Protection",
-      description: "Enterprise-grade protection included"
-    },
-    {
-      icon: <Globe className="w-6 h-6 text-gaming-green" />,
-      title: "Global Locations",
-      description: "15+ server locations worldwide"
-    },
-    {
-      icon: <Clock className="w-6 h-6 text-gaming-green" />,
-      title: "99.9% Uptime",
-      description: "Guaranteed uptime with SLA"
-    },
-    {
-      icon: <Users className="w-6 h-6 text-gaming-green" />,
-      title: "24/7 Support",
-      description: "Expert support team always available"
-    },
-    {
-      icon: <HardDrive className="w-6 h-6 text-gaming-green" />,
-      title: "NVMe SSD Storage",
-      description: "Lightning-fast storage performance"
-    }
+  const minecraftVersions = [
+    { version: '1.21.4', type: 'Latest Release', popular: true },
+    { version: '1.20.6', type: 'Stable', popular: true },
+    { version: '1.19.4', type: 'Popular', popular: false },
+    { version: '1.18.2', type: 'Legacy', popular: false },
+    { version: '1.16.5', type: 'Modded', popular: true },
+    { version: '1.12.2', type: 'Classic Modded', popular: false }
   ];
 
-  const testimonials = [
-    {
-      name: "Alex M.",
-      rating: 5,
-      text: "Best Minecraft hosting I've used. The control panel is amazing and support is super helpful!",
-      verified: true
-    },
-    {
-      name: "Sarah K.",
-      rating: 5,
-      text: "Server runs perfectly with 50+ players. No lag whatsoever. Highly recommend!",
-      verified: true
-    },
-    {
-      name: "Mike R.",
-      rating: 5,
-      text: "Setup was literally under a minute. The one-click modpack installer is a game changer.",
-      verified: true
-    }
+  const modpacks = [
+    { name: 'All The Mods 9', downloads: '2.1M', category: 'Kitchen Sink' },
+    { name: 'Better Minecraft', downloads: '1.8M', category: 'Adventure' },
+    { name: 'RLCraft', downloads: '3.2M', category: 'Hardcore' },
+    { name: 'Pixelmon Reforged', downloads: '1.5M', category: 'Pokemon' },
+    { name: 'SkyFactory 4', downloads: '2.7M', category: 'Skyblock' },
+    { name: 'Stoneblock 3', downloads: '987K', category: 'Underground' }
   ];
+
+  const getPlanPrice = (plan: any) => {
+    return plan[billingPeriod];
+  };
+
+  const getBillingText = () => {
+    switch (billingPeriod) {
+      case 'biannual': return '/6mo';
+      case 'annual': return '/year';
+      default: return '/mo';
+    }
+  };
+
+  const getSavingsText = () => {
+    switch (billingPeriod) {
+      case 'biannual': return 'Save 15%';
+      case 'annual': return 'Save 25%';
+      default: return '';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gaming-black">
-      <title>Minecraft Server Hosting - GameHost Pro | Starting at $2.99/mo</title>
-      <meta name="description" content="Best Minecraft server hosting for Java and Bedrock Edition. Instant setup, DDoS protection, unlimited plugins. 2000+ modpacks available. Starting at $2.99/mo." />
-      
       <PromoBanner />
       <Navigation />
-
+      
       {/* Hero Section */}
-      <section className="py-32 bg-gradient-gaming relative overflow-hidden">
-        <div className="absolute inset-0 opacity-30">
-          <div className="w-full h-full bg-gaming-green/5" 
-               style={{
-                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300ff88' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-               }}>
-          </div>
-        </div>
+      <section className="py-20 bg-gradient-gaming relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
-            <Badge className="bg-gaming-green/20 text-gaming-green border-gaming-green/30 mb-6 text-lg px-4 py-2">
-              #1 Minecraft Hosting
-            </Badge>
-            <h1 className="text-6xl font-bold text-gaming-white mb-6">
-              The Best <span className="text-gaming-green">Minecraft</span> Server Host
-            </h1>
-            <p className="text-xl text-gaming-gray mb-4">
-              For Java Edition and Bedrock Edition
-            </p>
-            <p className="text-lg text-gaming-gray mb-8">
-              Instant setup • DDoS protection • Starting at $2.99/mo
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold text-lg px-8 py-4">
-                Get Your Server Now
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 text-lg px-8 py-4">
-                View Demo
-                <Play className="w-5 h-5 ml-2" />
-              </Button>
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-16 h-16 bg-gaming-green rounded-xl flex items-center justify-center">
+                <Gamepad2 className="w-8 h-8 text-gaming-black" />
+              </div>
+              <h1 className="text-5xl font-bold text-gaming-white">
+                Minecraft <span className="text-gaming-green">Server Hosting</span>
+              </h1>
             </div>
-            <div className="flex items-center justify-center gap-6 text-sm text-gaming-gray">
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-gaming-green mr-2" />
-                Instant Setup
+            <p className="text-xl text-gaming-gray mb-8">
+              Premium Minecraft hosting with instant setup, mod support, and 24/7 uptime
+            </p>
+            
+            {/* Key Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
+              <div className="bg-gaming-black-lighter/50 rounded-lg p-4">
+                <div className="text-2xl font-bold text-gaming-green">99.9%</div>
+                <div className="text-sm text-gaming-gray">Uptime</div>
               </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-gaming-green mr-2" />
-                24/7 Support
+              <div className="bg-gaming-black-lighter/50 rounded-lg p-4">
+                <div className="text-2xl font-bold text-gaming-green">60s</div>
+                <div className="text-sm text-gaming-gray">Setup Time</div>
               </div>
-              <div className="flex items-center">
-                <CheckCircle className="w-4 h-4 text-gaming-green mr-2" />
-                99.9% Uptime
+              <div className="bg-gaming-black-lighter/50 rounded-lg p-4">
+                <div className="text-2xl font-bold text-gaming-green">24/7</div>
+                <div className="text-sm text-gaming-gray">Support</div>
+              </div>
+              <div className="bg-gaming-black-lighter/50 rounded-lg p-4">
+                <div className="text-2xl font-bold text-gaming-green">12+</div>
+                <div className="text-sm text-gaming-gray">Locations</div>
               </div>
             </div>
+
+            <Button 
+              size="lg" 
+              className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold px-8"
+            >
+              Start Your Server Now
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-gaming-black">
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
+          <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gaming-white mb-4">
               Choose Your <span className="text-gaming-green">Plan</span>
             </h2>
-            <p className="text-xl text-gaming-gray">
-              All plans include unlimited player slots and SSD storage
+            <p className="text-gaming-gray text-lg mb-8">
+              All plans include DDoS protection, mod support, and instant setup
             </p>
+            
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <span className="text-gaming-gray">Monthly</span>
+              <div className="flex bg-gaming-black-lighter rounded-lg p-1">
+                <button
+                  onClick={() => setBillingPeriod('monthly')}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    billingPeriod === 'monthly' 
+                      ? 'bg-gaming-green text-gaming-black' 
+                      : 'text-gaming-gray hover:text-gaming-white'
+                  }`}
+                >
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setBillingPeriod('biannual')}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    billingPeriod === 'biannual' 
+                      ? 'bg-gaming-green text-gaming-black' 
+                      : 'text-gaming-gray hover:text-gaming-white'
+                  }`}
+                >
+                  6 Months
+                </button>
+                <button
+                  onClick={() => setBillingPeriod('annual')}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    billingPeriod === 'annual' 
+                      ? 'bg-gaming-green text-gaming-black' 
+                      : 'text-gaming-gray hover:text-gaming-white'
+                  }`}
+                >
+                  Annual
+                </button>
+              </div>
+              <span className="text-gaming-gray">Annual</span>
+              {getSavingsText() && (
+                <Badge className="bg-gaming-green text-gaming-black ml-2">
+                  {getSavingsText()}
+                </Badge>
+              )}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            {pricingPlans.map((plan, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {minecraftPlans.map((plan) => (
               <Card 
-                key={index} 
-                className={`bg-gaming-dark border-2 transition-all hover:scale-105 relative ${
-                  plan.recommended 
-                    ? 'border-gaming-green ring-2 ring-gaming-green/20' 
-                    : 'border-gaming-green/20 hover:border-gaming-green/40'
+                key={plan.id}
+                className={`relative bg-gaming-black-lighter border-2 transition-all duration-300 ${
+                  plan.popular 
+                    ? 'border-gaming-green shadow-lg shadow-gaming-green/20' 
+                    : 'border-gaming-green/20 hover:border-gaming-green/50'
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gaming-green text-gaming-black font-semibold px-4 py-1">
+                    <Badge className="bg-gaming-green text-gaming-black font-semibold">
                       Most Popular
                     </Badge>
                   </div>
                 )}
-                {plan.recommended && (
-                  <div className="absolute -top-3 right-4">
-                    <Badge className="bg-blue-500 text-white font-semibold px-3 py-1">
-                      Recommended
-                    </Badge>
-                  </div>
-                )}
-                <CardHeader className="text-center pb-2">
-                  <CardTitle className="text-gaming-white text-2xl">{plan.name}</CardTitle>
+
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="text-gaming-white text-xl">{plan.name}</CardTitle>
+                  <p className="text-gaming-gray text-sm">{plan.description}</p>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold text-gaming-green">${plan.price}</span>
-                    <span className="text-gaming-gray">/month</span>
+                    <div className="text-3xl font-bold text-gaming-green">
+                      ${getPlanPrice(plan)}
+                      <span className="text-lg text-gaming-gray">{getBillingText()}</span>
+                    </div>
                   </div>
-                  <p className="text-gaming-gray text-sm mt-2">{plan.description}</p>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-6">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-center text-gaming-gray">
-                        <CheckCircle className="w-4 h-4 text-gaming-green mr-3 flex-shrink-0" />
-                        {feature}
-                      </li>
+
+                <CardContent className="space-y-4">
+                  {/* Plan specs */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-gaming-green" />
+                      <span className="text-gaming-gray">{plan.players} Players</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-4 h-4 text-gaming-green" />
+                      <span className="text-gaming-gray">{plan.ram} RAM</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <HardDrive className="w-4 h-4 text-gaming-green" />
+                      <span className="text-gaming-gray">{plan.storage} Storage</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-gaming-green" />
+                      <span className="text-gaming-gray">Global</span>
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="space-y-2">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-gaming-green flex-shrink-0" />
+                        <span className="text-gaming-gray text-sm">{feature}</span>
+                      </div>
                     ))}
-                  </ul>
+                  </div>
+
                   <Button 
-                    className={`w-full font-semibold ${
-                      plan.recommended 
-                        ? 'bg-gaming-green hover:bg-gaming-green-dark text-gaming-black' 
-                        : 'bg-gaming-dark border border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black'
+                    className={`w-full mt-6 ${
+                      plan.popular
+                        ? 'bg-gaming-green hover:bg-gaming-green-dark text-gaming-black'
+                        : 'bg-gaming-black-light hover:bg-gaming-green hover:text-gaming-black text-gaming-green border border-gaming-green'
                     }`}
-                    variant={plan.recommended ? "default" : "outline"}
                   >
-                    Get Started
+                    Choose {plan.name}
                   </Button>
                 </CardContent>
               </Card>
@@ -354,165 +361,133 @@ export default function MinecraftHostingPage() {
         </div>
       </section>
 
-      {/* Control Panel 2.0 Section */}
-      <section className="py-20 bg-gaming-dark">
+      {/* Features Section */}
+      <section className="py-20 bg-gaming-black-light">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <Badge className="bg-gaming-green/20 text-gaming-green border-gaming-green/30 mb-4">
-              Control Panel 2.0
-            </Badge>
             <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              Rebuilt From the <span className="text-gaming-green">Ground Up</span>
+              Why Choose Our <span className="text-gaming-green">Minecraft Hosting</span>
             </h2>
-            <p className="text-xl text-gaming-gray max-w-3xl mx-auto">
-              Our completely redesigned control panel makes server management effortless 
-              with powerful features and an intuitive interface.
+            <p className="text-gaming-gray text-lg max-w-2xl mx-auto">
+              Built specifically for Minecraft with features that matter to server owners
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {controlPanelFeatures.map((feature, index) => (
-              <Card key={index} className="bg-gaming-black border-gaming-green/20 hover:border-gaming-green/40 transition-all group">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {minecraftFeatures.map((feature, index) => (
+              <Card key={index} className="bg-gaming-black-lighter border-gaming-green/20 hover:border-gaming-green/50 transition-colors">
                 <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4 group-hover:scale-110 transition-transform">
-                    {feature.icon}
+                  <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <div className="text-gaming-green">{feature.icon}</div>
                   </div>
-                  <h3 className="text-gaming-white font-semibold text-lg mb-2">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold text-gaming-white mb-2">{feature.title}</h3>
                   <p className="text-gaming-gray">{feature.description}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
-
-          <div className="text-center">
-            <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold">
-              Try the Demo
-              <MousePointer className="w-5 h-5 ml-2" />
-            </Button>
-          </div>
         </div>
       </section>
 
-      {/* Server Types */}
-      <section className="py-20 bg-gaming-black">
+      {/* Versions & Modpacks */}
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              All Server <span className="text-gaming-green">Types</span> Supported
-            </h2>
-            <p className="text-xl text-gaming-gray">
-              From vanilla to heavily modded - we support them all
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-5xl mx-auto">
-            {serverTypes.map((type, index) => (
-              <Card key={index} className="bg-gaming-dark border-gaming-green/20 hover:border-gaming-green/40 transition-all hover:scale-105 group cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-3 text-gaming-green group-hover:scale-110 transition-transform">
-                    {type.icon}
-                  </div>
-                  <h3 className="text-gaming-white font-semibold mb-1">{type.name}</h3>
-                  <p className="text-gaming-gray text-xs">{type.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 bg-gaming-dark">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              Why Choose <span className="text-gaming-green">GameHost Pro</span>
-            </h2>
-            <p className="text-xl text-gaming-gray">
-              Everything you need for the perfect Minecraft server
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start space-x-4 p-6 bg-gaming-black rounded-lg border border-gaming-green/20 hover:border-gaming-green/40 transition-colors">
-                <div className="flex-shrink-0 p-2 bg-gaming-green/20 rounded-lg">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="text-gaming-white font-semibold text-lg mb-2">{feature.title}</h3>
-                  <p className="text-gaming-gray">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gaming-black">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              <span className="text-gaming-green">7,000+</span> Happy Customers
-            </h2>
-            <div className="flex items-center justify-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-6 h-6 fill-gaming-green text-gaming-green" />
-              ))}
-              <span className="text-gaming-green font-semibold ml-2">5.0 out of 5</span>
+          <Tabs defaultValue="versions" className="w-full">
+            <div className="text-center mb-8">
+              <TabsList className="bg-gaming-black-lighter">
+                <TabsTrigger value="versions" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
+                  Minecraft Versions
+                </TabsTrigger>
+                <TabsTrigger value="modpacks" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
+                  Popular Modpacks
+                </TabsTrigger>
+              </TabsList>
             </div>
-            <p className="text-xl text-gaming-gray">
-              Based on thousands of reviews
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-gaming-dark border-gaming-green/20">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-1 mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-gaming-green text-gaming-green" />
-                    ))}
-                  </div>
-                  <p className="text-gaming-gray mb-4">"{testimonial.text}"</p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-gaming-white font-semibold">{testimonial.name}</span>
-                    {testimonial.verified && (
-                      <Badge className="bg-gaming-green/20 text-gaming-green border-gaming-green/30 text-xs">
-                        <CheckCircle className="w-3 h-3 mr-1" />
-                        Verified
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+            <TabsContent value="versions">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gaming-white mb-4">
+                  Supported <span className="text-gaming-green">Minecraft Versions</span>
+                </h2>
+                <p className="text-gaming-gray">All major Minecraft versions supported with one-click installation</p>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {minecraftVersions.map((version, index) => (
+                  <Card key={index} className={`bg-gaming-black-lighter border transition-colors ${
+                    version.popular ? 'border-gaming-green/50' : 'border-gaming-green/20'
+                  } hover:border-gaming-green/80`}>
+                    <CardContent className="p-4 text-center">
+                      {version.popular && (
+                        <Badge className="bg-gaming-green text-gaming-black text-xs mb-2">
+                          Popular
+                        </Badge>
+                      )}
+                      <div className="text-lg font-bold text-gaming-white mb-1">{version.version}</div>
+                      <div className="text-sm text-gaming-gray">{version.type}</div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="modpacks">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gaming-white mb-4">
+                  Popular <span className="text-gaming-green">Modpacks</span>
+                </h2>
+                <p className="text-gaming-gray">One-click installation for the most popular modpacks</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {modpacks.map((modpack, index) => (
+                  <Card key={index} className="bg-gaming-black-lighter border-gaming-green/20 hover:border-gaming-green/50 transition-colors">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-lg font-semibold text-gaming-white">{modpack.name}</h3>
+                        <Badge variant="outline" className="border-gaming-green/50 text-gaming-green text-xs">
+                          {modpack.category}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2 text-gaming-gray">
+                        <Download className="w-4 h-4" />
+                        <span className="text-sm">{modpack.downloads} downloads</span>
+                      </div>
+                      <Button size="sm" className="w-full mt-4 bg-gaming-green hover:bg-gaming-green-dark text-gaming-black">
+                        Install Modpack
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </section>
 
-      {/* Money Back Guarantee */}
-      <section className="py-20 bg-gradient-to-r from-gaming-green/10 to-gaming-green/5">
+      {/* CTA Section */}
+      <section className="py-20">
         <div className="container mx-auto px-4 text-center">
-          <Shield className="w-16 h-16 text-gaming-green mx-auto mb-6" />
           <h2 className="text-4xl font-bold text-gaming-white mb-4">
-            3-Day Money Back Guarantee
+            Ready to Start Your <span className="text-gaming-green">Minecraft Server</span>?
           </h2>
-          <p className="text-xl text-gaming-gray mb-8 max-w-2xl mx-auto">
-            Not satisfied? Get a full refund within 3 days, no questions asked. 
-            We're confident you'll love our service.
+          <p className="text-gaming-gray text-lg mb-8 max-w-2xl mx-auto">
+            Join thousands of satisfied server owners. Get your Minecraft server online in under 60 seconds.
           </p>
-          <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold text-lg px-8 py-4">
-            Start Your Server Now
-            <Crown className="w-5 h-5 ml-2" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold px-8">
+              Start Your Server Now
+            </Button>
+            <Link href="/games">
+              <Button size="lg" variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black">
+                View All Games
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       <Footer />
-      <LiveChat />
     </div>
   );
 }

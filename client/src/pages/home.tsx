@@ -6,8 +6,6 @@ import GameCards from "@/components/game-cards";
 import FeaturesSection from "@/components/features-section";
 import PricingSection from "@/components/pricing-section";
 import TestimonialsSection from "@/components/testimonials-section";
-import ServerStatus from "@/components/server-status";
-import ServerLocations from "@/components/server-locations";
 import BlogSection from "@/components/blog-section";
 import CtaSection from "@/components/cta-section";
 import Footer from "@/components/footer";
@@ -27,8 +25,6 @@ export default function Home() {
       <FeaturesSection />
       <PricingSection />
       <TestimonialsSection />
-      <ServerStatus />
-      <ServerLocations />
       <BlogSection />
       <CtaSection />
       <Footer />
