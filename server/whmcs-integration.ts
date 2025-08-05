@@ -209,6 +209,16 @@ export class WHMCSIntegration {
     }
   }
 
+  // Get support departments
+  async getSupportDepartments(): Promise<any> {
+    try {
+      return await this.makeAPICall('GetSupportDepartments');
+    } catch (error) {
+      console.error('Error fetching support departments:', error);
+      return null;
+    }
+  }
+
   // Get ticket details
   async getTicketDetails(ticketId: string): Promise<any> {
     try {

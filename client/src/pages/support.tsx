@@ -39,10 +39,17 @@ export default function SupportPage() {
     email: "",
     subject: "",
     message: "",
-    priority: "Medium"
+    priority: "Medium",
+    deptid: ""
   });
 
   const [loggedInClient, setLoggedInClient] = useState<any>(null);
+
+  // Fetch support departments
+  const { data: departments } = useQuery({
+    queryKey: ['/api/whmcs/support/departments'],
+    enabled: true
+  });
 
   // Get logged in client for WHMCS integration
   useEffect(() => {
@@ -217,7 +224,8 @@ export default function SupportPage() {
       email: loggedInClient.email,
       subject: emailForm.subject,
       message: emailForm.message,
-      priority: emailForm.priority
+      priority: emailForm.priority,
+      deptid: emailForm.deptid
     });
   };
 
@@ -380,7 +388,7 @@ export default function SupportPage() {
                   </div>
                   
                   <form onSubmit={handleTicketSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div>
                         <Label htmlFor="subject" className="text-gaming-white text-sm font-medium mb-2 block">Subject *</Label>
                         <Input
@@ -392,6 +400,22 @@ export default function SupportPage() {
                           className="bg-gaming-black border-gaming-black-lighter text-gaming-white focus:border-gaming-green"
                           placeholder="Brief description of your inquiry"
                         />
+                      </div>
+                      <div>
+                        <Label htmlFor="department" className="text-gaming-white text-sm font-medium mb-2 block">Department</Label>
+                        <select
+                          id="department"
+                          value={emailForm.deptid}
+                          onChange={(e) => setEmailForm({ ...emailForm, deptid: e.target.value })}
+                          className="w-full px-3 py-2 bg-gaming-black border border-gaming-black-lighter rounded-md text-gaming-white focus:border-gaming-green focus:outline-none"
+                        >
+                          <option value="">Select Department</option>
+                          {departments?.departments?.department?.map((dept: any) => (
+                            <option key={dept.id} value={dept.id}>
+                              {dept.name}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div>
                         <Label htmlFor="priority" className="text-gaming-white text-sm font-medium mb-2 block">Priority</Label>
