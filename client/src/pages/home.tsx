@@ -1,20 +1,13 @@
 import PromoBanner from "@/components/promo-banner";
 import Navigation from "@/components/navigation";
 import ProfessionalHero from "@/components/professional-hero";
-import LiveChat from "@/components/live-chat";
 import TrustIndicators from "@/components/trust-indicators";
-import StatsSection from "@/components/stats-section";
 import GameCards from "@/components/game-cards";
 import FeaturesSection from "@/components/features-section";
-import AdvancedFeatures from "@/components/advanced-features";
-import GameOptimization from "@/components/game-optimization";
-import ComparisonSection from "@/components/comparison-section";
 import PricingSection from "@/components/pricing-section";
 import TestimonialsSection from "@/components/testimonials-section";
-import DemoServers from "@/components/demo-servers";
 import ServerStatus from "@/components/server-status";
 import ServerLocations from "@/components/server-locations";
-import MinecraftTools from "@/components/minecraft-tools";
 import BlogSection from "@/components/blog-section";
 import CtaSection from "@/components/cta-section";
 import Footer from "@/components/footer";
@@ -30,22 +23,15 @@ export default function Home() {
       <Navigation />
       <ProfessionalHero />
       <TrustIndicators />
-      <StatsSection />
       <GameCards />
       <FeaturesSection />
-      <AdvancedFeatures />
-      <GameOptimization />
-      <ComparisonSection />
       <PricingSection />
       <TestimonialsSection />
-      <DemoServers />
       <ServerStatus />
       <ServerLocations />
-      <MinecraftTools />
       <BlogSection />
       <CtaSection />
       <Footer />
-      <LiveChat />
     </div>
   );
 }
