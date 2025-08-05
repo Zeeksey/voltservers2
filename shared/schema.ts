@@ -54,6 +54,7 @@ export const games = pgTable("games", {
   heroImageUrl: text("hero_image_url"),
   features: text("features").array().default(sql`'{}'::text[]`),
   pricingPlans: jsonb("pricing_plans").default(sql`'[]'::jsonb`),
+  pricingTiers: jsonb("pricing_tiers").default(sql`'{"monthly": 1.0, "biannual": 0.85, "annual": 0.75}'::jsonb`), // Discount multipliers
   detailedDescription: text("detailed_description"),
   systemRequirements: text("system_requirements"),
   supportInfo: text("support_info"),

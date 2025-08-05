@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
@@ -12,6 +14,7 @@ import { Game } from "@shared/schema";
 export default function GamePage() {
   const [match, params] = useRoute("/games/:slug");
   const slug = params?.slug;
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "biannual" | "annual">("monthly");
 
   const { data: game, isLoading } = useQuery<Game>({
     queryKey: ["/api/games", slug],
@@ -63,10 +66,32 @@ export default function GamePage() {
     );
   }
 
+  // Pricing tier multipliers (discounts for longer terms)
+  const pricingMultipliers = {
+    monthly: 1.0,
+    biannual: 0.85, // 15% discount
+    annual: 0.75    // 25% discount
+  };
+
+  // Helper function to calculate discounted price
+  const calculatePrice = (basePrice: string, multiplier: number) => {
+    return (parseFloat(basePrice) * multiplier).toFixed(2);
+  };
+
+  const getBillingLabel = (period: string) => {
+    switch(period) {
+      case 'monthly': return 'Monthly';
+      case 'biannual': return 'Biannual (15% off)';
+      case 'annual': return 'Annual (25% off)';
+      default: return 'Monthly';
+    }
+  };
+
   const defaultPricingPlans = [
     {
       name: "Starter",
-      price: game.basePrice,
+      price: calculatePrice(game.basePrice, pricingMultipliers[billingPeriod]),
+      originalPrice: game.basePrice,
       players: "10",
       features: [
         "Instant Setup",
@@ -78,7 +103,8 @@ export default function GamePage() {
     },
     {
       name: "Standard", 
-      price: (parseFloat(game.basePrice) * 1.5).toFixed(2),
+      price: calculatePrice((parseFloat(game.basePrice) * 1.5).toFixed(2), pricingMultipliers[billingPeriod]),
+      originalPrice: (parseFloat(game.basePrice) * 1.5).toFixed(2),
       players: "25",
       features: [
         "Everything in Starter",
@@ -91,7 +117,8 @@ export default function GamePage() {
     },
     {
       name: "Premium",
-      price: (parseFloat(game.basePrice) * 2.5).toFixed(2), 
+      price: calculatePrice((parseFloat(game.basePrice) * 2.5).toFixed(2), pricingMultipliers[billingPeriod]),
+      originalPrice: (parseFloat(game.basePrice) * 2.5).toFixed(2),
       players: "Unlimited",
       features: [
         "Everything in Standard",
@@ -163,6 +190,34 @@ export default function GamePage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gaming-white mb-4">Choose Your Plan</h2>
             <p className="text-gaming-gray text-lg">Select the perfect hosting solution for your {game.name} server</p>
+            
+            {/* Billing Period Selector */}
+            <div className="flex justify-center mt-8 mb-8">
+              <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "biannual" | "annual")} className="w-auto">
+                <TabsList className="grid w-full grid-cols-3 bg-gaming-gray-dark">
+                  <TabsTrigger 
+                    value="monthly" 
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black"
+                  >
+                    Monthly
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="biannual" 
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black relative"
+                  >
+                    Biannual
+                    <Badge className="absolute -top-2 -right-2 bg-gaming-green text-gaming-black text-xs">15% OFF</Badge>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="annual" 
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black relative"
+                  >
+                    Annual
+                    <Badge className="absolute -top-2 -right-2 bg-gaming-green text-gaming-black text-xs">25% OFF</Badge>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -176,8 +231,29 @@ export default function GamePage() {
                 <CardHeader className="text-center pb-8">
                   <CardTitle className="text-2xl font-bold text-gaming-white">{plan.name}</CardTitle>
                   <div className="mt-4">
-                    <span className="text-4xl font-bold text-gaming-green">${plan.price}</span>
-                    <span className="text-gaming-gray">/mo</span>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-4xl font-bold text-gaming-green">${plan.price}</span>
+                        <span className="text-gaming-gray">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
+                      </div>
+                      {billingPeriod !== 'monthly' && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-gaming-gray line-through">${plan.originalPrice}</span>
+                          <Badge className="bg-gaming-green/20 text-gaming-green text-xs">
+                            {billingPeriod === 'biannual' ? 'Save 15%' : 'Save 25%'}
+                          </Badge>
+                        </div>
+                      )}
+                      {billingPeriod === 'monthly' && (
+                        <p className="text-gaming-gray text-sm">Billed monthly</p>
+                      )}
+                      {billingPeriod === 'biannual' && (
+                        <p className="text-gaming-gray text-sm">Billed every 6 months</p>
+                      )}
+                      {billingPeriod === 'annual' && (
+                        <p className="text-gaming-gray text-sm">Billed annually</p>
+                      )}
+                    </div>
                   </div>
                   <p className="text-gaming-gray mt-2">Recommended Players: {plan.players}</p>
                 </CardHeader>
