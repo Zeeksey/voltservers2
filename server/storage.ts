@@ -507,37 +507,17 @@ export class MemStorage implements IStorage {
 
     sampleStatus.forEach(status => this.serverStatus.set(status.id, status));
 
-    // Initialize server locations with proper ping data
+    // Initialize server locations with real VintHill server
     const sampleServerLocations: ServerLocation[] = [
       {
         id: randomUUID(),
-        city: "Virginia Beach",
+        city: "VintHill",
         country: "United States", 
-        region: "Virginia",
+        region: "VA",
         provider: "VINTHILL",
         ipAddress: "135.148.137.158",
         status: "online",
-        ping: 15
-      },
-      {
-        id: randomUUID(),
-        city: "Los Angeles",
-        country: "United States",
-        region: "California", 
-        provider: "DataPacket",
-        ipAddress: "8.8.8.8",
-        status: "online",
-        ping: 25
-      },
-      {
-        id: randomUUID(),
-        city: "Frankfurt",
-        country: "Germany",
-        region: "Hesse",
-        provider: "Hetzner",
-        ipAddress: "1.1.1.1",
-        status: "online",
-        ping: 35
+        ping: 12
       }
     ];
 
@@ -823,6 +803,17 @@ export class MemStorage implements IStorage {
       return updated;
     }
     return undefined;
+  }
+
+  // Method to update ping for real-time monitoring
+  async updateServerLocationPing(ipAddress: string, ping: number): Promise<void> {
+    for (const [id, location] of this.serverLocations.entries()) {
+      if (location.ipAddress === ipAddress) {
+        const updated = { ...location, ping };
+        this.serverLocations.set(id, updated);
+        break;
+      }
+    }
   }
 
   // Minecraft tools methods

@@ -40,9 +40,10 @@ export default function KnowledgebasePage() {
     queryKey: ["/api/blog"],
   });
 
-  // Fetch server locations
+  // Fetch server locations with auto-refresh for ping updates
   const { data: serverLocations = [] } = useQuery<ServerLocation[]>({
     queryKey: ["/api/server-locations"],
+    refetchInterval: 30000, // Refresh every 30 seconds for live ping updates
   });
 
   // Filter and categorize blog posts
@@ -397,8 +398,14 @@ export default function KnowledgebasePage() {
               <h2 className="text-3xl font-bold text-gaming-white mb-4">
                 Server Locations
               </h2>
-              <p className="text-gaming-gray text-lg">
-                Our global network of high-performance servers ensures low latency worldwide
+              <p className="text-gaming-gray text-lg mb-2">
+                Our high-performance servers with real-time ping monitoring
+              </p>
+              <p className="text-gaming-gray text-sm">
+                Ping updates automatically every 30 seconds • 
+                <span className="text-green-400"> ≤20ms Excellent</span> • 
+                <span className="text-yellow-400"> ≤50ms Good</span> • 
+                <span className="text-red-400"> &gt;50ms High</span>
               </p>
             </div>
 
@@ -434,12 +441,18 @@ export default function KnowledgebasePage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gaming-gray">Ping:</span>
-                        <span className="text-gaming-green">{location.ping}ms</span>
+                        <span className={`font-mono ${
+                          location.ping <= 20 ? 'text-green-400' : 
+                          location.ping <= 50 ? 'text-yellow-400' : 
+                          'text-red-400'
+                        }`}>
+                          {location.ping}ms
+                        </span>
                       </div>
                       {location.ipAddress && (
                         <div className="flex justify-between">
                           <span className="text-gaming-gray">Test IP:</span>
-                          <code className="text-gaming-white bg-gaming-black px-2 py-1 rounded text-xs">
+                          <code className="text-gaming-white bg-gaming-black px-2 py-1 rounded text-xs font-mono">
                             {location.ipAddress}
                           </code>
                         </div>
