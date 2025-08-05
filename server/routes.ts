@@ -1970,7 +1970,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Initialize WHMCS integration
   let whmcsIntegration: WHMCSIntegration | null = null;
-  if (process.env.WHMCS_API_IDENTIFIER && process.env.WHMCS_API_SECRET && process.env.WHMCS_API_URL) {
+
+  // Initialize WHMCS integration if environment variables are available
+  if (process.env.WHMCS_API_URL && process.env.WHMCS_API_IDENTIFIER && process.env.WHMCS_API_SECRET) {
     whmcsIntegration = new WHMCSIntegration();
   }
 
