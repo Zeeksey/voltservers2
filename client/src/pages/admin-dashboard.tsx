@@ -93,6 +93,7 @@ export default function AdminDashboard() {
   const [themeForm, setThemeForm] = useState({
     siteName: "VoltServers",
     siteTagline: "Premium Game Server Hosting",
+    siteDescription: "Professional game server hosting with 24/7 support and premium hardware",
     primaryColor: "#00ff88",
     secondaryColor: "#1a1a1a",
     accentColor: "#00cc6a",
@@ -104,7 +105,28 @@ export default function AdminDashboard() {
     fontFamily: "Inter",
     borderRadius: "0.5rem",
     holidayTheme: "none",
-    customCss: ""
+    customCss: "",
+    // SEO & Meta Tags
+    metaTitle: "",
+    metaDescription: "",
+    metaKeywords: "",
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
+    twitterCard: "summary_large_image",
+    twitterSite: "",
+    // Analytics & Tracking
+    googleAnalyticsId: "",
+    googleTagManagerId: "",
+    facebookPixelId: "",
+    customHeadCode: "",
+    customBodyCode: "",
+    // Site Management
+    maintenanceMode: false,
+    maintenanceMessage: "We're currently performing maintenance. Please check back soon!",
+    announcementBanner: "",
+    announcementType: "info",
+    showAnnouncementBanner: false
   });
   
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -645,7 +667,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gaming-black text-white">
+    <div className="admin-panel min-h-screen bg-gaming-black text-white">
       {/* Mobile-Friendly Header */}
       <div className="border-b border-gaming-green/20 bg-gaming-dark">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
@@ -834,27 +856,27 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                           <Button
-                            size="sm" className="touch-target admin-button"
+                            size="sm"
                             variant="outline"
                             onClick={() => handleEditGame(game)}
-                            className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            className="touch-target admin-button border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
                           <Link href={`/admin/games/${game.id}/customize`}>
                             <Button
-                              size="sm" className="touch-target admin-button"
+                              size="sm"
                               variant="outline"
-                              className="border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10"
+                              className="touch-target admin-button border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10"
                             >
                               <Settings className="w-4 h-4" />
                             </Button>
                           </Link>
                           <Button
-                            size="sm" className="touch-target admin-button"
+                            size="sm"
                             variant="outline"
                             onClick={() => deleteGameMutation.mutate(game.id)}
-                            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                            className="touch-target admin-button border-red-500/30 text-red-400 hover:bg-red-500/10"
                             disabled={deleteGameMutation.isPending}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -996,18 +1018,18 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                           <Button
-                            size="sm" className="touch-target admin-button"
+                            size="sm"
                             variant="outline"
                             onClick={() => handleEditBlog(post)}
-                            className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            className="touch-target admin-button border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
                           >
                             <Edit2 className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm" className="touch-target admin-button"
+                            size="sm"
                             variant="outline"
                             onClick={() => deleteBlogMutation.mutate(post.id)}
-                            className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                            className="touch-target admin-button border-red-500/30 text-red-400 hover:bg-red-500/10"
                             disabled={deleteBlogMutation.isPending}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1287,9 +1309,9 @@ export default function AdminDashboard() {
                         </span>
                         <Button
                           variant="outline"
-                          size="sm" className="touch-target admin-button"
+                          size="sm"
                           onClick={() => deleteLocationMutation.mutate(location.id)}
-                          className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                          className="touch-target admin-button border-red-500/30 text-red-400 hover:bg-red-500/20"
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -1507,8 +1529,8 @@ export default function AdminDashboard() {
                             <Button
                               type="button"
                               variant="outline"
-                              size="sm" className="touch-target admin-button"
-                              className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 w-full sm:w-auto"
+                              size="sm"
+                              className="touch-target admin-button border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 w-full sm:w-auto"
                             >
                               <Upload className="w-4 h-4 mr-2" />
                               Upload

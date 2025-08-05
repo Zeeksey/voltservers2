@@ -441,6 +441,7 @@ export const themeSettings = pgTable("theme_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   siteName: varchar("site_name").notNull().default("VoltServers"),
   siteTagline: varchar("site_tagline").notNull().default("Premium Game Server Hosting"),
+  siteDescription: text("site_description").default("Professional game server hosting with 24/7 support and premium hardware"),
   primaryColor: varchar("primary_color").notNull().default("#00ff88"),
   secondaryColor: varchar("secondary_color").notNull().default("#1a1a1a"),
   accentColor: varchar("accent_color").notNull().default("#00cc6a"),
@@ -453,6 +454,27 @@ export const themeSettings = pgTable("theme_settings", {
   borderRadius: varchar("border_radius").notNull().default("0.5rem"),
   holidayTheme: varchar("holiday_theme").default("none"), // none, snow, halloween, easter, christmas
   customCss: text("custom_css"),
+  // SEO & Meta Tags
+  metaTitle: varchar("meta_title"),
+  metaDescription: text("meta_description"),
+  metaKeywords: text("meta_keywords"),
+  ogTitle: varchar("og_title"),
+  ogDescription: text("og_description"),
+  ogImage: varchar("og_image"),
+  twitterCard: varchar("twitter_card").default("summary_large_image"),
+  twitterSite: varchar("twitter_site"),
+  // Analytics & Tracking
+  googleAnalyticsId: varchar("google_analytics_id"),
+  googleTagManagerId: varchar("google_tag_manager_id"),
+  facebookPixelId: varchar("facebook_pixel_id"),
+  customHeadCode: text("custom_head_code"),
+  customBodyCode: text("custom_body_code"),
+  // Site Management
+  maintenanceMode: boolean("maintenance_mode").default(false),
+  maintenanceMessage: text("maintenance_message").default("We're currently performing maintenance. Please check back soon!"),
+  announcementBanner: text("announcement_banner"),
+  announcementType: varchar("announcement_type").default("info"),
+  showAnnouncementBanner: boolean("show_announcement_banner").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
