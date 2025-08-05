@@ -70,9 +70,20 @@ export default function Footer() {
             <ul className="space-y-2">
               <li><Link href="/about"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">About Us</span></Link></li>
               <li><Link href="/hardware"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Hardware</span></Link></li>
+              <li><Link href="/pricing"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Pricing</span></Link></li>
               <li><Link href="/support"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Support Center</span></Link></li>
+              <li><Link href="/status"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Server Status</span></Link></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="text-gaming-white font-bold mb-4">Resources</h4>
+            <ul className="space-y-2">
+              <li><Link href="/knowledgebase"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Knowledge Base</span></Link></li>
               <li><Link href="/contact"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Contact Us</span></Link></li>
               <li><Link href="/client-portal"><span className="text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer">Client Portal</span></Link></li>
+              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">API Documentation</a></li>
+              <li><a href="#" className="text-gaming-gray hover:text-gaming-green transition-colors">Community Forum</a></li>
             </ul>
           </div>
         </div>

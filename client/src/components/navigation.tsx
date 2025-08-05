@@ -44,12 +44,11 @@ export default function Navigation() {
                 Hardware
               </span>
             </Link>
-            <button 
-              onClick={() => scrollToSection('pricing')}
-              className="hover:text-gaming-green transition-colors"
-            >
-              Pricing
-            </button>
+            <Link href="/pricing">
+              <span className="hover:text-gaming-green transition-colors cursor-pointer">
+                Pricing
+              </span>
+            </Link>
             <Link href="/about">
               <span className="hover:text-gaming-green transition-colors cursor-pointer">
                 About
@@ -104,12 +103,11 @@ export default function Navigation() {
                   Hardware
                 </span>
               </Link>
-              <button 
-                onClick={() => scrollToSection('pricing')}
-                className="text-left hover:text-gaming-green transition-colors"
-              >
-                Pricing
-              </button>
+              <Link href="/pricing">
+                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
+                  Pricing
+                </span>
+              </Link>
               <Link href="/about">
                 <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
                   About

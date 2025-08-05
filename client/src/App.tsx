@@ -14,6 +14,9 @@ import HardwarePage from "@/pages/hardware";
 import AboutPage from "@/pages/about";
 import SupportPage from "@/pages/support";
 import ContactPage from "@/pages/contact";
+import PricingPage from "@/pages/pricing";
+import KnowledgebasePage from "@/pages/knowledgebase";
+import StatusPage from "@/pages/status";
 
 function Router() {
   return (
@@ -26,6 +29,9 @@ function Router() {
       <Route path="/about" component={AboutPage} />
       <Route path="/support" component={SupportPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/pricing" component={PricingPage} />
+      <Route path="/knowledgebase" component={KnowledgebasePage} />
+      <Route path="/status" component={StatusPage} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
