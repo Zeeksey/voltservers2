@@ -17,7 +17,7 @@ export default function HeroSection() {
       
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh] lg:min-h-[75vh]">
-          <div className="space-y-6 lg:space-y-8 text-center lg:text-left">
+          <div className="space-y-6 lg:space-y-8 text-center lg:text-left flex flex-col items-center lg:items-start">
             <Badge className="inline-flex items-center px-3 py-2 lg:px-4 lg:py-2 bg-gaming-green/10 border border-gaming-green/20 text-gaming-green text-sm lg:text-base">
               <span className="w-2 h-2 bg-gaming-green rounded-full mr-2 animate-pulse-green" />
               99.9% Uptime Guaranteed
@@ -29,9 +29,8 @@ export default function HeroSection() {
               <span className="text-gaming-white">Hosting</span>
             </h1>
             
-            <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl mx-auto lg:mx-0">
-              Deploy your game servers in seconds with our cutting-edge infrastructure. 
-              From Minecraft to CS2, Rust, and more - we've got you covered with enterprise-grade performance and global reach.
+            <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl text-center lg:text-left">
+              Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
