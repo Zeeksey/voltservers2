@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Suspense, lazy, useEffect, useState } from "react";
 import HolidayEffects from "@/components/holiday-effects";
+import CookieBanner from "@/components/cookie-banner";
 
 // Critical pages loaded immediately
 import NotFound from "@/pages/not-found";
@@ -95,6 +96,7 @@ function App() {
         <HolidayEffects theme={holidayTheme} />
         <Toaster />
         <Router />
+        <CookieBanner />
       </TooltipProvider>
     </QueryClientProvider>
   );

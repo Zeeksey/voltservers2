@@ -39,7 +39,8 @@ import {
   Search,
   Share2,
   BarChart3,
-  Code
+  Code,
+  Cookie
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -130,7 +131,17 @@ export default function AdminDashboard() {
     maintenanceMessage: "We're currently performing maintenance. Please check back soon!",
     announcementBanner: "",
     announcementType: "info",
-    showAnnouncementBanner: false
+    showAnnouncementBanner: false,
+    // Cookie Policy Settings
+    showCookieBanner: true,
+    cookieConsentRequired: true,
+    cookiePolicyText: "We use cookies to enhance your experience and analyze site traffic.",
+    cookiePolicyUrl: "/privacy-policy",
+    cookieCategories: JSON.stringify([
+      { id: "necessary", name: "Necessary", description: "Essential for website functionality", required: true },
+      { id: "analytics", name: "Analytics", description: "Help us understand how visitors use our site", required: false },
+      { id: "marketing", name: "Marketing", description: "Used to deliver relevant advertisements", required: false }
+    ], null, 2)
   });
   
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -1929,6 +1940,66 @@ export default function AdminDashboard() {
                             </div>
                           </div>
                         )}
+                      </div>
+                    </div>
+
+                    {/* Cookie Policy Management */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Cookie className="w-4 h-4" />
+                        Cookie Policy & GDPR
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={themeForm.showCookieBanner}
+                            onCheckedChange={(checked) => setThemeForm({...themeForm, showCookieBanner: checked})}
+                          />
+                          <Label className="text-gray-300">Show Cookie Banner</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            checked={themeForm.cookieConsentRequired}
+                            onCheckedChange={(checked) => setThemeForm({...themeForm, cookieConsentRequired: checked})}
+                          />
+                          <Label className="text-gray-300">Require Cookie Consent</Label>
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Cookie Policy Text</Label>
+                          <Textarea
+                            value={themeForm.cookiePolicyText}
+                            onChange={(e) => setThemeForm({...themeForm, cookiePolicyText: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="We use cookies to enhance your experience and analyze site traffic."
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Privacy Policy URL</Label>
+                          <Input
+                            value={themeForm.cookiePolicyUrl}
+                            onChange={(e) => setThemeForm({...themeForm, cookiePolicyUrl: e.target.value})}
+                            className="admin-input"
+                            placeholder="/privacy-policy"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">Cookie Categories (JSON)</Label>
+                          <Textarea
+                            value={themeForm.cookieCategories}
+                            onChange={(e) => setThemeForm({...themeForm, cookieCategories: e.target.value})}
+                            className="admin-textarea font-mono text-sm"
+                            placeholder={JSON.stringify([
+                              { id: "necessary", name: "Necessary", description: "Essential for website functionality", required: true },
+                              { id: "analytics", name: "Analytics", description: "Help us understand how visitors use our site", required: false },
+                              { id: "marketing", name: "Marketing", description: "Used to deliver relevant advertisements", required: false }
+                            ], null, 2)}
+                            rows={6}
+                          />
+                          <p className="text-xs text-gray-400 mt-1">
+                            Define cookie categories with id, name, description, and required fields
+                          </p>
+                        </div>
                       </div>
                     </div>
 

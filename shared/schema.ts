@@ -476,6 +476,16 @@ export const themeSettings = pgTable("theme_settings", {
   announcementBanner: text("announcement_banner"),
   announcementType: varchar("announcement_type").default("info"),
   showAnnouncementBanner: boolean("show_announcement_banner").default(false),
+  // Cookie Policy Settings
+  showCookieBanner: boolean("show_cookie_banner").default(true),
+  cookieConsentRequired: boolean("cookie_consent_required").default(true),
+  cookiePolicyText: text("cookie_policy_text").default("We use cookies to enhance your experience and analyze site traffic."),
+  cookiePolicyUrl: text("cookie_policy_url").default("/privacy-policy"),
+  cookieCategories: text("cookie_categories").default(JSON.stringify([
+    { id: "necessary", name: "Necessary", description: "Essential for website functionality", required: true },
+    { id: "analytics", name: "Analytics", description: "Help us understand how visitors use our site", required: false },
+    { id: "marketing", name: "Marketing", description: "Used to deliver relevant advertisements", required: false }
+  ])),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
