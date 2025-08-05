@@ -487,10 +487,9 @@ export const themeSettings = pgTable("theme_settings", {
   siteDescription: text("site_description").default("Professional game server hosting with 24/7 support and premium hardware"),
   heroTitle: text("hero_title").default("Deploy Your Game Server in Minutes"),
   heroSubtitle: text("hero_subtitle").default("Experience lightning-fast deployment with our premium game server hosting platform"),
-  heroDescription: text("hero_description").default("Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers."),
+  heroDescription: text("hero_description").default("Experience lightning-fast game servers with 99.9% uptime guarantee. Get your server online in minutes with our one-click deployment system."),
   heroButtonText: varchar("hero_button_text").default("Get Started"),
   heroButtonUrl: varchar("hero_button_url").default("/pricing"),
-  heroDescription: text("hero_description").default("Experience lightning-fast game servers with 99.9% uptime guarantee. Get your server online in minutes with our one-click deployment system."),
   primaryColor: varchar("primary_color").notNull().default("#00ff88"),
   secondaryColor: varchar("secondary_color").notNull().default("#1a1a1a"),
   accentColor: varchar("accent_color").notNull().default("#00cc6a"),
@@ -574,9 +573,6 @@ export type CustomPage = typeof customPages.$inferSelect;
 export type InsertCustomPage = typeof customPages.$inferInsert;
 export type NavigationItem = typeof navigationItems.$inferSelect;
 export type InsertNavigationItem = typeof navigationItems.$inferInsert;
-
-export type InsertDemoServer = z.infer<typeof insertDemoServerSchema>;
-export type DemoServer = typeof demoServers.$inferSelect;
 
 export type InsertPricingDetail = z.infer<typeof insertPricingDetailSchema>;
 export type PricingDetail = typeof pricingDetails.$inferSelect;
