@@ -323,7 +323,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.firstname}
                           onChange={(e) => setProfileData(prev => ({ ...prev, firstname: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                           disabled={profileLoading}
                         />
                       </div>
@@ -334,7 +334,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.lastname}
                           onChange={(e) => setProfileData(prev => ({ ...prev, lastname: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                           disabled={profileLoading}
                         />
                       </div>
@@ -348,7 +348,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.companyname}
                           onChange={(e) => setProfileData(prev => ({ ...prev, companyname: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white pl-10"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray pl-10"
                           disabled={profileLoading}
                         />
                       </div>
@@ -372,7 +372,7 @@ export default function AccountSettings() {
                           type="email"
                           value={profileData.email}
                           onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white pl-10"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray pl-10"
                           disabled={profileLoading}
                         />
                       </div>
@@ -386,7 +386,7 @@ export default function AccountSettings() {
                           type="tel"
                           value={profileData.phonenumber}
                           onChange={(e) => setProfileData(prev => ({ ...prev, phonenumber: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white pl-10"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray pl-10"
                           disabled={profileLoading}
                         />
                       </div>
@@ -408,7 +408,7 @@ export default function AccountSettings() {
                         type="text"
                         value={profileData.address1}
                         onChange={(e) => setProfileData(prev => ({ ...prev, address1: e.target.value }))}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                        className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                         disabled={profileLoading}
                       />
                     </div>
@@ -419,7 +419,7 @@ export default function AccountSettings() {
                         type="text"
                         value={profileData.address2}
                         onChange={(e) => setProfileData(prev => ({ ...prev, address2: e.target.value }))}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                        className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                         disabled={profileLoading}
                       />
                     </div>
@@ -431,7 +431,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.city}
                           onChange={(e) => setProfileData(prev => ({ ...prev, city: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                           disabled={profileLoading}
                         />
                       </div>
@@ -442,7 +442,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.state}
                           onChange={(e) => setProfileData(prev => ({ ...prev, state: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                           disabled={profileLoading}
                         />
                       </div>
@@ -453,7 +453,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.postcode}
                           onChange={(e) => setProfileData(prev => ({ ...prev, postcode: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                           disabled={profileLoading}
                         />
                       </div>
@@ -465,7 +465,7 @@ export default function AccountSettings() {
                         type="text"
                         value={profileData.country}
                         onChange={(e) => setProfileData(prev => ({ ...prev, country: e.target.value }))}
-                        className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white"
+                        className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray"
                         disabled={profileLoading}
                       />
                     </div>
@@ -516,7 +516,7 @@ export default function AccountSettings() {
                           type={showNewPassword ? "text" : "password"}
                           value={passwordData.newPassword}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white pl-10 pr-10"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray pl-10 pr-10"
                           placeholder="Enter new password"
                         />
                         <button
@@ -538,7 +538,7 @@ export default function AccountSettings() {
                           type={showConfirmPassword ? "text" : "password"}
                           value={passwordData.confirmPassword}
                           onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                          className="bg-gaming-dark-lighter border-gaming-green/30 text-gaming-white pl-10 pr-10"
+                          className="bg-gaming-dark border-gaming-green/30 text-gaming-white placeholder:text-gaming-gray pl-10 pr-10"
                           placeholder="Confirm new password"
                         />
                         <button
