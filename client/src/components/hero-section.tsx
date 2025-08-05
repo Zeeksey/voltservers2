@@ -7,7 +7,11 @@ import { useQuery } from "@tanstack/react-query";
 interface ThemeSettings {
   siteName?: string;
   siteTagline?: string;
-  heroText?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroButtonText?: string;
+  heroButtonUrl?: string;
 }
 
 export default function HeroSection() {
@@ -36,26 +40,26 @@ export default function HeroSection() {
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                 <span className="text-gaming-white">
-                  {themeSettings?.siteName || "VoltServers"}
+                  {themeSettings?.heroTitle || themeSettings?.siteName || "VoltServers"}
                 </span>
               </h1>
               
               <p className="text-lg lg:text-xl text-gaming-green max-w-2xl font-semibold">
-                {themeSettings?.siteTagline || "Premium Game Server Hosting"}
+                {themeSettings?.heroSubtitle || themeSettings?.siteTagline || "Premium Game Server Hosting"}
               </p>
 
               <p className="text-lg lg:text-xl text-gaming-gray max-w-2xl">
-                {themeSettings?.heroText || "Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month."}
+                {themeSettings?.heroDescription || "Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month."}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 w-full justify-center lg:justify-start">
-                <Link href="/pricing">
+                <Link href={themeSettings?.heroButtonUrl || "/pricing"}>
                   <Button 
                     className="bg-gradient-green text-gaming-black px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow w-full sm:w-auto"
                     size="lg"
                   >
                     <Rocket className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
-                    Get Started - From $2.99/mo
+                    {themeSettings?.heroButtonText || "Get Started"} - From $2.99/mo
                   </Button>
                 </Link>
                 <Link href="/minecraft-tools">
