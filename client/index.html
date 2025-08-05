@@ -4,9 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     
+    <!-- Performance optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
     <!-- Default SEO Meta Tags -->
     <title>VoltServers - Premium Game Server Hosting | 99.9% Uptime</title>
     <meta name="description" content="Professional game server hosting with 99.9% uptime guarantee. Deploy Minecraft, CS2, Rust servers instantly. DDoS protection, NVMe SSD, 24/7 support." />
+    
+    <!-- Performance Meta Tags -->
+    <meta name="referrer" content="origin-when-cross-origin" />
+    <meta http-equiv="x-dns-prefetch-control" content="on" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -21,11 +29,52 @@
     
     <!-- Discord-specific optimizations -->
     <meta name="theme-color" content="#00ff88" />
+    
+    <!-- Preload critical resources -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+    
+    <!-- Critical CSS inline for instant loading -->
+    <style>
+      /* Critical above-the-fold CSS */
+      body { 
+        margin: 0; 
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background-color: hsl(220, 13%, 6%);
+        color: hsl(213, 31%, 97%);
+        line-height: 1.5;
+      }
+      #root { 
+        min-height: 100vh; 
+        display: flex;
+        flex-direction: column;
+      }
+      /* Loading spinner for better perceived performance */
+      .loading-spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid hsl(220, 13%, 15%);
+        border-top: 3px solid hsl(147, 100%, 50%);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 9999;
+      }
+      @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Loading state for better perceived performance -->
+      <div class="loading-spinner" id="initial-loader"></div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
+    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js" defer></script>
   </body>
 </html>

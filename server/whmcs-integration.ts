@@ -1,0 +1,172 @@
+import crypto from 'crypto';
+import { Request, Response, NextFunction } from 'express';
+
+interface WHMCSConfig {
+  identifier: string;
+  secret: string;
+  url: string;
+  accesskey?: string;
+}
+
+interface WHMCSUser {
+  userid: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  status: string;
+  groupid: string;
+}
+
+export class WHMCSIntegration {
+  private config: WHMCSConfig;
+
+  constructor(config: WHMCSConfig) {
+    this.config = config;
+  }
+
+  // Verify WHMCS SSO token
+  verifyToken(token: string, timestamp: string, hash: string): boolean {
+    const expectedHash = crypto
+      .createHash('sha1')
+      .update(token + timestamp + this.config.secret)
+      .digest('hex');
+    
+    return hash === expectedHash;
+  }
+
+  // Make API call to WHMCS
+  async makeAPICall(action: string, params: Record<string, any> = {}): Promise<any> {
+    const postData = {
+      identifier: this.config.identifier,
+      secret: this.config.secret,
+      action,
+      responsetype: 'json',
+      ...params
+    };
+
+    try {
+      const response = await fetch(`${this.config.url}/includes/api.php`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(postData).toString()
+      });
+
+      const data = await response.json();
+      
+      if (data.result !== 'success') {
+        throw new Error(`WHMCS API Error: ${data.message || 'Unknown error'}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('WHMCS API Error:', error);
+      throw error;
+    }
+  }
+
+  // Get client details from WHMCS
+  async getClientDetails(clientId: string): Promise<WHMCSUser | null> {
+    try {
+      const response = await this.makeAPICall('GetClientsDetails', {
+        clientid: clientId
+      });
+
+      return {
+        userid: response.userid,
+        firstname: response.firstname,
+        lastname: response.lastname,
+        email: response.email,
+        status: response.status,
+        groupid: response.groupid
+      };
+    } catch (error) {
+      console.error('Error fetching client details:', error);
+      return null;
+    }
+  }
+
+  // Validate client login
+  async validateLogin(email: string, password: string): Promise<WHMCSUser | null> {
+    try {
+      const response = await this.makeAPICall('ValidateLogin', {
+        email,
+        password2: password
+      });
+
+      if (response.userid) {
+        return await this.getClientDetails(response.userid);
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error validating login:', error);
+      return null;
+    }
+  }
+}
+
+// Middleware for WHMCS authentication
+export function createWHMCSAuthMiddleware(whmcs: WHMCSIntegration) {
+  return async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.query.token as string;
+    const timestamp = req.query.timestamp as string;
+    const hash = req.query.hash as string;
+    const userid = req.query.userid as string;
+
+    if (!token || !timestamp || !hash || !userid) {
+      return res.status(401).json({ message: 'Missing WHMCS authentication parameters' });
+    }
+
+    // Verify token hasn't expired (5 minute window)
+    const now = Math.floor(Date.now() / 1000);
+    const tokenTime = parseInt(timestamp);
+    if (now - tokenTime > 300) {
+      return res.status(401).json({ message: 'Authentication token expired' });
+    }
+
+    // Verify token hash
+    if (!whmcs.verifyToken(token, timestamp, hash)) {
+      return res.status(401).json({ message: 'Invalid authentication token' });
+    }
+
+    // Get user details from WHMCS
+    const user = await whmcs.getClientDetails(userid);
+    if (!user) {
+      return res.status(401).json({ message: 'User not found in WHMCS' });
+    }
+
+    // Check if user is active
+    if (user.status !== 'Active') {
+      return res.status(401).json({ message: 'User account is not active' });
+    }
+
+    // Attach user to request
+    (req as any).whmcsUser = user;
+    next();
+  };
+}
+
+// Generate WHMCS SSO URL
+export function generateWHMCSLoginURL(
+  whmcsUrl: string,
+  secret: string,
+  goto: string = '/'
+): string {
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const token = crypto.randomBytes(16).toString('hex');
+  const hash = crypto
+    .createHash('sha1')
+    .update(token + timestamp + secret)
+    .digest('hex');
+
+  const params = new URLSearchParams({
+    token,
+    timestamp,
+    hash,
+    goto: encodeURIComponent(goto)
+  });
+
+  return `${whmcsUrl}/clientarea.php?sso=1&${params.toString()}`;
+}

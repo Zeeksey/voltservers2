@@ -423,6 +423,73 @@ export type DemoServer = typeof demoServers.$inferSelect;
 export type InsertGamePage = z.infer<typeof insertGamePageSchema>;
 export type GamePage = typeof gamePages.$inferSelect;
 
+// WHMCS Integration Settings
+export const whmcsSettings = pgTable("whmcs_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  isEnabled: boolean("is_enabled").notNull().default(false),
+  whmcsUrl: varchar("whmcs_url").notNull(),
+  identifier: varchar("identifier").notNull(),
+  secret: varchar("secret").notNull(),
+  accessKey: varchar("access_key"),
+  ssoEnabled: boolean("sso_enabled").notNull().default(false),
+  autoSync: boolean("auto_sync").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Theme Customization Settings
+export const themeSettings = pgTable("theme_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  primaryColor: varchar("primary_color").notNull().default("#00ff88"),
+  secondaryColor: varchar("secondary_color").notNull().default("#1a1a1a"),
+  accentColor: varchar("accent_color").notNull().default("#00cc6a"),
+  backgroundColor: varchar("background_color").notNull().default("#0a0a0a"),
+  textColor: varchar("text_color").notNull().default("#ffffff"),
+  logoUrl: varchar("logo_url"),
+  faviconUrl: varchar("favicon_url"),
+  fontFamily: varchar("font_family").notNull().default("Inter"),
+  borderRadius: varchar("border_radius").notNull().default("0.5rem"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Custom Pages
+export const customPages = pgTable("custom_pages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title").notNull(),
+  slug: varchar("slug").notNull().unique(),
+  content: text("content").notNull(),
+  metaDescription: varchar("meta_description"),
+  isPublished: boolean("is_published").notNull().default(false),
+  showInNav: boolean("show_in_nav").notNull().default(false),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Navigation Menu Items
+export const navigationItems = pgTable("navigation_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  label: varchar("label").notNull(),
+  url: varchar("url").notNull(),
+  icon: varchar("icon"),
+  parentId: varchar("parent_id"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isExternal: boolean("is_external").notNull().default(false),
+  isVisible: boolean("is_visible").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export type WHMCSSettings = typeof whmcsSettings.$inferSelect;
+export type InsertWHMCSSettings = typeof whmcsSettings.$inferInsert;
+export type ThemeSettings = typeof themeSettings.$inferSelect;
+export type InsertThemeSettings = typeof themeSettings.$inferInsert;
+export type CustomPage = typeof customPages.$inferSelect;
+export type InsertCustomPage = typeof customPages.$inferInsert;
+export type NavigationItem = typeof navigationItems.$inferSelect;
+export type InsertNavigationItem = typeof navigationItems.$inferInsert;
+
 export type InsertDemoServer = z.infer<typeof insertDemoServerSchema>;
 export type DemoServer = typeof demoServers.$inferSelect;
 
