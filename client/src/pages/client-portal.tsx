@@ -243,14 +243,17 @@ export default function ClientPortal() {
                               <div className="flex items-start justify-between mb-4">
                                 <div>
                                   <h4 className="text-gaming-white font-bold text-lg">
-                                    {service.serverDetails?.gameType || service.productname || 'Game Server'}
+                                    {service.name || service.productname || 'Game Server'}
                                   </h4>
-                                  <p className="text-gaming-gray text-sm">{service.domain || service.serverDetails?.ip || 'Server Domain'}</p>
+                                  <p className="text-gaming-gray text-sm">
+                                    {service.groupname || service.translated_groupname || 'Game Server'} • 
+                                    {service.domain || service.dedicatedip || 'Server Domain'}
+                                  </p>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                  <div className={`w-3 h-3 rounded-full ${service.serverDetails?.status === 'Online' ? 'bg-green-500' : 'bg-red-500'}`} />
-                                  <span className={`text-sm font-medium ${service.serverDetails?.status === 'Online' ? 'text-green-400' : 'text-red-400'}`}>
-                                    {service.serverDetails?.status || service.domainstatus || 'Unknown'}
+                                  <div className={`w-3 h-3 rounded-full ${service.status === 'Active' ? 'bg-green-500' : service.status === 'Suspended' ? 'bg-yellow-500' : 'bg-red-500'}`} />
+                                  <span className={`text-sm font-medium ${service.status === 'Active' ? 'text-green-400' : service.status === 'Suspended' ? 'text-yellow-400' : 'text-red-400'}`}>
+                                    {service.status || 'Unknown'}
                                   </span>
                                 </div>
                               </div>
@@ -262,25 +265,25 @@ export default function ClientPortal() {
                                   <div>
                                     <span className="text-gaming-gray">Server IP:</span>
                                     <span className="text-gaming-white ml-2 font-mono">
-                                      {service.serverDetails?.ip || service.dedicatedip || `server-${service.id}.gamehost.com`}
+                                      {service.dedicatedip ? service.dedicatedip.split(':')[0] : service.serverhostname || `server-${service.id}.gamehost.com`}
                                     </span>
                                   </div>
                                   <div>
                                     <span className="text-gaming-gray">Port:</span>
                                     <span className="text-gaming-white ml-2 font-mono">
-                                      {service.serverDetails?.port || '25565'}
+                                      {service.dedicatedip ? service.dedicatedip.split(':')[1] : '25565'}
                                     </span>
                                   </div>
                                   <div>
                                     <span className="text-gaming-gray">Location:</span>
                                     <span className="text-gaming-white ml-2">
-                                      {service.serverDetails?.location || 'Global Network'}
+                                      {service.serverhostname || 'Global Network'}
                                     </span>
                                   </div>
                                   <div>
-                                    <span className="text-gaming-gray">Uptime:</span>
+                                    <span className="text-gaming-gray">Billing Cycle:</span>
                                     <span className="text-green-400 ml-2 font-semibold">
-                                      {service.serverDetails?.uptime || '99.9%'}
+                                      {service.billingcycle || 'Monthly'}
                                     </span>
                                   </div>
                                 </div>
@@ -290,27 +293,27 @@ export default function ClientPortal() {
                               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                 <div className="bg-gaming-dark p-3 rounded-lg text-center">
                                   <div className="text-gaming-green font-semibold">
-                                    {service.serverDetails?.specs?.ram || '4GB RAM'}
+                                    Order #{service.ordernumber}
                                   </div>
-                                  <div className="text-gaming-gray text-xs">Memory</div>
+                                  <div className="text-gaming-gray text-xs">Order ID</div>
                                 </div>
                                 <div className="bg-gaming-dark p-3 rounded-lg text-center">
                                   <div className="text-gaming-green font-semibold">
-                                    {service.serverDetails?.specs?.storage || 'SSD'}
+                                    {new Date(service.regdate).toLocaleDateString()}
                                   </div>
-                                  <div className="text-gaming-gray text-xs">Storage</div>
+                                  <div className="text-gaming-gray text-xs">Created</div>
                                 </div>
                                 <div className="bg-gaming-dark p-3 rounded-lg text-center">
                                   <div className="text-gaming-green font-semibold">
-                                    {service.serverDetails?.specs?.cpu || 'High CPU'}
+                                    {service.paymentmethodname || 'Card'}
                                   </div>
-                                  <div className="text-gaming-gray text-xs">Processor</div>
+                                  <div className="text-gaming-gray text-xs">Payment</div>
                                 </div>
                                 <div className="bg-gaming-dark p-3 rounded-lg text-center">
                                   <div className="text-gaming-green font-semibold">
-                                    {service.serverDetails?.specs?.bandwidth || 'Unlimited'}
+                                    {service.nextduedate !== '0000-00-00' ? new Date(service.nextduedate).toLocaleDateString() : 'N/A'}
                                   </div>
-                                  <div className="text-gaming-gray text-xs">Bandwidth</div>
+                                  <div className="text-gaming-gray text-xs">Next Due</div>
                                 </div>
                               </div>
                             </div>
@@ -323,27 +326,27 @@ export default function ClientPortal() {
                                   <div>
                                     <span className="text-gaming-gray text-sm">Price:</span>
                                     <div className="text-gaming-green font-bold text-xl">
-                                      ${service.amount || service.recurringamount || '0.00'}
+                                      ${parseFloat(service.recurringamount || '0').toFixed(2)}/{service.billingcycle?.toLowerCase().includes('month') ? 'mo' : service.billingcycle?.toLowerCase() || 'cycle'}
                                     </div>
-                                    <span className="text-gaming-gray text-sm">
-                                      {service.billingcycle || 'Monthly'}
-                                    </span>
                                   </div>
                                   <div>
                                     <span className="text-gaming-gray text-sm">Next Due:</span>
                                     <div className="text-gaming-white text-sm">
-                                      {service.nextduedate || 'N/A'}
+                                      {service.nextduedate !== '0000-00-00' ? new Date(service.nextduedate).toLocaleDateString() : 'N/A'}
                                     </div>
+                                  </div>
+                                  <div>
+                                    <span className="text-gaming-gray text-sm">Status:</span>
+                                    <Badge className={`mt-1 ${
+                                      service.status === 'Active' ? 'bg-green-500/20 text-green-400' :
+                                      service.status === 'Suspended' ? 'bg-yellow-500/20 text-yellow-400' :
+                                      'bg-red-500/20 text-red-400'
+                                    }`}>
+                                      {service.status}
+                                    </Badge>
                                   </div>
                                 </div>
 
-                                <Badge className={`w-full justify-center mb-3 ${
-                                  service.domainstatus === 'Active' 
-                                    ? 'bg-green-500/20 text-green-400' 
-                                    : 'bg-red-500/20 text-red-400'
-                                }`}>
-                                  {service.domainstatus || 'Unknown Status'}
-                                </Badge>
 
                                 <div className="space-y-2">
                                   <Button 
