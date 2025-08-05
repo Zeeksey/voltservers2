@@ -17,8 +17,7 @@ export default function PromoBanner() {
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-green text-gaming-black py-3 px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gaming-green opacity-90" />
+    <div className="bg-gaming-green text-gaming-black py-3 px-4 relative overflow-hidden">
       <div className="relative container mx-auto flex items-center justify-center text-center">
         <div className="flex items-center space-x-4">
           <Zap className="text-gaming-black animate-pulse" />

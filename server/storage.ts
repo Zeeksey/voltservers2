@@ -337,30 +337,30 @@ export class MemStorage implements IStorage {
 
     samplePosts.forEach(post => this.blogPosts.set(post.id, post));
 
-    // Initialize demo servers
+    // Initialize demo servers with real Minecraft servers
     const gameIds = Array.from(this.games.keys());
     const sampleDemoServers: DemoServer[] = [
       {
         id: randomUUID(),
         gameId: gameIds[0], // Minecraft
-        serverName: "GameHost Pro Minecraft Demo",
-        serverIp: "demo-mc.gamehostpro.com",
+        serverName: "Hypixel Demo Server",
+        serverIp: "mc.hypixel.net",
         serverPort: 25565,
-        maxPlayers: 20,
-        description: "Try our Minecraft hosting with this demo server. Explore our optimized world and test our performance!",
+        maxPlayers: 200000,
+        description: "Experience the most popular Minecraft server with mini-games, SkyBlock, and more!",
         isActive: true,
         playtime: 30
       },
       {
         id: randomUUID(),
-        gameId: gameIds[1], // CS2
-        serverName: "GameHost Pro CS2 Demo",
-        serverIp: "demo-cs2.gamehostpro.com",
-        serverPort: 27015,
-        maxPlayers: 16,
-        description: "Experience Counter-Strike 2 on our high-performance servers. Try different maps and game modes!",
+        gameId: gameIds[0], // Minecraft
+        serverName: "Mineplex Demo Server", 
+        serverIp: "us.mineplex.com",
+        serverPort: 25565,
+        maxPlayers: 4000,
+        description: "Join one of the largest Minecraft networks with countless game modes and activities!",
         isActive: true,
-        playtime: 15
+        playtime: 30
       }
     ];
 

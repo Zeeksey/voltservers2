@@ -207,6 +207,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Server query endpoint
+  app.get("/api/query-server/:serverIp/:port?", async (req, res) => {
+    try {
+      const { serverIp } = req.params;
+      const port = req.params.port || "25565";
+      
+      // Use mcsrvstat.us API to get real server data
+      const response = await fetch(`https://api.mcsrvstat.us/3/${serverIp}:${port}`);
+      const data = await response.json();
+      
+      if (!data.online) {
+        return res.status(404).json({ 
+          message: "Server is offline or not found",
+          online: false 
+        });
+      }
+      
+      res.json({
+        online: data.online,
+        players: {
+          current: data.players?.online || 0,
+          max: data.players?.max || 0
+        },
+        version: data.version || "Unknown",
+        motd: data.motd?.clean?.join(" ") || data.motd?.raw?.join(" ") || "No MOTD",
+        ping: data.debug?.ping || 0,
+        hostname: data.hostname || serverIp,
+        port: data.port || parseInt(port),
+        software: data.software || "Unknown"
+      });
+    } catch (error) {
+      console.error("Server query error:", error);
+      res.status(500).json({ message: "Failed to query server" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
