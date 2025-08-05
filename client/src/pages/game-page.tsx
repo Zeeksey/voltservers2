@@ -321,7 +321,7 @@ export default function GamePage() {
                             : (plan.annualPrice || (plan.price * pricingMultipliers.annual).toFixed(2))
                           }
                         </span>
-                        <span className="text-gaming-gray">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
+                        <span className="text-gaming-gray text-lg">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
                       </div>
                       {billingPeriod !== 'monthly' && (
                         <div className="flex items-center gap-2 text-sm">

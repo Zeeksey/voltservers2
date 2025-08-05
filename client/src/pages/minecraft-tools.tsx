@@ -31,7 +31,7 @@ interface MinecraftTool {
   category: string;
   icon: string;
   featured: boolean;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  platforms: string[];
 }
 
 const minecraftTools: MinecraftTool[] = [
@@ -43,7 +43,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Creative',
     icon: 'Palette',
     featured: true,
-    difficulty: 'Beginner'
+    platforms: ['PC', 'Console', 'Mobile']
   },
   {
     id: '2',
@@ -53,7 +53,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Server',
     icon: 'Code',
     featured: true,
-    difficulty: 'Intermediate'
+    platforms: ['PC', 'Console', 'Mobile', 'Crossplay']
   },
   {
     id: '3',
@@ -63,7 +63,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'World',
     icon: 'Globe',
     featured: true,
-    difficulty: 'Beginner'
+    platforms: ['PC', 'Console', 'Mobile', 'Crossplay']
   },
   {
     id: '4',
@@ -73,7 +73,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Gameplay',
     icon: 'Calculator',
     featured: false,
-    difficulty: 'Intermediate'
+    platforms: ['PC', 'Console', 'Mobile']
   },
   {
     id: '5',
@@ -83,7 +83,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Server',
     icon: 'Cpu',
     featured: true,
-    difficulty: 'Advanced'
+    platforms: ['PC', 'Console', 'Crossplay']
   },
   {
     id: '6',
@@ -93,7 +93,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Server',
     icon: 'Shield',
     featured: false,
-    difficulty: 'Intermediate'
+    platforms: ['PC', 'Console', 'Crossplay']
   },
   {
     id: '7',
@@ -103,7 +103,7 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Server',
     icon: 'Database',
     featured: false,
-    difficulty: 'Beginner'
+    platforms: ['PC', 'Console', 'Mobile', 'Crossplay']
   },
   {
     id: '8',
@@ -113,16 +113,17 @@ const minecraftTools: MinecraftTool[] = [
     category: 'Server',
     icon: 'Users',
     featured: false,
-    difficulty: 'Beginner'
+    platforms: ['PC', 'Console', 'Mobile', 'Crossplay']
   }
 ];
 
 const categories = ['All', 'Creative', 'Server', 'World', 'Gameplay'];
+const featuredTools = minecraftTools.filter(tool => tool.featured);
 
 export default function MinecraftToolsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('All');
+  const [selectedPlatform, setSelectedPlatform] = useState('All');
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -142,15 +143,13 @@ export default function MinecraftToolsPage() {
     const matchesSearch = tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || tool.category === selectedCategory;
-    const matchesDifficulty = selectedDifficulty === 'All' || tool.difficulty === selectedDifficulty;
+    const matchesPlatform = selectedPlatform === 'All' || tool.platforms.includes(selectedPlatform);
     
-    return matchesSearch && matchesCategory && matchesDifficulty;
+    return matchesSearch && matchesCategory && matchesPlatform;
   });
 
-  const featuredTools = minecraftTools.filter(tool => tool.featured);
-
   return (
-    <div className="min-h-screen bg-gaming-black text-gaming-white">
+    <div className="min-h-screen bg-gaming-black">
       <PromoBanner />
       <Navigation />
       
@@ -212,16 +211,22 @@ export default function MinecraftToolsPage() {
                         <Badge variant="outline" className="text-xs">
                           {tool.category}
                         </Badge>
-                        <Badge 
-                          variant="secondary" 
-                          className={`text-xs ${
-                            tool.difficulty === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                            tool.difficulty === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}
-                        >
-                          {tool.difficulty}
-                        </Badge>
+                        <div className="flex gap-1">
+                          {tool.platforms.slice(0, 2).map((platform, platformIndex) => (
+                            <Badge 
+                              key={platformIndex}
+                              variant="secondary" 
+                              className="text-xs bg-gaming-green/20 text-gaming-green"
+                            >
+                              {platform}
+                            </Badge>
+                          ))}
+                          {tool.platforms.length > 2 && (
+                            <Badge variant="secondary" className="text-xs bg-gaming-green/20 text-gaming-green">
+                              +{tool.platforms.length - 2}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -269,18 +274,18 @@ export default function MinecraftToolsPage() {
             </Tabs>
 
             <div className="mt-4 flex gap-2 justify-center flex-wrap">
-              {['All', 'Beginner', 'Intermediate', 'Advanced'].map((difficulty) => (
+              {['All', 'PC', 'Console', 'Mobile', 'Crossplay'].map((platform) => (
                 <Button
-                  key={difficulty}
-                  variant={selectedDifficulty === difficulty ? "default" : "outline"}
+                  key={platform}
+                  variant={selectedPlatform === platform ? "default" : "outline"}
                   size="sm"
-                  onClick={() => setSelectedDifficulty(difficulty)}
-                  className={selectedDifficulty === difficulty ? 
+                  onClick={() => setSelectedPlatform(platform)}
+                  className={selectedPlatform === platform ? 
                     "bg-gaming-green text-gaming-black hover:bg-gaming-green-dark" : 
                     "border-gaming-green/20 text-gaming-gray hover:text-gaming-white"
                   }
                 >
-                  {difficulty}
+                  {platform}
                 </Button>
               ))}
             </div>
@@ -309,16 +314,22 @@ export default function MinecraftToolsPage() {
                         <Badge variant="outline" className="text-xs">
                           {tool.category}
                         </Badge>
-                        <Badge 
-                          variant="secondary" 
-                          className={`text-xs ${
-                            tool.difficulty === 'Beginner' ? 'bg-green-500/20 text-green-400' :
-                            tool.difficulty === 'Intermediate' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-red-500/20 text-red-400'
-                          }`}
-                        >
-                          {tool.difficulty}
-                        </Badge>
+                        <div className="flex gap-1">
+                          {tool.platforms.slice(0, 2).map((platform, platformIndex) => (
+                            <Badge 
+                              key={platformIndex}
+                              variant="secondary" 
+                              className="text-xs bg-gaming-green/20 text-gaming-green"
+                            >
+                              {platform}
+                            </Badge>
+                          ))}
+                          {tool.platforms.length > 2 && (
+                            <Badge variant="secondary" className="text-xs bg-gaming-green/20 text-gaming-green">
+                              +{tool.platforms.length - 2}
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
