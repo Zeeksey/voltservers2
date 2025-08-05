@@ -4,6 +4,7 @@ import { storage, memStorage, MemStorage } from "./storage";
 import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
+import { WHMCSIntegration } from "./whmcs-integration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
@@ -1942,6 +1943,110 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Contact form error:", error);
       res.status(500).json({ error: "Failed to send message. Please try again later." });
+    }
+  });
+
+  // Initialize WHMCS integration
+  let whmcsIntegration: WHMCSIntegration | null = null;
+  if (process.env.WHMCS_API_IDENTIFIER && process.env.WHMCS_API_SECRET && process.env.WHMCS_API_URL) {
+    whmcsIntegration = new WHMCSIntegration();
+  }
+
+  // WHMCS API Endpoints
+  app.get("/api/whmcs/test", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const isConnected = await whmcsIntegration.testConnection();
+      res.json({ connected: isConnected, message: isConnected ? "WHMCS connection successful" : "WHMCS connection failed" });
+    } catch (error) {
+      res.status(500).json({ message: "WHMCS connection test failed", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/clients", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const limitstart = parseInt(req.query.limitstart as string) || 0;
+      const limitnum = parseInt(req.query.limitnum as string) || 25;
+      const clients = await whmcsIntegration.getClients(limitstart, limitnum);
+      res.json(clients);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch clients", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/clients/:clientId", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const client = await whmcsIntegration.getClientDetails(req.params.clientId);
+      if (!client) {
+        return res.status(404).json({ message: "Client not found" });
+      }
+      res.json(client);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch client details", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/clients/:clientId/services", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const services = await whmcsIntegration.getClientServices(req.params.clientId);
+      res.json(services || { services: [] });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch client services", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/clients/:clientId/invoices", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const invoices = await whmcsIntegration.getClientInvoices(req.params.clientId);
+      res.json(invoices || { invoices: [] });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch client invoices", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/tickets", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const clientId = req.query.clientId as string;
+      const tickets = await whmcsIntegration.getSupportTickets(clientId);
+      res.json(tickets || { tickets: [] });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch support tickets", error: error.message });
+    }
+  });
+
+  app.get("/api/whmcs/products", async (req, res) => {
+    if (!whmcsIntegration) {
+      return res.status(503).json({ message: "WHMCS integration not configured" });
+    }
+    
+    try {
+      const products = await whmcsIntegration.getProducts();
+      res.json(products || { products: [] });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch products", error: error.message });
     }
   });
 

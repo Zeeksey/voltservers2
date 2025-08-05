@@ -20,8 +20,23 @@ interface WHMCSUser {
 export class WHMCSIntegration {
   private config: WHMCSConfig;
 
-  constructor(config: WHMCSConfig) {
-    this.config = config;
+  constructor(config?: WHMCSConfig) {
+    this.config = config || {
+      identifier: process.env.WHMCS_API_IDENTIFIER!,
+      secret: process.env.WHMCS_API_SECRET!,
+      url: process.env.WHMCS_API_URL!
+    };
+  }
+
+  // Test WHMCS connection
+  async testConnection(): Promise<boolean> {
+    try {
+      const response = await this.makeAPICall('GetActivityLog', { limitnum: 1 });
+      return response.result === 'success';
+    } catch (error) {
+      console.error('WHMCS connection test failed:', error);
+      return false;
+    }
   }
 
   // Verify WHMCS SSO token
@@ -102,6 +117,64 @@ export class WHMCSIntegration {
       return null;
     } catch (error) {
       console.error('Error validating login:', error);
+      return null;
+    }
+  }
+
+  // Get all clients
+  async getClients(limitstart?: number, limitnum?: number): Promise<any> {
+    try {
+      return await this.makeAPICall('GetClients', {
+        limitstart: limitstart || 0,
+        limitnum: limitnum || 25
+      });
+    } catch (error) {
+      console.error('Error fetching clients:', error);
+      return null;
+    }
+  }
+
+  // Get client invoices
+  async getClientInvoices(clientId: string): Promise<any> {
+    try {
+      return await this.makeAPICall('GetInvoices', {
+        userid: clientId
+      });
+    } catch (error) {
+      console.error('Error fetching client invoices:', error);
+      return null;
+    }
+  }
+
+  // Get client services
+  async getClientServices(clientId: string): Promise<any> {
+    try {
+      return await this.makeAPICall('GetClientsProducts', {
+        clientid: clientId
+      });
+    } catch (error) {
+      console.error('Error fetching client services:', error);
+      return null;
+    }
+  }
+
+  // Get support tickets
+  async getSupportTickets(clientId?: string): Promise<any> {
+    try {
+      const params = clientId ? { clientid: clientId } : {};
+      return await this.makeAPICall('GetTickets', params);
+    } catch (error) {
+      console.error('Error fetching support tickets:', error);
+      return null;
+    }
+  }
+
+  // Get products/services catalog
+  async getProducts(): Promise<any> {
+    try {
+      return await this.makeAPICall('GetProducts');
+    } catch (error) {
+      console.error('Error fetching products:', error);
       return null;
     }
   }
