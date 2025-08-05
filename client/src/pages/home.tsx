@@ -5,6 +5,8 @@ import TrustIndicators from "@/components/trust-indicators";
 import StatsSection from "@/components/stats-section";
 import GameCards from "@/components/game-cards";
 import FeaturesSection from "@/components/features-section";
+import AdvancedFeatures from "@/components/advanced-features";
+import GameOptimization from "@/components/game-optimization";
 import ComparisonSection from "@/components/comparison-section";
 import PricingSection from "@/components/pricing-section";
 import TestimonialsSection from "@/components/testimonials-section";
@@ -30,6 +32,8 @@ export default function Home() {
       <StatsSection />
       <GameCards />
       <FeaturesSection />
+      <AdvancedFeatures />
+      <GameOptimization />
       <ComparisonSection />
       <PricingSection />
       <TestimonialsSection />

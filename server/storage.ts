@@ -24,7 +24,19 @@ import {
   type SiteSetting,
   type InsertSiteSetting,
   type PromoSetting,
-  type InsertPromoSetting
+  type InsertPromoSetting,
+  type MinecraftServer,
+  type InsertMinecraftServer,
+  type MinecraftPlugin,
+  type InsertMinecraftPlugin,
+  type MinecraftWorld,
+  type InsertMinecraftWorld,
+  type MinecraftPlayer,
+  type InsertMinecraftPlayer,
+  type MinecraftBackup,
+  type InsertMinecraftBackup,
+  type MinecraftLog,
+  type InsertMinecraftLog,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { DatabaseStorage } from "./database-storage";
@@ -164,6 +176,14 @@ export class MemStorage implements IStorage {
   private gamePages: Map<string, GamePage>;
   private demoServers: Map<string, DemoServer>;
   private pricingDetails: Map<string, PricingDetail>;
+  
+  // Minecraft management storage
+  private minecraftServers: Map<string, MinecraftServer>;
+  private minecraftPlugins: Map<string, MinecraftPlugin>;
+  private minecraftWorlds: Map<string, MinecraftWorld>;
+  private minecraftPlayers: Map<string, MinecraftPlayer>;
+  private minecraftBackups: Map<string, MinecraftBackup>;
+  private minecraftLogs: Map<string, MinecraftLog>;
 
   constructor() {
     this.users = new Map();
@@ -176,6 +196,14 @@ export class MemStorage implements IStorage {
     this.gamePages = new Map();
     this.demoServers = new Map();
     this.pricingDetails = new Map();
+    
+    // Initialize Minecraft management maps
+    this.minecraftServers = new Map();
+    this.minecraftPlugins = new Map();
+    this.minecraftWorlds = new Map();
+    this.minecraftPlayers = new Map();
+    this.minecraftBackups = new Map();
+    this.minecraftLogs = new Map();
     
     this.initializeData();
   }
@@ -771,6 +799,202 @@ export class MemStorage implements IStorage {
     };
     this.pricingDetails.set(id, detail);
     return detail;
+  }
+
+  // Minecraft server management methods
+  async getAllMinecraftServers(): Promise<MinecraftServer[]> {
+    return Array.from(this.minecraftServers.values());
+  }
+
+  async getMinecraftServer(id: string): Promise<MinecraftServer | undefined> {
+    return this.minecraftServers.get(id);
+  }
+
+  async getUserMinecraftServers(userId: string): Promise<MinecraftServer[]> {
+    return Array.from(this.minecraftServers.values()).filter(server => server.userId === userId);
+  }
+
+  async createMinecraftServer(insertServer: InsertMinecraftServer): Promise<MinecraftServer> {
+    const id = randomUUID();
+    const server: MinecraftServer = { 
+      ...insertServer, 
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.minecraftServers.set(id, server);
+    return server;
+  }
+
+  async updateMinecraftServer(id: string, updates: Partial<MinecraftServer>): Promise<MinecraftServer> {
+    const existing = this.minecraftServers.get(id);
+    if (!existing) {
+      throw new Error(`Minecraft server with id ${id} not found`);
+    }
+    const updated = { ...existing, ...updates, updatedAt: new Date() };
+    this.minecraftServers.set(id, updated);
+    return updated;
+  }
+
+  async deleteMinecraftServer(id: string): Promise<void> {
+    this.minecraftServers.delete(id);
+    // Also delete related data
+    const plugins = Array.from(this.minecraftPlugins.values()).filter(p => p.serverId === id);
+    plugins.forEach(p => this.minecraftPlugins.delete(p.id));
+    
+    const worlds = Array.from(this.minecraftWorlds.values()).filter(w => w.serverId === id);
+    worlds.forEach(w => this.minecraftWorlds.delete(w.id));
+    
+    const players = Array.from(this.minecraftPlayers.values()).filter(p => p.serverId === id);
+    players.forEach(p => this.minecraftPlayers.delete(p.id));
+    
+    const backups = Array.from(this.minecraftBackups.values()).filter(b => b.serverId === id);
+    backups.forEach(b => this.minecraftBackups.delete(b.id));
+    
+    const logs = Array.from(this.minecraftLogs.values()).filter(l => l.serverId === id);
+    logs.forEach(l => this.minecraftLogs.delete(l.id));
+  }
+
+  // Minecraft plugin methods
+  async getMinecraftPlugins(serverId: string): Promise<MinecraftPlugin[]> {
+    return Array.from(this.minecraftPlugins.values()).filter(plugin => plugin.serverId === serverId);
+  }
+
+  async createMinecraftPlugin(insertPlugin: InsertMinecraftPlugin): Promise<MinecraftPlugin> {
+    const id = randomUUID();
+    const plugin: MinecraftPlugin = { 
+      ...insertPlugin, 
+      id,
+      installedAt: new Date(),
+    };
+    this.minecraftPlugins.set(id, plugin);
+    return plugin;
+  }
+
+  async updateMinecraftPlugin(id: string, updates: Partial<MinecraftPlugin>): Promise<MinecraftPlugin> {
+    const existing = this.minecraftPlugins.get(id);
+    if (!existing) {
+      throw new Error(`Minecraft plugin with id ${id} not found`);
+    }
+    const updated = { ...existing, ...updates };
+    this.minecraftPlugins.set(id, updated);
+    return updated;
+  }
+
+  async deleteMinecraftPlugin(id: string): Promise<void> {
+    this.minecraftPlugins.delete(id);
+  }
+
+  // Minecraft world methods
+  async getMinecraftWorlds(serverId: string): Promise<MinecraftWorld[]> {
+    return Array.from(this.minecraftWorlds.values()).filter(world => world.serverId === serverId);
+  }
+
+  async createMinecraftWorld(insertWorld: InsertMinecraftWorld): Promise<MinecraftWorld> {
+    const id = randomUUID();
+    const world: MinecraftWorld = { 
+      ...insertWorld, 
+      id,
+      createdAt: new Date(),
+    };
+    this.minecraftWorlds.set(id, world);
+    return world;
+  }
+
+  async updateMinecraftWorld(id: string, updates: Partial<MinecraftWorld>): Promise<MinecraftWorld> {
+    const existing = this.minecraftWorlds.get(id);
+    if (!existing) {
+      throw new Error(`Minecraft world with id ${id} not found`);
+    }
+    const updated = { ...existing, ...updates };
+    this.minecraftWorlds.set(id, updated);
+    return updated;
+  }
+
+  async deleteMinecraftWorld(id: string): Promise<void> {
+    this.minecraftWorlds.delete(id);
+    // Also delete related backups
+    const backups = Array.from(this.minecraftBackups.values()).filter(b => b.worldId === id);
+    backups.forEach(b => this.minecraftBackups.delete(b.id));
+  }
+
+  // Minecraft player methods
+  async getMinecraftPlayers(serverId: string): Promise<MinecraftPlayer[]> {
+    return Array.from(this.minecraftPlayers.values()).filter(player => player.serverId === serverId);
+  }
+
+  async createMinecraftPlayer(insertPlayer: InsertMinecraftPlayer): Promise<MinecraftPlayer> {
+    const id = randomUUID();
+    const player: MinecraftPlayer = { 
+      ...insertPlayer, 
+      id,
+      firstJoin: new Date(),
+    };
+    this.minecraftPlayers.set(id, player);
+    return player;
+  }
+
+  async updateMinecraftPlayer(id: string, updates: Partial<MinecraftPlayer>): Promise<MinecraftPlayer> {
+    const existing = this.minecraftPlayers.get(id);
+    if (!existing) {
+      throw new Error(`Minecraft player with id ${id} not found`);
+    }
+    const updated = { ...existing, ...updates };
+    this.minecraftPlayers.set(id, updated);
+    return updated;
+  }
+
+  async deleteMinecraftPlayer(id: string): Promise<void> {
+    this.minecraftPlayers.delete(id);
+  }
+
+  // Minecraft backup methods
+  async getMinecraftBackups(serverId: string): Promise<MinecraftBackup[]> {
+    return Array.from(this.minecraftBackups.values()).filter(backup => backup.serverId === serverId);
+  }
+
+  async createMinecraftBackup(insertBackup: InsertMinecraftBackup): Promise<MinecraftBackup> {
+    const id = randomUUID();
+    const backup: MinecraftBackup = { 
+      ...insertBackup, 
+      id,
+      createdAt: new Date(),
+    };
+    this.minecraftBackups.set(id, backup);
+    return backup;
+  }
+
+  async deleteMinecraftBackup(id: string): Promise<void> {
+    this.minecraftBackups.delete(id);
+  }
+
+  // Minecraft log methods
+  async getMinecraftLogs(serverId: string, limit: number = 100): Promise<MinecraftLog[]> {
+    return Array.from(this.minecraftLogs.values())
+      .filter(log => log.serverId === serverId)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, limit);
+  }
+
+  async createMinecraftLog(insertLog: InsertMinecraftLog): Promise<MinecraftLog> {
+    const id = randomUUID();
+    const log: MinecraftLog = { 
+      ...insertLog, 
+      id,
+      timestamp: new Date(),
+    };
+    this.minecraftLogs.set(id, log);
+    return log;
+  }
+
+  async deleteOldMinecraftLogs(serverId: string, olderThanDays: number): Promise<void> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
+    
+    const logsToDelete = Array.from(this.minecraftLogs.values())
+      .filter(log => log.serverId === serverId && new Date(log.timestamp) < cutoffDate);
+    
+    logsToDelete.forEach(log => this.minecraftLogs.delete(log.id));
   }
 }
 
