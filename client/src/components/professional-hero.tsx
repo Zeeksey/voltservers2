@@ -167,26 +167,7 @@ export default function ProfessionalHero() {
               </CardContent>
             </Card>
 
-            {/* Floating Stats */}
-            <div className="absolute -top-4 -left-4 bg-gaming-green text-gaming-black rounded-lg p-3 shadow-lg animate-bounce">
-              <div className="flex items-center space-x-2">
-                <Server className="w-5 h-5" />
-                <div>
-                  <div className="font-bold text-lg">99.9%</div>
-                  <div className="text-xs opacity-80">Uptime</div>
-                </div>
-              </div>
-            </div>
 
-            <div className="absolute -bottom-4 -right-4 bg-gaming-dark border border-gaming-green/30 text-gaming-white rounded-lg p-3 shadow-lg animate-pulse">
-              <div className="flex items-center space-x-2">
-                <Globe className="w-5 h-5 text-gaming-green" />
-                <div>
-                  <div className="font-bold text-lg text-gaming-green">15+</div>
-                  <div className="text-xs text-gaming-gray">Locations</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
