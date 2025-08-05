@@ -19,139 +19,114 @@ export default function Navigation() {
     setIsMenuOpen(false);
   };
 
+  const mainNavLinks = [
+    { href: "/games", label: "Games" },
+    { href: "/pricing", label: "Pricing" },
+    { href: "/hardware", label: "Hardware" },
+    { href: "/status", label: "Status" },
+    { href: "/support", label: "Support" }
+  ];
+
   return (
-    <nav className="sticky top-0 z-40 glass-effect">
+    <nav className="sticky top-0 z-50 glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-3 lg:py-4">
           <Link href="/">
-            <div className="flex items-center space-x-2 cursor-pointer">
-              <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
-                <Zap className="text-gaming-black text-xl" />
+            <div className="flex items-center space-x-3 cursor-pointer group">
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Zap className="text-gaming-black text-lg lg:text-xl" />
               </div>
-              <span className="text-2xl font-bold text-gaming-green">VoltServers</span>
+              <span className="text-xl lg:text-2xl font-bold text-gaming-green">VoltServers</span>
             </div>
           </Link>
           
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/games">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Games
-              </span>
-            </Link>
-            <Link href="/hardware">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Hardware
-              </span>
-            </Link>
-            <Link href="/pricing">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Pricing
-              </span>
-            </Link>
-            <Link href="/knowledgebase">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Knowledge Base
-              </span>
-            </Link>
-            <Link href="/status">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Status
-              </span>
-            </Link>
-            <Link href="/about">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                About
-              </span>
-            </Link>
-            <Link href="/support">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Support
-              </span>
-            </Link>
-            <Link href="/contact">
-              <span className="hover:text-gaming-green transition-colors cursor-pointer">
-                Contact
-              </span>
-            </Link>
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-6">
+            {mainNavLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                <span className={`text-gaming-white hover:text-gaming-green transition-colors cursor-pointer font-medium px-3 py-2 rounded-md hover:bg-gaming-green/10 ${
+                  location === link.href ? 'text-gaming-green bg-gaming-green/10' : ''
+                }`}>
+                  {link.label}
+                </span>
+              </Link>
+            ))}
           </div>
           
-          <div className="flex items-center space-x-4">
+          {/* Action Buttons */}
+          <div className="flex items-center space-x-2 lg:space-x-4">
             <Link href="/client-portal">
               <Button 
                 variant="outline" 
-                className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+                size="sm"
+                className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black transition-all duration-200"
               >
                 Client Portal
               </Button>
             </Link>
             <Link href="/games">
-              <Button className="bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/25">
+              <Button 
+                size="sm"
+                className="bg-gradient-green text-gaming-black hover:shadow-lg hover:shadow-gaming-green/25 font-medium px-4 lg:px-6"
+              >
                 Get Started
               </Button>
             </Link>
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-gaming-green"
+              className="lg:hidden text-gaming-green hover:bg-gaming-green/10 w-9 h-9"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X /> : <Menu />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
         
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gaming-green/20">
-            <div className="flex flex-col space-y-4">
-              <Link href="/games">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Games
-                </span>
-              </Link>
-              <Link href="/hardware">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Hardware
-                </span>
-              </Link>
-              <Link href="/pricing">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Pricing
-                </span>
-              </Link>
-              <Link href="/knowledgebase">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Knowledge Base
-                </span>
-              </Link>
-              <Link href="/status">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Status
-                </span>
-              </Link>
-              <Link href="/about">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  About
-                </span>
-              </Link>
-              <Link href="/support">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Support
-                </span>
-              </Link>
-              <Link href="/contact">
-                <span className="text-left hover:text-gaming-green transition-colors cursor-pointer block">
-                  Contact
-                </span>
-              </Link>
-              <Link href="/client-portal">
-                <Button 
-                  variant="outline" 
-                  className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black w-full mt-2"
-                >
-                  Client Portal
-                </Button>
-              </Link>
+          <div className="lg:hidden py-4 border-t border-gaming-green/20 bg-gaming-black-lighter/95 backdrop-blur-sm">
+            <div className="flex flex-col space-y-1">
+              {mainNavLinks.map((link) => (
+                <Link key={link.href} href={link.href}>
+                  <span 
+                    className={`block px-4 py-3 text-gaming-white hover:text-gaming-green hover:bg-gaming-green/10 transition-colors cursor-pointer rounded-md ${
+                      location === link.href ? 'text-gaming-green bg-gaming-green/10' : ''
+                    }`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {link.label}
+                  </span>
+                </Link>
+              ))}
+              <div className="px-4 py-2 border-t border-gaming-green/10 mt-4">
+                <Link href="/knowledgebase">
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
+                    Knowledge Base
+                  </span>
+                </Link>
+                <Link href="/about">
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
+                    About
+                  </span>
+                </Link>
+                <Link href="/contact">
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
+                    Contact
+                  </span>
+                </Link>
+                <div className="pt-2">
+                  <Link href="/client-portal">
+                    <Button 
+                      variant="outline" 
+                      className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black w-full"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Client Portal
+                    </Button>
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         )}
