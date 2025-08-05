@@ -451,3 +451,71 @@ export function generateWHMCSLoginURL(
 
   return `${whmcsUrl}/clientarea.php?sso=1&${params.toString()}`;
 }
+
+// Get WHMCS products with pricing for a specific game
+export async function getWHMCSProducts(gameType?: string): Promise<any> {
+  try {
+    console.log('Fetching WHMCS products for game type:', gameType || 'all');
+    
+    const config = {
+      whmcsUrl: process.env.WHMCS_API_URL!,
+      identifier: process.env.WHMCS_API_IDENTIFIER!,
+      secret: process.env.WHMCS_API_SECRET!
+    };
+    
+    const whmcs = new WHMCSIntegration(config);
+    const response = await whmcs.getProducts();
+    
+    if (!response || response.result !== 'success') {
+      throw new Error('Failed to fetch products from WHMCS');
+    }
+    
+    let products = response.products?.product || [];
+    
+    // Filter products for specific game type if provided
+    if (gameType && gameType.toLowerCase() === 'minecraft') {
+      products = products.filter((product: any) => 
+        product.name.toLowerCase().includes('minecraft') ||
+        product.description?.toLowerCase().includes('minecraft') ||
+        product.group_name?.toLowerCase().includes('minecraft')
+      );
+    }
+    
+    // Transform WHMCS products to our pricing plan format
+    const pricingPlans = products.map((product: any) => {
+      const pricing = product.pricing || {};
+      const monthlyPrice = pricing.USD?.monthly || pricing.monthly || '0.00';
+      const annualPrice = pricing.USD?.annually || pricing.annually || (parseFloat(monthlyPrice) * 12 * 0.75).toFixed(2);
+      
+      return {
+        id: `whmcs-${product.pid}`,
+        name: product.name,
+        description: product.description || `${product.name} hosting plan`,
+        monthlyPrice: parseFloat(monthlyPrice),
+        annualPrice: parseFloat(annualPrice),
+        features: [
+          'WHMCS Managed',
+          'Automatic Setup', 
+          '24/7 Support',
+          'DDoS Protection',
+          ...(product.configoptions ? ['Configurable Options'] : [])
+        ],
+        popular: false,
+        whmcsProductId: product.pid,
+        whmcsData: product
+      };
+    });
+    
+    console.log(`Found ${pricingPlans.length} WHMCS products for ${gameType || 'all games'}`);
+    
+    return {
+      result: 'success',
+      products: pricingPlans,
+      totalProducts: pricingPlans.length
+    };
+    
+  } catch (error) {
+    console.error('Error fetching WHMCS products:', error);
+    throw error;
+  }
+}

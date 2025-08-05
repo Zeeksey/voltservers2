@@ -4,7 +4,7 @@ import { storage, memStorage, MemStorage } from "./storage";
 import { initializeDatabase } from "./initialize-db";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
-import { WHMCSIntegration, createWHMCSAuthMiddleware } from "./whmcs-integration";
+import { WHMCSIntegration, createWHMCSAuthMiddleware, getWHMCSProducts } from "./whmcs-integration";
 import { wispIntegration } from "./wisp-integration";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -2610,6 +2610,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error replying to ticket:', error);
       console.error('Error details:', error.message, error.stack);
       res.status(500).json({ error: `Failed to reply to ticket: ${error.message || 'Unknown error'}` });
+    }
+  });
+
+  // WHMCS Products API route
+  app.get('/api/whmcs/products/:gameType?', async (req, res) => {
+    try {
+      const gameType = req.params.gameType;
+      console.log(`Fetching WHMCS products for game type: ${gameType || 'all'}`);
+      
+      const result = await getWHMCSProducts(gameType);
+      res.json(result);
+    } catch (error) {
+      console.error('Error fetching WHMCS products:', error);
+      
+      // Return fallback pricing data for Minecraft if WHMCS fails
+      if (req.params.gameType?.toLowerCase() === 'minecraft') {
+        res.json({
+          result: 'fallback',
+          products: [
+            {
+              id: 'minecraft-starter',
+              name: 'Minecraft Starter',
+              description: 'Perfect for small communities and friends',
+              monthlyPrice: 5.99,
+              annualPrice: 47.92,
+              features: ['Up to 20 Players', '4GB RAM', 'Plugin Support', '24/7 Support'],
+              popular: false,
+              whmcsProductId: null
+            },
+            {
+              id: 'minecraft-pro',
+              name: 'Minecraft Pro',
+              description: 'Great for medium-sized communities',
+              monthlyPrice: 12.99,
+              annualPrice: 103.92,
+              features: ['Up to 50 Players', '8GB RAM', 'Plugin Support', 'Custom World', '24/7 Support'],
+              popular: true,
+              whmcsProductId: null
+            },
+            {
+              id: 'minecraft-enterprise',
+              name: 'Minecraft Enterprise',
+              description: 'Ultimate solution for large communities',
+              monthlyPrice: 24.99,
+              annualPrice: 199.92,
+              features: ['Unlimited Players', '16GB RAM', 'Full Plugin Access', 'Custom Mods', 'Priority Support'],
+              popular: false,
+              whmcsProductId: null
+            }
+          ],
+          totalProducts: 3,
+          message: 'WHMCS unavailable, using fallback data'
+        });
+      } else {
+        res.status(500).json({ 
+          error: 'Failed to fetch products from WHMCS',
+          message: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
     }
   });
 

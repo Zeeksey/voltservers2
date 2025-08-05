@@ -117,6 +117,17 @@ export default function GamePage() {
     enabled: !!game?.id,
   });
 
+  // Fetch WHMCS pricing plans for Minecraft
+  const { data: whmcsProducts, isLoading: whmcsLoading } = useQuery({
+    queryKey: ['/api/whmcs/products', slug],
+    queryFn: async () => {
+      const response = await fetch(`/api/whmcs/products/${slug}`);
+      if (!response.ok) throw new Error('Failed to fetch WHMCS products');
+      return response.json();
+    },
+    enabled: !!game && slug === 'minecraft'
+  });
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gaming-black">
@@ -210,9 +221,25 @@ export default function GamePage() {
     }
   ];
 
-  const pricingPlans = game.pricingPlans && Array.isArray(game.pricingPlans) && game.pricingPlans.length > 0 
-    ? game.pricingPlans as any[] 
-    : defaultPricingPlans;
+  // Use WHMCS products for Minecraft if available, otherwise use existing logic
+  let pricingPlans;
+  if (slug === 'minecraft' && whmcsProducts?.products?.length > 0) {
+    pricingPlans = whmcsProducts.products.map((product: any) => ({
+      name: product.name,
+      price: calculatePrice(product.monthlyPrice.toString(), pricingMultipliers[billingPeriod]),
+      originalPrice: product.monthlyPrice.toString(),
+      players: "Variable", // WHMCS products may not have player limits defined
+      features: product.features || [],
+      popular: product.popular || false,
+      whmcsProductId: product.whmcsProductId
+    }));
+  } else if (customPricingTiers && customPricingTiers.length > 0) {
+    pricingPlans = customPricingTiers;
+  } else if (game.pricingPlans && Array.isArray(game.pricingPlans) && game.pricingPlans.length > 0) {
+    pricingPlans = game.pricingPlans as any[];
+  } else {
+    pricingPlans = defaultPricingPlans;
+  }
 
   const features = game.features && game.features.length > 0 ? game.features : [
     "Instant Setup",
@@ -284,6 +311,27 @@ export default function GamePage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gaming-white mb-4">Choose Your Plan</h2>
             <p className="text-gaming-gray text-lg">Select the perfect hosting solution for your {game.name} server</p>
+            {slug === 'minecraft' && whmcsProducts?.products?.length > 0 && (
+              <div className="mt-4">
+                <Badge variant="secondary" className="bg-gaming-green/20 text-gaming-green">
+                  Live WHMCS Pricing ({whmcsProducts.products.length} plans)
+                </Badge>
+              </div>
+            )}
+            {slug === 'minecraft' && whmcsProducts?.result === 'fallback' && (
+              <div className="mt-4">
+                <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-400">
+                  Fallback Pricing (WHMCS Unavailable)
+                </Badge>
+              </div>
+            )}
+            {slug === 'minecraft' && whmcsLoading && (
+              <div className="mt-4">
+                <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
+                  Loading WHMCS Products...
+                </Badge>
+              </div>
+            )}
             
             {/* Billing Period Selector */}
             <div className="flex justify-center mt-8 mb-8">
