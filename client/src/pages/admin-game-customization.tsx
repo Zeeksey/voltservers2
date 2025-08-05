@@ -338,9 +338,6 @@ export default function AdminGameCustomization() {
     </div>
   );
 }
-    }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/games/${gameId}/pricing-tiers`] });
       toast({ title: 'Pricing tier created successfully' });
       resetTierForm();
     },

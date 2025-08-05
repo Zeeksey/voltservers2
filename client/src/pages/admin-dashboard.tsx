@@ -646,65 +646,66 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gaming-black text-white">
-      {/* Header */}
+      {/* Mobile-Friendly Header */}
       <div className="border-b border-gaming-green/20 bg-gaming-dark">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Shield className="w-8 h-8 text-gaming-green" />
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-gaming-green" />
             <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-gray-400">Welcome back, {adminUser.username}</p>
+              <h1 className="text-lg sm:text-2xl font-bold">Admin Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-400 hidden sm:block">Welcome back, {adminUser.username}</p>
             </div>
           </div>
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+            size="sm" className="touch-target admin-button"
+            className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 text-xs sm:text-sm"
           >
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="games" className="space-y-6">
-          <TabsList className="bg-gaming-dark border border-gaming-green/20">
-            <TabsTrigger value="games" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <Gamepad2 className="w-4 h-4 mr-2" />
-              Games
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+        <Tabs defaultValue="games" className="space-y-4 sm:space-y-6 admin-tabs">
+          <TabsList className="bg-gaming-dark border border-gaming-green/20 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1 h-auto p-1 admin-tabs-list">
+            <TabsTrigger value="games" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <Gamepad2 className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Games</span>
             </TabsTrigger>
-            <TabsTrigger value="game-pages" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <Layout className="w-4 h-4 mr-2" />
-              Game Pages
+            <TabsTrigger value="game-pages" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <Layout className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Pages</span>
             </TabsTrigger>
-            <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <BookOpen className="w-4 h-4 mr-2" />
-              Blog
+            <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Blog</span>
             </TabsTrigger>
-            <TabsTrigger value="promo" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <Megaphone className="w-4 h-4 mr-2" />
-              Promo Banner
+            <TabsTrigger value="promo" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <Megaphone className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Promo</span>
             </TabsTrigger>
-            <TabsTrigger value="locations" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <MapPin className="w-4 h-4 mr-2" />
-              Server Locations
+            <TabsTrigger value="locations" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Locations</span>
             </TabsTrigger>
-            <TabsTrigger value="demo-servers" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <Server className="w-4 h-4 mr-2" />
-              Demo Servers
+            <TabsTrigger value="demo-servers" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <Server className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Servers</span>
             </TabsTrigger>
-            <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black">
-              <Palette className="w-4 h-4 mr-2" />
-              Theme
+            <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <Palette className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Theme</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Games Management */}
-          <TabsContent value="games" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="games" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               {/* Game Form */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green">
                     {editingGame ? "Edit Game" : "Add New Game"}
@@ -712,7 +713,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleGameSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label className="text-gray-300">Name</Label>
                         <Input
@@ -750,7 +751,7 @@ export default function AdminDashboard() {
                         required
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label className="text-gray-300">Base Price ($)</Label>
                         <Input
@@ -771,7 +772,7 @@ export default function AdminDashboard() {
                         />
                       </div>
                     </div>
-                    <div className="flex space-x-6">
+                    <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
                       <div className="flex items-center space-x-2">
                         <Switch
                           checked={gameForm.isPopular}
@@ -794,17 +795,17 @@ export default function AdminDashboard() {
                         <Label className="text-gray-300">Trending</Label>
                       </div>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <Button 
                         type="submit" 
-                        className="bg-gaming-green hover:bg-gaming-green/90 text-gaming-black"
+                        className="bg-gaming-green hover:bg-gaming-green/90 text-gaming-black text-sm sm:text-base"
                         disabled={createGameMutation.isPending || updateGameMutation.isPending}
                       >
                         <Save className="w-4 h-4 mr-2" />
                         {editingGame ? "Update Game" : "Create Game"}
                       </Button>
                       {editingGame && (
-                        <Button type="button" variant="outline" onClick={resetGameForm}>
+                        <Button type="button" variant="outline" onClick={resetGameForm} className="text-sm sm:text-base">
                           Cancel
                         </Button>
                       )}
@@ -814,14 +815,14 @@ export default function AdminDashboard() {
               </Card>
 
               {/* Games List */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green">Existing Games ({games.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 max-h-96 overflow-y-auto">
                     {games.map((game: Game) => (
-                      <div key={game.id} className="flex items-center justify-between p-3 bg-gaming-dark-lighter rounded-lg">
+                      <div key={game.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-gaming-dark-lighter rounded-lg gap-2 sm:gap-0">
                         <div>
                           <h3 className="font-semibold text-white">{game.name}</h3>
                           <p className="text-sm text-gray-400">${game.basePrice} • {game.playerCount} players</p>
@@ -831,9 +832,9 @@ export default function AdminDashboard() {
                             {game.isTrending && <Badge variant="secondary" className="text-xs bg-purple-500/20 text-purple-400">Trending</Badge>}
                           </div>
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                           <Button
-                            size="sm"
+                            size="sm" className="touch-target admin-button"
                             variant="outline"
                             onClick={() => handleEditGame(game)}
                             className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
@@ -842,7 +843,7 @@ export default function AdminDashboard() {
                           </Button>
                           <Link href={`/admin/games/${game.id}/customize`}>
                             <Button
-                              size="sm"
+                              size="sm" className="touch-target admin-button"
                               variant="outline"
                               className="border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10"
                             >
@@ -850,7 +851,7 @@ export default function AdminDashboard() {
                             </Button>
                           </Link>
                           <Button
-                            size="sm"
+                            size="sm" className="touch-target admin-button"
                             variant="outline"
                             onClick={() => deleteGameMutation.mutate(game.id)}
                             className="border-red-500/30 text-red-400 hover:bg-red-500/10"
@@ -868,10 +869,10 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Blog Management */}
-          <TabsContent value="blog" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="blog" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               {/* Blog Form */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green">
                     {editingBlog ? "Edit Blog Post" : "Add New Blog Post"}
@@ -879,7 +880,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleBlogSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <Label className="text-gray-300">Title</Label>
                         <Input
@@ -926,7 +927,7 @@ export default function AdminDashboard() {
                         required
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                       <div>
                         <Label className="text-gray-300">Author</Label>
                         <Input
@@ -953,7 +954,7 @@ export default function AdminDashboard() {
                       />
                       <Label className="text-gray-300">Published</Label>
                     </div>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                       <Button 
                         type="submit" 
                         className="bg-gaming-green hover:bg-gaming-green/90 text-gaming-black"
@@ -973,7 +974,7 @@ export default function AdminDashboard() {
               </Card>
 
               {/* Blog Posts List */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green">Blog Posts ({blogPosts.length})</CardTitle>
                 </CardHeader>
@@ -993,9 +994,9 @@ export default function AdminDashboard() {
                             </span>
                           </div>
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                           <Button
-                            size="sm"
+                            size="sm" className="touch-target admin-button"
                             variant="outline"
                             onClick={() => handleEditBlog(post)}
                             className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
@@ -1003,7 +1004,7 @@ export default function AdminDashboard() {
                             <Edit2 className="w-4 h-4" />
                           </Button>
                           <Button
-                            size="sm"
+                            size="sm" className="touch-target admin-button"
                             variant="outline"
                             onClick={() => deleteBlogMutation.mutate(post.id)}
                             className="border-red-500/30 text-red-400 hover:bg-red-500/10"
@@ -1055,7 +1056,7 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                     <div>
                       <Label className="text-gray-300">Link Text (optional)</Label>
                       <Input
@@ -1076,10 +1077,10 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                     <div>
                       <Label className="text-gray-300">Background Color</Label>
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                         <Input
                           type="color"
                           value={promoForm.backgroundColor}
@@ -1095,7 +1096,7 @@ export default function AdminDashboard() {
                     </div>
                     <div>
                       <Label className="text-gray-300">Text Color</Label>
-                      <div className="flex space-x-2">
+                      <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                         <Input
                           type="color"
                           value={promoForm.textColor}
@@ -1155,7 +1156,7 @@ export default function AdminDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                   <div className="space-y-2">
                     <Label className="text-gaming-white">City</Label>
                     <Input
@@ -1286,7 +1287,7 @@ export default function AdminDashboard() {
                         </span>
                         <Button
                           variant="outline"
-                          size="sm"
+                          size="sm" className="touch-target admin-button"
                           onClick={() => deleteLocationMutation.mutate(location.id)}
                           className="border-red-500/30 text-red-400 hover:bg-red-500/20"
                         >
@@ -1316,7 +1317,7 @@ export default function AdminDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                   <div>
                     <Label className="text-gaming-white">Server Name</Label>
                     <Input 
@@ -1340,7 +1341,7 @@ export default function AdminDashboard() {
                     </Select>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                   <div>
                     <Label className="text-gaming-white">Server IP</Label>
                     <Input 
@@ -1426,10 +1427,10 @@ export default function AdminDashboard() {
           </TabsContent>
 
           {/* Theme Customization Tab */}
-          <TabsContent value="theme" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TabsContent value="theme" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
               {/* Theme Settings Form */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green flex items-center gap-2">
                     <Palette className="w-5 h-5" />
@@ -1496,17 +1497,18 @@ export default function AdminDashboard() {
                       <div className="grid grid-cols-1 gap-4">
                         <div>
                           <Label className="text-gray-300">Logo</Label>
-                          <div className="flex items-center space-x-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
                             <Input
                               type="file"
                               accept="image/*"
                               onChange={(e) => handleFileUpload(e, 'logo')}
-                              className="admin-input"
+                              className="admin-input flex-1"
                             />
                             <Button
                               type="button"
                               variant="outline"
-                              className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                              size="sm" className="touch-target admin-button"
+                              className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 w-full sm:w-auto"
                             >
                               <Upload className="w-4 h-4 mr-2" />
                               Upload
@@ -1547,7 +1549,7 @@ export default function AdminDashboard() {
                         <Palette className="w-4 h-4" />
                         Color Scheme
                       </h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                         <div>
                           <Label className="text-gray-300">Primary Color</Label>
                           <div className="flex items-center space-x-2">
@@ -1690,7 +1692,7 @@ export default function AdminDashboard() {
                     {/* Typography */}
                     <div className="space-y-4">
                       <h3 className="text-gaming-green font-semibold">Typography & Layout</h3>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 admin-form-grid">
                         <div>
                           <Label className="text-gray-300">Font Family</Label>
                           <Select value={themeForm.fontFamily} onValueChange={(value) => setThemeForm({...themeForm, fontFamily: value})}>
@@ -1773,7 +1775,7 @@ export default function AdminDashboard() {
               </Card>
 
               {/* Theme Preview */}
-              <Card className="bg-gaming-dark border-gaming-green/20">
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
                   <CardTitle className="text-gaming-green">Live Preview</CardTitle>
                   <p className="text-gray-400 text-sm">Enable preview mode to see changes in real-time</p>
@@ -1793,7 +1795,7 @@ export default function AdminDashboard() {
                         {themeForm.siteName}
                       </h4>
                       <p className="text-sm opacity-75">{themeForm.siteTagline}</p>
-                      <div className="mt-3 flex space-x-2">
+                      <div className="mt-3 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
                         <div 
                           className="px-3 py-1 rounded text-sm"
                           style={{
