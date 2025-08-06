@@ -2,44 +2,66 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Rocket, Clock, Shield } from "lucide-react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+
+interface ThemeSettings {
+  ctaBadgeText?: string;
+  ctaTitle?: string;
+  ctaDescription?: string;
+  ctaPrimaryButtonText?: string;
+  ctaPrimaryButtonUrl?: string;
+  ctaSecondaryButtonText?: string;
+  ctaSecondaryButtonUrl?: string;
+}
 
 export default function CtaSection() {
+  const { data: themeSettings } = useQuery<ThemeSettings>({
+    queryKey: ["/api/theme-settings"],
+  });
+
   return (
     <section className="py-20 bg-gradient-to-r from-gaming-green/10 via-gaming-black to-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           <Badge className="inline-flex items-center px-4 py-2 bg-gaming-green/20 border border-gaming-green/30 text-gaming-green mb-8">
             <Clock className="mr-2 w-4 h-4" />
-            Limited Time: 30% Off First Month
+            {themeSettings?.ctaBadgeText || "Limited Time: 30% Off First Month"}
           </Badge>
           
           <h2 className="text-4xl lg:text-6xl font-bold mb-6">
-            Ready to <span className="text-gaming-green">Level Up</span><br />
-            Your Game Server?
+            {themeSettings?.ctaTitle ? (
+              <span dangerouslySetInnerHTML={{
+                __html: themeSettings.ctaTitle.replace(/Level Up/g, '<span class="text-gaming-green">Level Up</span>')
+              }} />
+            ) : (
+              <>
+                Ready to <span className="text-gaming-green">Level Up</span><br />
+                Your Game Server?
+              </>
+            )}
           </h2>
           
           <p className="text-xl text-gaming-gray mb-8 max-w-2xl mx-auto">
-            Join over 50,000 players worldwide. Get your game server online in under 60 seconds 
-            with our enterprise-grade infrastructure and 24/7 expert support.
+            {themeSettings?.ctaDescription || "Join over 50,000 players worldwide. Get your game server online in under 60 seconds with our enterprise-grade infrastructure and 24/7 expert support."}
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link href="/games">
+            <Link href={themeSettings?.ctaPrimaryButtonUrl || "/games"}>
               <Button 
                 className="bg-gradient-green text-gaming-black px-8 py-4 text-lg font-bold hover:shadow-xl hover:shadow-gaming-green/30 animate-glow"
                 size="lg"
               >
                 <Rocket className="mr-2" />
-                Get Started Today
+                {themeSettings?.ctaPrimaryButtonText || "Get Started Today"}
               </Button>
             </Link>
-            <Link href="/minecraft-tools">
+            <Link href={themeSettings?.ctaSecondaryButtonUrl || "/minecraft-tools"}>
               <Button 
                 variant="outline"
                 className="border-2 border-gaming-green text-gaming-green px-8 py-4 text-lg font-bold hover:bg-gaming-green hover:text-gaming-black"
                 size="lg"
               >
-                View Live Demo
+                {themeSettings?.ctaSecondaryButtonText || "View Live Demo"}
               </Button>
             </Link>
           </div>

@@ -139,6 +139,14 @@ export default function AdminDashboard() {
     heroDescription: "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
     heroButtonText: "Get Started",
     heroButtonUrl: "/pricing",
+    // CTA Section
+    ctaBadgeText: "Limited Time: 30% Off First Month",
+    ctaTitle: "Ready to Level Up Your Game Server?",
+    ctaDescription: "Join over 50,000 players worldwide. Get your game server online in under 60 seconds with our enterprise-grade infrastructure and 24/7 expert support.",
+    ctaPrimaryButtonText: "Get Started Today",
+    ctaPrimaryButtonUrl: "/games",
+    ctaSecondaryButtonText: "View Live Demo", 
+    ctaSecondaryButtonUrl: "/minecraft-tools",
     primaryColor: "#00ff88",
     secondaryColor: "#1a1a1a",
     accentColor: "#00cc6a",
@@ -356,6 +364,12 @@ export default function AdminDashboard() {
     refetchOnWindowFocus: false,
   });
 
+  const { data: themeSettings } = useQuery({
+    queryKey: ["/api/theme-settings"],
+    queryFn: () => apiRequest("/api/theme-settings"),
+    staleTime: 10 * 60 * 1000, // 10 minutes
+  });
+
   // Initialize server location pings with static data
   useEffect(() => {
     if (serverLocations.length === 0) return;
@@ -406,6 +420,73 @@ export default function AdminDashboard() {
       });
     }
   }, [promoSettings]);
+
+  // Update theme form when data loads
+  useEffect(() => {
+    if (themeSettings) {
+      setThemeForm({
+        siteName: themeSettings.siteName || "VoltServers",
+        siteTagline: themeSettings.siteTagline || "Premium Game Server Hosting",
+        siteDescription: themeSettings.siteDescription || "Professional game server hosting with 24/7 support and premium hardware",
+        heroTitle: themeSettings.heroTitle || "Deploy Your Game Server in Minutes",
+        heroSubtitle: themeSettings.heroSubtitle || "Experience lightning-fast deployment with our premium game server hosting platform", 
+        heroDescription: themeSettings.heroDescription || "Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.",
+        heroButtonText: themeSettings.heroButtonText || "Get Started",
+        heroButtonUrl: themeSettings.heroButtonUrl || "/pricing",
+        // CTA Section
+        ctaBadgeText: themeSettings.ctaBadgeText || "Limited Time: 30% Off First Month",
+        ctaTitle: themeSettings.ctaTitle || "Ready to Level Up Your Game Server?",
+        ctaDescription: themeSettings.ctaDescription || "Join over 50,000 players worldwide. Get your game server online in under 60 seconds with our enterprise-grade infrastructure and 24/7 expert support.",
+        ctaPrimaryButtonText: themeSettings.ctaPrimaryButtonText || "Get Started Today",
+        ctaPrimaryButtonUrl: themeSettings.ctaPrimaryButtonUrl || "/games",
+        ctaSecondaryButtonText: themeSettings.ctaSecondaryButtonText || "View Live Demo", 
+        ctaSecondaryButtonUrl: themeSettings.ctaSecondaryButtonUrl || "/minecraft-tools",
+        primaryColor: themeSettings.primaryColor || "#00ff88",
+        secondaryColor: themeSettings.secondaryColor || "#1a1a1a",
+        accentColor: themeSettings.accentColor || "#00cc6a",
+        backgroundColor: themeSettings.backgroundColor || "#0a0a0a",
+        textColor: themeSettings.textColor || "#ffffff",
+        logoUrl: themeSettings.logoUrl || "",
+        faviconUrl: themeSettings.faviconUrl || "",
+        footerText: themeSettings.footerText || "",
+        fontFamily: themeSettings.fontFamily || "Inter",
+        borderRadius: themeSettings.borderRadius || "0.5rem",
+        holidayTheme: themeSettings.holidayTheme || "none",
+        customCss: themeSettings.customCss || "",
+        // SEO & Meta Tags
+        metaTitle: themeSettings.metaTitle || "",
+        metaDescription: themeSettings.metaDescription || "",
+        metaKeywords: themeSettings.metaKeywords || "",
+        ogTitle: themeSettings.ogTitle || "",
+        ogDescription: themeSettings.ogDescription || "",
+        ogImage: themeSettings.ogImage || "",
+        twitterCard: themeSettings.twitterCard || "summary_large_image",
+        twitterSite: themeSettings.twitterSite || "",
+        // Analytics & Tracking
+        googleAnalyticsId: themeSettings.googleAnalyticsId || "",
+        googleTagManagerId: themeSettings.googleTagManagerId || "",
+        facebookPixelId: themeSettings.facebookPixelId || "",
+        customHeadCode: themeSettings.customHeadCode || "",
+        customBodyCode: themeSettings.customBodyCode || "",
+        // Site Management
+        maintenanceMode: themeSettings.maintenanceMode || false,
+        maintenanceMessage: themeSettings.maintenanceMessage || "We're currently performing maintenance. Please check back soon!",
+        announcementBanner: themeSettings.announcementBanner || "",
+        announcementType: themeSettings.announcementType || "info",
+        showAnnouncementBanner: themeSettings.showAnnouncementBanner || false,
+        // Cookie Policy Settings
+        showCookieBanner: themeSettings.showCookieBanner !== undefined ? themeSettings.showCookieBanner : true,
+        cookieConsentRequired: themeSettings.cookieConsentRequired !== undefined ? themeSettings.cookieConsentRequired : true,
+        cookiePolicyText: themeSettings.cookiePolicyText || "We use cookies to enhance your experience and analyze site traffic.",
+        cookiePolicyUrl: themeSettings.cookiePolicyUrl || "/privacy-policy",
+        cookieCategories: themeSettings.cookieCategories || JSON.stringify([
+          { id: "necessary", name: "Necessary", description: "Essential for website functionality", required: true },
+          { id: "analytics", name: "Analytics", description: "Help us understand how visitors use our site", required: false },
+          { id: "marketing", name: "Marketing", description: "Used to deliver relevant advertisements", required: false }
+        ], null, 2)
+      });
+    }
+  }, [themeSettings]);
 
   // Mutations
   const createGameMutation = useMutation({
@@ -2111,6 +2192,85 @@ export default function AdminDashboard() {
                               onChange={(e) => setThemeForm({...themeForm, heroButtonUrl: e.target.value})}
                               className="admin-input"
                               placeholder="/pricing"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CTA Section Customization */}
+                    <div className="space-y-4">
+                      <h3 className="text-gaming-green font-semibold flex items-center gap-2">
+                        <Zap className="w-4 h-4" />
+                        CTA Section Content
+                      </h3>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div>
+                          <Label className="text-gray-300">CTA Badge Text</Label>
+                          <Input
+                            value={themeForm.ctaBadgeText}
+                            onChange={(e) => setThemeForm({...themeForm, ctaBadgeText: e.target.value})}
+                            className="admin-input"
+                            placeholder="Limited Time: 30% Off First Month"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">CTA Title</Label>
+                          <Textarea
+                            value={themeForm.ctaTitle}
+                            onChange={(e) => setThemeForm({...themeForm, ctaTitle: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Ready to Level Up Your Game Server?"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-gray-300">CTA Description</Label>
+                          <Textarea
+                            value={themeForm.ctaDescription}
+                            onChange={(e) => setThemeForm({...themeForm, ctaDescription: e.target.value})}
+                            className="admin-textarea"
+                            placeholder="Join over 50,000 players worldwide. Get your game server online in under 60 seconds with our enterprise-grade infrastructure and 24/7 expert support."
+                            rows={3}
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-gray-300">Primary CTA Button Text</Label>
+                            <Input
+                              value={themeForm.ctaPrimaryButtonText}
+                              onChange={(e) => setThemeForm({...themeForm, ctaPrimaryButtonText: e.target.value})}
+                              className="admin-input"
+                              placeholder="Get Started Today"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300">Primary CTA Button URL</Label>
+                            <Input
+                              value={themeForm.ctaPrimaryButtonUrl}
+                              onChange={(e) => setThemeForm({...themeForm, ctaPrimaryButtonUrl: e.target.value})}
+                              className="admin-input"
+                              placeholder="/games"
+                            />
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <Label className="text-gray-300">Secondary CTA Button Text</Label>
+                            <Input
+                              value={themeForm.ctaSecondaryButtonText}
+                              onChange={(e) => setThemeForm({...themeForm, ctaSecondaryButtonText: e.target.value})}
+                              className="admin-input"
+                              placeholder="View Live Demo"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-gray-300">Secondary CTA Button URL</Label>
+                            <Input
+                              value={themeForm.ctaSecondaryButtonUrl}
+                              onChange={(e) => setThemeForm({...themeForm, ctaSecondaryButtonUrl: e.target.value})}
+                              className="admin-input"
+                              placeholder="/minecraft-tools"
                             />
                           </div>
                         </div>
