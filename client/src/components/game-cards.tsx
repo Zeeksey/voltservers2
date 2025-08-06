@@ -6,6 +6,7 @@ import { Plus, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
 
 // Static games data to prevent flashing - shows immediately without API calls
 const staticGames = [
@@ -92,8 +93,38 @@ const staticGames = [
 ];
 
 export default function GameCards() {
-  // Use only static data to prevent any flashing
-  const games = staticGames;
+  // Query games from admin-managed API data
+  const { data: apiGames, isLoading, error } = useQuery({
+    queryKey: ['/api/games'],
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    refetchInterval: 60000, // Refetch every minute
+  });
+
+  // Use API data first, fallback to static data if API fails
+  const games = apiGames && apiGames.length > 0 ? apiGames : staticGames;
+
+  // Show loading state only if we have no data at all
+  if (isLoading && !games?.length) {
+    return (
+      <section id="games" className="py-20 bg-gaming-black-light">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+              <span className="text-gaming-green">Popular</span> Game Servers
+            </h2>
+            <p className="text-xl text-gaming-gray max-w-3xl mx-auto">
+              Choose from our extensive library of supported games. Each server comes with optimized configurations and mod support.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="h-80 bg-gaming-black-lighter border border-gaming-black-lighter rounded-lg animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="games" className="py-20 bg-gaming-black-light">
