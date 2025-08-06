@@ -319,15 +319,7 @@ export default function HardwarePage() {
                         </div>
                       </div>
                       
-                      {location.ip && (
-                        <div className="mb-4 p-3 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
-                          <div className="flex items-center gap-2 mb-1">
-                            <Globe className="w-4 h-4 text-gaming-green" />
-                            <span className="text-gaming-white font-medium">Server IP:</span>
-                          </div>
-                          <span className="text-gaming-green font-mono text-sm">{location.ip}</span>
-                        </div>
-                      )}
+
                       
                       {location.cooling && (
                         <Badge className="bg-blue-500/20 text-blue-400 mb-3">
@@ -341,16 +333,16 @@ export default function HardwarePage() {
                           <span className="text-gaming-white text-sm">{location.specs}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Wifi className="w-4 h-4 text-gaming-gray" />
-                          <span className="text-gaming-white text-sm">1-10 Gbps Network Port</span>
+                          <MapPin className="w-4 h-4 text-gaming-gray" />
+                          <span className="text-gaming-white text-sm">{location.name}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <HardDrive className="w-4 h-4 text-gaming-gray" />
-                          <span className="text-gaming-white text-sm">DDR4/DDR5 RAM</span>
+                          <Clock className="w-4 h-4 text-gaming-gray" />
+                          <span className="text-gaming-white text-sm">Latency: {location.ping}</span>
                         </div>
                         {location.score && location.score !== 'N/A' && (
                           <div className="flex justify-between items-center pt-2">
-                            <span className="text-gaming-gray text-sm">Single Thread Score</span>
+                            <span className="text-gaming-gray text-sm">Performance Score</span>
                             <span className="text-gaming-green font-semibold">{location.score}</span>
                           </div>
                         )}
