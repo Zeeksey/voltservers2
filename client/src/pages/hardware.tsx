@@ -18,10 +18,8 @@ import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 
 export default function HardwarePage() {
-  // Primary server specifications - OVH Rise-Game-2
+  // Primary server specifications
   const primaryServer = {
-    name: "Rise-Game-2",
-    provider: "OVHcloud",
     processor: "AMD Ryzen 7 5800X",
     cores: "8 cores",
     baseSpeed: "3.8 GHz",
@@ -29,39 +27,25 @@ export default function HardwarePage() {
     architecture: "AMD Ryzen 5000 series",
     multithreading: "SMT (Simultaneous Multithreading)",
     cooling: "Water Cooling Technology",
-    ddosProtection: "Exclusive Game DDoS Protection",
+    ddosProtection: "Game DDoS Protection",
     traffic: "Unlimited Traffic",
-    performance: "26% more performance than previous generation",
-    optimizedFor: "Video processing, encoding, virtual gaming platforms"
+    performance: "High-performance gaming hardware",
+    optimizedFor: "Gaming servers and virtual platforms"
   };
 
   const locations = [
     {
       region: "North America",
       locations: [
-        { name: "Virginia", ping: "13ms", recommended: true, specs: "OVH Rise-Game-2 (Ryzen 7 5800X @ 4.7 GHz)", score: "4130", cooling: "Water Cooled" },
-        { name: "Quebec", ping: "36ms", specs: "OVH Rise-Game-2 (Ryzen 7 5800X @ 4.7 GHz)", score: "4130", cooling: "Water Cooled" },
-        { name: "Florida", ping: "42ms", specs: "AMD Ryzen 9 7950X @ Max 5.70 GHz", score: "4266" },
-        { name: "Texas", ping: "46ms", specs: "Intel Xeon E-2276G @ Max 4.90 GHz", score: "2880" },
-        { name: "California", ping: "86ms", specs: "AMD EPYC 4564P @ Max 5.70 GHz", score: "4266" },
-        { name: "Oregon", ping: "91ms", specs: "AMD EPYC 4244P @ Max 5.10 GHz", score: "3858", cooling: "Water Cooled" }
-      ]
-    },
-    {
-      region: "Europe",
-      locations: [
-        { name: "United Kingdom", ping: "86ms", specs: "AMD EPYC 4464P @ Max 5.40 GHz", score: "4130" },
-        { name: "Germany", ping: "99ms", specs: "AMD Ryzen 9 7950X @ Max 5.70 GHz", score: "4266" },
-        { name: "Netherlands", ping: "102ms", specs: "AMD EPYC 4564P @ Max 5.70 GHz", score: "4266" },
-        { name: "France", ping: "97ms", specs: "AMD EPYC 4244P @ Max 5.10 GHz", score: "3858" }
-      ]
-    },
-    {
-      region: "Asia Pacific",
-      locations: [
-        { name: "Australia", ping: "221ms", specs: "AMD EPYC 4464P @ Max 5.40 GHz", score: "4130" },
-        { name: "Singapore", ping: "252ms", specs: "AMD Ryzen 9 7950X @ Max 5.70 GHz", score: "4266" },
-        { name: "India", ping: "248ms", specs: "AMD EPYC 4564P @ Max 5.70 GHz", score: "4266" }
+        { 
+          name: "Virginia, Vinthill", 
+          ping: "13ms", 
+          recommended: true, 
+          specs: "AMD Ryzen 7 5800X @ 4.7 GHz", 
+          score: "4130", 
+          cooling: "Water Cooled",
+          ip: "104.196.223.28"
+        }
       ]
     }
   ];
@@ -142,7 +126,7 @@ export default function HardwarePage() {
               Our Primary Gaming Server
             </h2>
             <p className="text-xl text-gaming-gray">
-              OVH Rise-Game-2 - Professional gaming hardware with 26% more performance
+              Professional gaming hardware optimized for maximum performance
             </p>
           </div>
           
@@ -251,10 +235,10 @@ export default function HardwarePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              We Serve Customers <span className="text-gaming-green">All Around The World</span>
+              Our <span className="text-gaming-green">Server Location</span>
             </h2>
             <p className="text-gaming-gray text-lg">
-              From the US to Europe, Asia, and Australia - we've got servers worldwide so you can play with low ping wherever you are.
+              Strategically located in Virginia for optimal performance and low latency gaming.
             </p>
           </div>
 
@@ -280,6 +264,14 @@ export default function HardwarePage() {
                           <Clock className="w-4 h-4 text-gaming-green" />
                           <span className="text-gaming-green font-semibold">{location.ping}</span>
                         </div>
+                      </div>
+                      
+                      <div className="mb-4 p-3 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Globe className="w-4 h-4 text-gaming-green" />
+                          <span className="text-gaming-white font-medium">Server IP:</span>
+                        </div>
+                        <span className="text-gaming-green font-mono text-sm">{location.ip}</span>
                       </div>
                       
                       {location.cooling && (
