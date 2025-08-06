@@ -42,7 +42,8 @@ import {
   Code,
   Cookie,
   Zap,
-  HelpCircle
+  HelpCircle,
+  DollarSign
 } from "lucide-react";
 import type { Game, BlogPost, PromoSetting } from "@shared/schema";
 import GamePageAdmin from "@/components/game-page-admin";
@@ -375,7 +376,7 @@ export default function AdminDashboard() {
     if (serverLocations.length === 0) return;
 
     // Set static ping values for each location to avoid network issues
-    serverLocations.forEach(location => {
+    serverLocations.forEach((location: any) => {
       const estimatedPing = getEstimatedPing(location.region, location.country);
       setLocationPings(prev => new Map(prev.set(location.id, estimatedPing)));
     });
@@ -1920,7 +1921,7 @@ export default function AdminDashboard() {
                           <SelectValue placeholder="Select a game" />
                         </SelectTrigger>
                         <SelectContent className="bg-gaming-black border-gaming-green/20">
-                          {games.map(game => (
+                          {games.map((game: any) => (
                             <SelectItem key={game.id} value={game.id}>
                               {game.name}
                             </SelectItem>
@@ -2095,7 +2096,7 @@ export default function AdminDashboard() {
                               <div>
                                 <span className="text-gaming-gray">Game:</span>
                                 <span className="text-gaming-white ml-1">
-                                  {games.find(g => g.id === server.gameId)?.name || server.gameId}
+                                  {games.find((g: any) => g.id === server.gameId)?.name || server.gameId}
                                 </span>
                               </div>
                               <div>

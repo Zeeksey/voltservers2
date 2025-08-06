@@ -363,7 +363,7 @@ export default function GamePage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
-            {(customPricingTiers.length > 0 ? customPricingTiers : pricingPlans).map((plan: any, index) => (
+            {(customPricingTiers.length > 0 ? customPricingTiers : pricingPlans).map((plan: any, index: number) => (
               <Card key={index} className={`relative ${(plan.popular || plan.isPopular) ? 'border-gaming-green' : ''}`}>
                 {(plan.popular || plan.isPopular) && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
