@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 
 interface ThemeSettings {
   siteName?: string;
-  logoUrl?: string;
 }
 
 export default function Navigation() {
@@ -17,9 +16,6 @@ export default function Navigation() {
     queryKey: ["/api/theme-settings"],
     retry: false,
   });
-
-  const siteName = themeSettings?.siteName || "VoltServers";
-  const logoUrl = themeSettings?.logoUrl;
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -39,24 +35,13 @@ export default function Navigation() {
   return (
     <nav className="glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-2 lg:py-2">
+        <div className="flex justify-between items-center py-3 lg:py-4">
           <Link href="/">
             <div className="flex items-center space-x-3 cursor-pointer group">
-              {logoUrl ? (
-                <img 
-                  src={logoUrl} 
-                  alt={siteName} 
-                  className="w-auto max-w-none object-contain group-hover:scale-105 transition-transform"
-                  style={{ width: '130px', height: '130px', minWidth: '130px', minHeight: '130px' }}
-                />
-              ) : (
-                <>
-                  <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                    <Zap className="text-gaming-black text-lg lg:text-xl" />
-                  </div>
-                  <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
-                </>
-              )}
+              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Zap className="text-gaming-black text-lg lg:text-xl" />
+              </div>
+              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{themeSettings?.siteName || "VoltServers"}</span>
             </div>
           </Link>
           

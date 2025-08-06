@@ -664,27 +664,6 @@ textarea::placeholder {
     justify-content: center;
   }
 
-  /* Bolt animation effects */
-  @keyframes bolt-glow {
-    0%, 100% { 
-      filter: drop-shadow(0 0 8px rgba(0, 204, 106, 0.6)) drop-shadow(0 0 16px rgba(0, 204, 106, 0.3));
-      opacity: 0.8;
-    }
-    50% { 
-      filter: drop-shadow(0 0 12px rgba(0, 204, 106, 0.8)) drop-shadow(0 0 24px rgba(0, 204, 106, 0.5));
-      opacity: 1;
-    }
-  }
-
-  @keyframes bolt-pulse {
-    0%, 100% { transform: scale(1) rotate(var(--bolt-rotation, 0deg)); }
-    50% { transform: scale(1.1) rotate(var(--bolt-rotation, 0deg)); }
-  }
-
-  .bolt-effect {
-    animation: bolt-glow 2s ease-in-out infinite, bolt-pulse 1.5s ease-in-out infinite;
-  }
-
   /* Enhanced mobile experience */
   @media (max-width: 640px) {
     /* Prevent zoom on input focus for iOS */

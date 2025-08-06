@@ -25,9 +25,7 @@ import {
   Eye,
   Save,
   MapPin,
-  Palette,
-  Zap,
-  Loader2
+  Palette
 } from "lucide-react";
 import type { Game, BlogPost } from "@shared/schema";
 import NavigationNew from "@/components/navigation-new";
@@ -90,7 +88,6 @@ export default function AdminDashboard() {
     region: "",
     provider: "",
     ipAddress: "",
-    port: "80",
     status: "online" as "online" | "offline" | "maintenance"
   });
   const [demoServerForm, setDemoServerForm] = useState({
@@ -109,58 +106,7 @@ export default function AdminDashboard() {
   const [editingLocation, setEditingLocation] = useState<any>(null);
   const [editingDemoServer, setEditingDemoServer] = useState<any>(null);
   
-  const [pingResults, setPingResults] = useState<Map<string, number>>(new Map());
-  const [testingPing, setTestingPing] = useState<Set<string>>(new Set());
-  
   const { toast } = useToast();
-  
-  // Ping testing function
-  const testLocationPing = async (locationId: string, ipAddress: string, port: string = "80") => {
-    if (!ipAddress) return;
-    
-    setTestingPing(prev => new Set([...prev, locationId]));
-    
-    try {
-      const startTime = Date.now();
-      // Use a simple HTTP request to test connectivity
-      const response = await fetch(`/api/ping-test`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ host: ipAddress, port: parseInt(port) })
-      });
-      
-      const endTime = Date.now();
-      const pingTime = endTime - startTime;
-      
-      if (response.ok) {
-        setPingResults(prev => new Map([...prev, [locationId, pingTime]]));
-        toast({
-          title: "Ping Test Successful",
-          description: `${ipAddress}: ${pingTime}ms`,
-        });
-      } else {
-        setPingResults(prev => new Map([...prev, [locationId, -1]]));
-        toast({
-          title: "Ping Test Failed",
-          description: `Could not reach ${ipAddress}`,
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      setPingResults(prev => new Map([...prev, [locationId, -1]]));
-      toast({
-        title: "Ping Test Error",
-        description: `Network error testing ${ipAddress}`,
-        variant: "destructive",
-      });
-    } finally {
-      setTestingPing(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(locationId);
-        return newSet;
-      });
-    }
-  };
   const queryClient = useQueryClient();
 
   // Check authentication
@@ -926,7 +872,7 @@ export default function AdminDashboard() {
                   <Button
                     onClick={() => {
                       setEditingLocation(null);
-                      setLocationForm({ city: "", country: "", region: "", provider: "", ipAddress: "", port: "80", status: "online" });
+                      setLocationForm({ city: "", country: "", region: "", provider: "", ipAddress: "", status: "online" });
                     }}
                     className="bg-gaming-green text-black hover:bg-gaming-green/90"
                   >
@@ -942,52 +888,15 @@ export default function AdminDashboard() {
                       <div>
                         <h3 className="text-gaming-white font-medium">{location.city}, {location.country}</h3>
                         <p className="text-gaming-gray text-sm">{location.provider} - {location.region}</p>
-                        {location.ipAddress && (
-                          <p className="text-gaming-gray text-xs">IP: {location.ipAddress}</p>
-                        )}
-                        <div className="flex items-center gap-2 mt-1">
-                          <Badge variant="outline" className={`text-xs ${
-                            location.status === 'online' ? 'border-gaming-green text-gaming-green' :
-                            location.status === 'maintenance' ? 'border-yellow-500 text-yellow-500' :
-                            'border-red-500 text-red-500'
-                          }`}>
-                            {location.status}
-                          </Badge>
-                          {pingResults.has(location.id) && (
-                            <Badge variant="outline" className={`text-xs ${
-                              pingResults.get(location.id) === -1 
-                                ? 'border-red-500 text-red-500' 
-                                : 'border-gaming-green text-gaming-green'
-                            }`}>
-                              {pingResults.get(location.id) === -1 
-                                ? 'Unreachable' 
-                                : `${pingResults.get(location.id)}ms`
-                              }
-                            </Badge>
-                          )}
-                        </div>
+                        <Badge variant="outline" className={`text-xs mt-1 ${
+                          location.status === 'online' ? 'border-gaming-green text-gaming-green' :
+                          location.status === 'maintenance' ? 'border-yellow-500 text-yellow-500' :
+                          'border-red-500 text-red-500'
+                        }`}>
+                          {location.status}
+                        </Badge>
                       </div>
                       <div className="flex items-center space-x-2">
-                        {location.ipAddress && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => testLocationPing(location.id, location.ipAddress, "80")}
-                            disabled={testingPing.has(location.id)}
-                            className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-                          >
-                            {testingPing.has(location.id) ? (
-                              <>
-                                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                                Testing
-                              </>
-                            ) : (
-                              <>
-                                <Zap className="w-4 h-4" />
-                              </>
-                            )}
-                          </Button>
-                        )}
                         <Button
                           variant="outline"
                           size="sm"
@@ -999,7 +908,6 @@ export default function AdminDashboard() {
                               region: location.region,
                               provider: location.provider,
                               ipAddress: location.ipAddress || "",
-                              port: location.port?.toString() || "80",
                               status: location.status
                             });
                           }}
@@ -1069,24 +977,6 @@ export default function AdminDashboard() {
                         onChange={(e) => setLocationForm({...locationForm, provider: e.target.value})}
                         className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                         placeholder="AWS"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-gaming-white">IP Address</Label>
-                      <Input
-                        value={locationForm.ipAddress}
-                        onChange={(e) => setLocationForm({...locationForm, ipAddress: e.target.value})}
-                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
-                        placeholder="192.168.1.1"
-                      />
-                    </div>
-                    <div>
-                      <Label className="text-gaming-white">Port (for ping test)</Label>
-                      <Input
-                        value={locationForm.port}
-                        onChange={(e) => setLocationForm({...locationForm, port: e.target.value})}
-                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
-                        placeholder="80"
                       />
                     </div>
                     <div>
@@ -1406,8 +1296,6 @@ export default function AdminDashboard() {
                       <SelectContent>
                         <SelectItem value="none">None</SelectItem>
                         <SelectItem value="snow">Snow Effect</SelectItem>
-                        <SelectItem value="green-snow">🟢 Green Snow</SelectItem>
-                        <SelectItem value="bolts">⚡ VoltServers Bolts</SelectItem>
                         <SelectItem value="halloween">Halloween</SelectItem>
                         <SelectItem value="christmas">Christmas</SelectItem>
                         <SelectItem value="easter">Easter</SelectItem>

@@ -1173,58 +1173,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Ping test endpoint for server locations
-  app.post('/api/ping-test', async (req, res) => {
-    const { host, port = 80 } = req.body;
-    
-    if (!host) {
-      return res.status(400).json({ error: 'Host is required' });
-    }
-    
-    try {
-      const startTime = Date.now();
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      
-      try {
-        // Simple HTTP connectivity test
-        await fetch(`http://${host}:${port}`, { 
-          signal: controller.signal,
-          method: 'HEAD',
-          mode: 'no-cors'
-        });
-        clearTimeout(timeoutId);
-        
-        const endTime = Date.now();
-        const pingTime = endTime - startTime;
-        
-        res.json({ 
-          success: true, 
-          pingTime,
-          host,
-          port 
-        });
-      } catch (fetchError) {
-        clearTimeout(timeoutId);
-        const endTime = Date.now();
-        const pingTime = endTime - startTime;
-        
-        res.json({ 
-          success: true, 
-          pingTime: pingTime < 5000 ? pingTime : -1,
-          host,
-          port 
-        });
-      }
-    } catch (error) {
-      res.status(500).json({ 
-        error: 'Ping test failed',
-        host,
-        port 
-      });
-    }
-  });
-
   app.put("/api/admin/theme-settings", requireAdmin, async (req, res) => {
     try {
       const settings = await storage.updateThemeSettings(req.body);
