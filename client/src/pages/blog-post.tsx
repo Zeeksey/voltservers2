@@ -7,6 +7,11 @@ import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 import { BlogPost } from "@shared/schema";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
+import 'highlight.js/styles/github-dark.css';
 
 export default function BlogPostPage() {
   const [match, params] = useRoute("/blog/:slug");
@@ -154,48 +159,29 @@ export default function BlogPostPage() {
             </div>
 
             {/* Content */}
-            <div className="prose prose-lg prose-invert max-w-none">
-              <div 
-                className="text-gaming-white leading-relaxed"
-                style={{ 
-                  whiteSpace: 'pre-wrap',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '1.125rem',
-                  lineHeight: '1.75'
+            <div className="prose prose-lg prose-invert max-w-none blog-content">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+                components={{
+                  h1: ({node, ...props}) => <h1 className="text-4xl font-bold text-gaming-white mt-8 mb-6" {...props} />,
+                  h2: ({node, ...props}) => <h2 className="text-3xl font-bold text-gaming-white mt-8 mb-4" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-2xl font-semibold text-gaming-white mt-6 mb-3" {...props} />,
+                  h4: ({node, ...props}) => <h4 className="text-xl font-semibold text-gaming-white mt-4 mb-2" {...props} />,
+                  p: ({node, ...props}) => <p className="mb-4 text-gaming-gray leading-relaxed" {...props} />,
+                  strong: ({node, ...props}) => <strong className="font-bold text-gaming-white" {...props} />,
+                  em: ({node, ...props}) => <em className="italic text-gaming-white" {...props} />,
+                  code: ({node, ...props}) => <code className="bg-gaming-black-lighter text-gaming-green px-2 py-1 rounded text-sm font-mono" {...props} />,
+                  pre: ({node, ...props}) => <pre className="bg-gaming-black-lighter rounded-lg p-4 overflow-x-auto mb-4" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc list-inside mb-4 text-gaming-gray space-y-2" {...props} />,
+                  ol: ({node, ...props}) => <ol className="list-decimal list-inside mb-4 text-gaming-gray space-y-2" {...props} />,
+                  li: ({node, ...props}) => <li className="text-gaming-gray" {...props} />,
+                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gaming-green pl-4 italic text-gaming-gray bg-gaming-black-lighter p-4 rounded-r-lg mb-4" {...props} />,
+                  a: ({node, ...props}) => <a className="text-gaming-green hover:text-gaming-green-light underline" {...props} />,
                 }}
               >
-                {post.content.split('\n').map((paragraph, index) => {
-                  if (paragraph.startsWith('# ')) {
-                    return (
-                      <h2 key={index} className="text-3xl font-bold text-gaming-white mt-8 mb-4">
-                        {paragraph.replace('# ', '')}
-                      </h2>
-                    );
-                  }
-                  if (paragraph.startsWith('## ')) {
-                    return (
-                      <h3 key={index} className="text-2xl font-semibold text-gaming-white mt-6 mb-3">
-                        {paragraph.replace('## ', '')}
-                      </h3>
-                    );
-                  }
-                  if (paragraph.startsWith('### ')) {
-                    return (
-                      <h4 key={index} className="text-xl font-semibold text-gaming-white mt-4 mb-2">
-                        {paragraph.replace('### ', '')}
-                      </h4>
-                    );
-                  }
-                  if (paragraph.trim() === '') {
-                    return <br key={index} />;
-                  }
-                  return (
-                    <p key={index} className="mb-4 text-gaming-gray">
-                      {paragraph}
-                    </p>
-                  );
-                })}
-              </div>
+                {post.content}
+              </ReactMarkdown>
             </div>
 
             {/* Call to Action */}

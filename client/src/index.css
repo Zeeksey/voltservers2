@@ -404,6 +404,29 @@ textarea::placeholder {
     animation: pulse-green 1s ease-in-out infinite alternate;
   }
 
+  /* Blog Content Styling */
+  .blog-content pre {
+    background-color: hsl(220, 13%, 10%) !important;
+    border: 1px solid hsl(var(--gaming-green) / 0.2);
+    color: hsl(var(--gaming-white)) !important;
+  }
+
+  .blog-content code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Cascadia Code', monospace !important;
+  }
+
+  .blog-content pre code {
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    color: hsl(var(--gaming-white)) !important;
+  }
+
+  .blog-content .hljs {
+    background: hsl(220, 13%, 10%) !important;
+    color: hsl(var(--gaming-white)) !important;
+  }
+
   /* Mobile-responsive admin styles */
   @media (max-width: 640px) {
     .admin-form-grid {
