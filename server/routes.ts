@@ -985,10 +985,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(game);
     } catch (error) {
       console.error("Create game error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Game not created. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        const game = await memStorage.createGame(req.body);
+        res.json(game);
+      } catch (memError) {
+        console.error("Memory storage fallback failed:", memError);
+        res.status(503).json({ 
+          message: "Failed to create game. Please try again.",
+          error: "STORAGE_ERROR" 
+        });
+      }
     }
   });
 
@@ -998,10 +1005,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(game);
     } catch (error) {
       console.error("Update game error:", error);
-      res.status(503).json({ 
-        message: "Database temporarily unavailable. Game changes not saved. Please try again later or contact support.",
-        error: "DATABASE_UNAVAILABLE" 
-      });
+      // Try memory storage as fallback
+      try {
+        const game = await memStorage.updateGame(req.params.id, req.body);
+        res.json(game);
+      } catch (memError) {
+        console.error("Memory storage fallback failed:", memError);
+        res.status(503).json({ 
+          message: "Failed to update game. Please try again.",
+          error: "STORAGE_ERROR" 
+        });
+      }
     }
   });
 

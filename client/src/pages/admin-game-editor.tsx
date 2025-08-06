@@ -154,13 +154,14 @@ export default function AdminGameEditor() {
   };
 
   const addPricingPlan = () => {
+    const basePrice = 9.99;
     const newPlan: PricingPlan = {
       name: 'New Plan',
-      price: '9.99',
-      monthlyPrice: '9.99',
-      quarterlyPrice: '8.99',
-      biannualPrice: '7.99',
-      annualPrice: '7.49',
+      price: basePrice.toFixed(2),
+      monthlyPrice: basePrice.toFixed(2),
+      quarterlyPrice: (basePrice * 0.9).toFixed(2),  // 10% off
+      biannualPrice: (basePrice * 0.8).toFixed(2),   // 20% off
+      annualPrice: (basePrice * 0.75).toFixed(2),    // 25% off
       features: ['Feature 1', 'Feature 2'],
       players: '10',
       ram: '2GB',
@@ -178,9 +179,23 @@ export default function AdminGameEditor() {
   const updatePricingPlan = (index: number, field: keyof PricingPlan, value: any) => {
     setGameData(prev => ({
       ...prev,
-      pricingPlans: prev.pricingPlans?.map((plan, i) => 
-        i === index ? { ...plan, [field]: value } : plan
-      ) || []
+      pricingPlans: prev.pricingPlans?.map((plan, i) => {
+        if (i !== index) return plan;
+        
+        const updatedPlan = { ...plan, [field]: value };
+        
+        // Auto-calculate discounted prices when monthly price changes
+        if (field === 'monthlyPrice' && value) {
+          const monthlyPrice = parseFloat(value);
+          if (!isNaN(monthlyPrice)) {
+            updatedPlan.quarterlyPrice = (monthlyPrice * 0.9).toFixed(2); // 10% off
+            updatedPlan.biannualPrice = (monthlyPrice * 0.8).toFixed(2);   // 20% off
+            updatedPlan.annualPrice = (monthlyPrice * 0.75).toFixed(2);    // 25% off
+          }
+        }
+        
+        return updatedPlan;
+      }) || []
     }));
   };
 
@@ -560,13 +575,18 @@ export default function AdminGameEditor() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Button
-                  onClick={addPricingPlan}
-                  className="bg-gaming-green text-black hover:bg-gaming-green/90"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Pricing Plan
-                </Button>
+                <div className="flex items-center justify-between">
+                  <Button
+                    onClick={addPricingPlan}
+                    className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Pricing Plan
+                  </Button>
+                  <div className="text-xs text-gaming-gray bg-gaming-black-light px-3 py-2 rounded">
+                    💡 Enter monthly price - discounts auto-calculate (10%, 20%, 25% off)
+                  </div>
+                </div>
 
                 {gameData.pricingPlans?.map((plan, planIndex) => (
                   <Card key={planIndex} className="bg-gaming-black border-gaming-green/30">
@@ -614,34 +634,38 @@ export default function AdminGameEditor() {
 
                       <div className="grid grid-cols-4 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-gaming-white">Monthly ($)</Label>
+                          <Label className="text-gaming-white">Monthly ($) <span className="text-xs text-gaming-gray">(Auto-calculates discounts)</span></Label>
                           <Input
                             value={plan.monthlyPrice || ''}
                             onChange={(e) => updatePricingPlan(planIndex, 'monthlyPrice', e.target.value)}
+                            placeholder="9.99"
                             className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-gaming-white">Quarterly ($)</Label>
+                          <Label className="text-gaming-white">Quarterly ($) <span className="text-xs text-gaming-green">-10% auto</span></Label>
                           <Input
                             value={plan.quarterlyPrice || ''}
                             onChange={(e) => updatePricingPlan(planIndex, 'quarterlyPrice', e.target.value)}
+                            placeholder="Auto-calculated"
                             className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-gaming-white">Biannual ($)</Label>
+                          <Label className="text-gaming-white">Biannual ($) <span className="text-xs text-gaming-green">-20% auto</span></Label>
                           <Input
                             value={plan.biannualPrice || ''}
                             onChange={(e) => updatePricingPlan(planIndex, 'biannualPrice', e.target.value)}
+                            placeholder="Auto-calculated"
                             className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-gaming-white">Annual ($)</Label>
+                          <Label className="text-gaming-white">Annual ($) <span className="text-xs text-gaming-green">-25% auto</span></Label>
                           <Input
                             value={plan.annualPrice || ''}
                             onChange={(e) => updatePricingPlan(planIndex, 'annualPrice', e.target.value)}
+                            placeholder="Auto-calculated"
                             className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                           />
                         </div>
