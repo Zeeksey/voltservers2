@@ -25,16 +25,18 @@ export default function NavigationNew() {
   return (
     <nav className="glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-3 lg:py-4">
+        <div className="flex justify-between items-center py-2 lg:py-2">
           <Link href="/">
-            <div className="flex items-center space-x-3 cursor-pointer group">
+            <div className="flex items-center space-x-3 cursor-pointer group py-2">
               {logoUrl ? (
-                <img 
-                  src={logoUrl} 
-                  alt={siteName} 
-                  className="h-12 lg:h-20 w-auto max-w-none object-contain group-hover:scale-105 transition-transform"
-                  style={{ minHeight: '48px', maxHeight: '80px' }}
-                />
+                <div className="flex items-center justify-center min-w-[200px] lg:min-w-[300px]">
+                  <img 
+                    src={logoUrl} 
+                    alt={siteName} 
+                    className="h-10 lg:h-14 w-auto max-w-none object-contain group-hover:scale-105 transition-transform"
+                    style={{ minHeight: '40px', maxHeight: '56px' }}
+                  />
+                </div>
               ) : (
                 <>
                   <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
