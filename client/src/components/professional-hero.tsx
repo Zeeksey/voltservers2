@@ -59,7 +59,7 @@ export default function ProfessionalHero() {
           {/* Content */}
           <div className="space-y-8">
             {/* Trust Badge */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-center space-x-2">
               <Badge className="bg-gaming-green/20 text-gaming-green border-gaming-green/30 px-3 py-1">
                 <TrendingUp className="w-4 h-4 mr-1" />
                 #1 Rated Game Hosting
@@ -81,13 +81,13 @@ export default function ProfessionalHero() {
                   {themeSettings?.heroSubtitle || "Server Hosting"}
                 </span>
               </h1>
-              <p className="text-xl text-gaming-gray leading-relaxed max-w-lg">
+              <p className="text-xl text-gaming-gray leading-relaxed max-w-lg mx-auto">
                 {themeSettings?.heroDescription || "Deploy high-performance game servers instantly with enterprise-grade infrastructure, DDoS protection, and 24/7 expert support. Starting at just $2.99/month."}
               </p>
             </div>
 
             {/* Feature Pills */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center gap-3">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-center space-x-2 bg-gaming-dark/50 backdrop-blur-sm border border-gaming-green/20 rounded-full px-4 py-2">
                   <span className="text-gaming-green">{feature.icon}</span>
@@ -97,7 +97,7 @@ export default function ProfessionalHero() {
             </div>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href={themeSettings?.heroButtonUrl || "/games"}>
                 <Button size="lg" className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black text-lg px-8 py-4 h-auto group">
                   {themeSettings?.heroButtonText || "Get Started Today"}
