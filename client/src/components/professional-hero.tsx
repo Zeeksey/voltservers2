@@ -118,8 +118,10 @@ export default function ProfessionalHero() {
                 size="lg" 
                 className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 text-lg px-8 py-4 h-auto group"
               >
-                <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
-                Watch Demo
+                {(themeSettings?.heroDemoButtonText || "Watch Demo").toLowerCase().includes("watch") && (
+                  <Play className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                )}
+                {themeSettings?.heroDemoButtonText || "Watch Demo"}
               </Button>
             </div>
 

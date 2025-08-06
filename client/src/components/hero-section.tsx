@@ -70,7 +70,9 @@ export default function HeroSection() {
                   className="border-2 border-gaming-green text-gaming-green px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-lg font-bold hover:bg-gaming-green hover:text-gaming-black w-full sm:w-auto"
                   size="lg"
                 >
-                  <Play className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
+                  {(themeSettings?.heroDemoButtonText || "Watch Demo").toLowerCase().includes("watch") && (
+                    <Play className="mr-2 w-4 h-4 lg:w-5 lg:h-5" />
+                  )}
                   {themeSettings?.heroDemoButtonText || "Watch Demo"}
                 </Button>
               </Link>
