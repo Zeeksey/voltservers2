@@ -43,6 +43,8 @@ import {
   type InsertGamePricingTier,
   type GameFeature,
   type InsertGameFeature,
+  incidents,
+  type InsertIncidentSchema,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { DatabaseStorage } from "./database-storage";

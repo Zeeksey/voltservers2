@@ -42,6 +42,8 @@ interface AdminUser {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [isCreateIncidentOpen, setIsCreateIncidentOpen] = useState(false);
+  const [editingIncident, setEditingIncident] = useState<any>(null);
   const [themeForm, setThemeForm] = useState({
     siteName: "VoltServers",
     siteTagline: "Professional Game Server Hosting",
@@ -235,6 +237,21 @@ export default function AdminDashboard() {
       return response.json();
     }
   });
+
+  const { data: incidents = [] } = useQuery({
+    queryKey: ['/api/incidents'],
+    queryFn: async () => {
+      const response = await fetch('/api/incidents');
+      if (!response.ok) throw new Error('Failed to fetch incidents');
+      return response.json();
+    }
+  });
+
+  // Helper functions for incident management
+  const editIncident = (incident: any) => {
+    setEditingIncident(incident);
+    setIsCreateIncidentOpen(true);
+  };
 
   // Statistics
   const stats = {
@@ -577,6 +594,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
               <Palette className="w-4 h-4 mr-2" />
               Theme
+            </TabsTrigger>
+            <TabsTrigger value="incidents" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
+              <Zap className="w-4 h-4 mr-2" />
+              Status & Incidents
             </TabsTrigger>
           </TabsList>
 
@@ -1935,6 +1956,122 @@ export default function AdminDashboard() {
                   {updateThemeMutation.isPending ? 'Saving...' : 'Save Theme Settings'}
                 </Button>
               </div>
+            </div>
+          </TabsContent>
+
+          {/* Status & Incidents Tab */}
+          <TabsContent value="incidents" className="space-y-6">
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-gaming-white mb-2">Status & Incidents Management</h2>
+                  <p className="text-gaming-gray">Manage service status and incident reports for your status page</p>
+                </div>
+                <Button 
+                  onClick={() => setIsCreateIncidentOpen(true)}
+                  className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Incident
+                </Button>
+              </div>
+
+              {/* Current Incidents */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Active Incidents</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Current ongoing service issues
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {incidents.filter((incident: any) => !incident.isResolved).length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-gaming-green/20 rounded-full flex items-center justify-center">
+                          <Zap className="w-8 h-8 text-gaming-green" />
+                        </div>
+                        <p className="text-gaming-gray mb-2">All systems operational</p>
+                        <p className="text-sm text-gaming-gray/70">No active incidents to display</p>
+                      </div>
+                    ) : (
+                      incidents.filter((incident: any) => !incident.isResolved).map((incident: any) => (
+                        <div key={incident.id} className="border border-gaming-green/30 rounded-lg p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="text-gaming-white font-semibold">{incident.title}</h3>
+                            <div className="flex items-center gap-2">
+                              <Badge variant={incident.severity === 'critical' ? 'destructive' : incident.severity === 'major' ? 'secondary' : 'default'}>
+                                {incident.severity}
+                              </Badge>
+                              <Badge variant={incident.status === 'resolved' ? 'default' : 'secondary'}>
+                                {incident.status}
+                              </Badge>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => editIncident(incident)}
+                                className="text-gaming-green hover:text-gaming-green/80"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="text-gaming-gray text-sm mb-2">{incident.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-gaming-gray/70">
+                            <span>Started: {new Date(incident.startTime).toLocaleString()}</span>
+                            {incident.affectedServices?.length > 0 && (
+                              <span>Services: {incident.affectedServices.join(', ')}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Recent Resolved Incidents */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Recent Resolved Incidents</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Previously resolved issues (last 30 days)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {incidents.filter((incident: any) => incident.isResolved).length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-gaming-gray text-sm">No recent incidents</p>
+                      </div>
+                    ) : (
+                      incidents.filter((incident: any) => incident.isResolved).slice(0, 5).map((incident: any) => (
+                        <div key={incident.id} className="border border-gaming-green/20 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="text-gaming-white text-sm font-medium">{incident.title}</h4>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="text-xs">
+                                {incident.severity}
+                              </Badge>
+                              <Badge variant="default" className="text-xs">
+                                resolved
+                              </Badge>
+                            </div>
+                          </div>
+                          <p className="text-gaming-gray text-xs mb-2">{incident.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-gaming-gray/50">
+                            <span>Duration: {incident.endTime ? 
+                              Math.round((new Date(incident.endTime) - new Date(incident.startTime)) / (1000 * 60)) + ' minutes' 
+                              : 'Unknown'}</span>
+                            <span>Resolved: {incident.endTime ? new Date(incident.endTime).toLocaleString() : 'N/A'}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>
