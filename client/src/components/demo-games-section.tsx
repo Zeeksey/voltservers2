@@ -36,101 +36,20 @@ interface ServerStatus {
 export default function DemoGamesSection() {
   const [copiedServer, setCopiedServer] = useState<string | null>(null);
 
-  // Static demo servers to prevent any flashing
-  const demoServers = [
-    {
-      id: '107a681c-4a77-4a56-9999-04ee5e67abcd',
-      serverName: 'VoltServers Creative Hub',
-      gameType: 'Minecraft',
-      serverIp: 'mc.hypixel.net',
-      serverPort: 25565,
-      maxPlayers: 100,
-      description: 'Build anything you can imagine in our creative showcase server',
-      version: '1.21.4',
-      gameMode: 'Creative',
-      platform: 'Crossplay'
-    },
-    {
-      id: 'cc6885f5-b1d3-421b-96f3-ab9c93d59521',
-      serverName: 'VoltServers PvP Arena',
-      gameType: 'CS2',
-      serverIp: 'fragshack.esea.net',
-      serverPort: 27015,
-      maxPlayers: 32,
-      description: 'Fast-paced competitive matches with custom maps',
-      version: '2.1.9',
-      gameMode: 'Deathmatch',
-      platform: 'PC'
-    },
-    {
-      id: 'bbeeed4e-1f6f-4450-a477-34bc1a3f1fe2',
-      serverName: 'VoltServers Survival',
-      gameType: 'Rust',
-      serverIp: 'rust.playground.gg',
-      serverPort: 28015,
-      maxPlayers: 200,
-      description: 'Classic survival experience on a fresh-wiped server',
-      version: '2024.12.10',
-      gameMode: 'Vanilla',
-      platform: 'PC'
-    },
-    {
-      id: 'e5fd2554-61e4-40db-b635-3484feacaf67',
-      serverName: 'VoltServers Mineplex',
-      gameType: 'Minecraft',
-      serverIp: 'us.mineplex.com',
-      serverPort: 25565,
-      maxPlayers: 1000,
-      description: 'Mini-games and competitions with active community',
-      version: '1.21.4',
-      gameMode: 'Minigames',
-      platform: 'Crossplay'
-    }
-  ];
+  // Query real demo servers from API - this pulls LIVE data from actual game servers
+  const { data: demoServers = [], isLoading: serversLoading } = useQuery({
+    queryKey: ['/api/demo-servers'],
+    refetchInterval: 30000, // Refresh every 30 seconds for live data
+    staleTime: 10000 // Consider data stale after 10 seconds
+  });
 
-  // Static server status to prevent flashing
-  const serverStatuses = new Map([
-    ['107a681c-4a77-4a56-9999-04ee5e67abcd', {
-      online: true,
-      players: { current: 47, max: 100 },
-      version: '1.21.4',
-      motd: 'VoltServers Creative Hub',
-      ping: 25,
-      hostname: 'mc.hypixel.net',
-      port: 25565,
-      software: 'Paper'
-    }],
-    ['cc6885f5-b1d3-421b-96f3-ab9c93d59521', {
-      online: true,
-      players: { current: 18, max: 32 },
-      version: '2.1.9',
-      motd: 'VoltServers PvP Arena',
-      ping: 35,
-      hostname: 'fragshack.esea.net',
-      port: 27015,
-      software: 'Source'
-    }],
-    ['bbeeed4e-1f6f-4450-a477-34bc1a3f1fe2', {
-      online: true,
-      players: { current: 134, max: 200 },
-      version: '2024.12.10',
-      motd: 'VoltServers Survival',
-      ping: 42,
-      hostname: 'rust.playground.gg',
-      port: 28015,
-      software: 'Rust'
-    }],
-    ['e5fd2554-61e4-40db-b635-3484feacaf67', {
-      online: true,
-      players: { current: 287, max: 1000 },
-      version: '1.21.4',
-      motd: 'VoltServers Mineplex',
-      ping: 28,
-      hostname: 'us.mineplex.com',
-      port: 25565,
-      software: 'Paper'
-    }]
-  ]);
+  // Query live server status for each demo server
+  const { data: serverStatuses = new Map(), isLoading: statusLoading } = useQuery({
+    queryKey: ['/api/server-status', demoServers?.map((s: any) => s.id)],
+    enabled: demoServers.length > 0,
+    refetchInterval: 15000, // Check status every 15 seconds
+    staleTime: 5000
+  });
 
   // Use demo servers directly
   const serversToDisplay = demoServers;

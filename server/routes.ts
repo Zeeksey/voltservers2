@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 import { WHMCSIntegration, createWHMCSAuthMiddleware, getWHMCSProducts } from "./whmcs-integration";
 import { wispIntegration, WispIntegration } from "./wisp-integration";
+import { getServerStatus } from "./server-query";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
@@ -514,35 +515,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(servers);
     } catch (error) {
       console.error("Demo servers fetch error:", error);
-      // Return fallback demo servers if database is unavailable
+      // Return fallback demo servers with REAL server IPs for live querying
       res.json([
         {
-          id: "demo-minecraft-1",
-          serverName: "Minecraft Demo Server",
-          gameId: "minecraft-java",
-          serverIp: "play.cubecraft.net",
+          id: "107a681c-4a77-4a56-9999-04ee5e67ab21",
+          serverName: "VoltServers Hypixel",
+          gameType: "Minecraft",
+          serverIp: "mc.hypixel.net",
           serverPort: 25565,
-          playerCount: 42,
-          maxPlayers: 100,
-          isOnline: true,
-          version: "1.20.4",
-          description: "Join our official Minecraft demo server to test our hosting quality",
-          location: "US East"
+          maxPlayers: 100000,
+          description: "The world's largest Minecraft server with mini-games and competitions",
+          version: "1.21.4",
+          gameMode: "Minigames",
+          platform: "Crossplay",
+          isEnabled: true,
+          sortOrder: 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
         },
         {
-          id: "demo-minecraft-2", 
-          serverName: "Creative Building Server",
-          gameId: "minecraft-java",
-          serverIp: "mc.hypixel.net", 
+          id: "8406f8c6-287a-43ce-a557-6b6c5c5e2c41",
+          serverName: "VoltServers Mineplex",
+          gameType: "Minecraft", 
+          serverIp: "us.mineplex.com",
           serverPort: 25565,
-          playerCount: 87,
-          maxPlayers: 200,
-          isOnline: true,
-          version: "1.20.4",
-          description: "Creative building server for testing and experimentation",
-          location: "EU West"
+          maxPlayers: 2000,
+          description: "Premium mini-games server with active community",
+          version: "1.21.4",
+          gameMode: "Minigames",
+          platform: "Crossplay",
+          isEnabled: true,
+          sortOrder: 2,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: "c2b4e8da-92f1-4bb2-8e72-1b2c7d8e9f4a",
+          serverName: "VoltServers CubeCraft",
+          gameType: "Minecraft",
+          serverIp: "play.cubecraft.net", 
+          serverPort: 25565,
+          maxPlayers: 5000,
+          description: "Popular server with unique game modes and events",
+          version: "1.21.4",
+          gameMode: "Mixed",
+          platform: "Crossplay",
+          isEnabled: true,
+          sortOrder: 3,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        },
+        {
+          id: "d3c5f9eb-a3g2-5cc3-9f83-2c3d8e9f5b5b",
+          serverName: "VoltServers 2b2t",
+          gameType: "Minecraft",
+          serverIp: "2b2t.org",
+          serverPort: 25565,
+          maxPlayers: 300,
+          description: "The oldest anarchy server in Minecraft",
+          version: "1.21.4",
+          gameMode: "Anarchy",
+          platform: "Java",
+          isEnabled: true,
+          sortOrder: 4,
+          createdAt: new Date(),
+          updatedAt: new Date()
         }
       ]);
+    }
+  });
+
+  // Real-time server status endpoint - queries LIVE server data from actual Minecraft servers
+  app.get("/api/server-status/:serverIds", async (req, res) => {
+    try {
+      const serverIds = req.params.serverIds.split(',');
+      const statusMap = new Map();
+      
+      // Get demo server details
+      let servers;
+      try {
+        servers = await storage.getActiveDemoServers();
+      } catch (error) {
+        // Use fallback servers for live querying - these are REAL Minecraft servers
+        servers = [
+          {
+            id: "107a681c-4a77-4a56-9999-04ee5e67ab21",
+            serverName: "VoltServers Hypixel",
+            gameType: "Minecraft",
+            serverIp: "mc.hypixel.net", 
+            serverPort: 25565
+          },
+          {
+            id: "8406f8c6-287a-43ce-a557-6b6c5c5e2c41",
+            serverName: "VoltServers Mineplex",
+            gameType: "Minecraft",
+            serverIp: "us.mineplex.com",
+            serverPort: 25565
+          },
+          {
+            id: "c2b4e8da-92f1-4bb2-8e72-1b2c7d8e9f4a", 
+            serverName: "VoltServers CubeCraft",
+            gameType: "Minecraft",
+            serverIp: "play.cubecraft.net",
+            serverPort: 25565
+          },
+          {
+            id: "d3c5f9eb-a3g2-5cc3-9f83-2c3d8e9f5b5b",
+            serverName: "VoltServers 2b2t", 
+            gameType: "Minecraft",
+            serverIp: "2b2t.org",
+            serverPort: 25565
+          }
+        ];
+      }
+      
+      // Query each server's LIVE status from the actual game servers
+      const statusPromises = servers
+        .filter(server => serverIds.includes(server.id))
+        .map(async (server) => {
+          try {
+            console.log(`Querying LIVE server: ${server.serverName} (${server.serverIp}:${server.serverPort})`);
+            const status = await getServerStatus(server.gameType, server.serverIp, server.serverPort);
+            return [server.id, status];
+          } catch (error) {
+            console.error(`Failed to query ${server.serverName}:`, error);
+            return [server.id, {
+              online: false,
+              players: { current: 0, max: 0 },
+              version: 'Unknown',
+              motd: 'Query Failed',
+              ping: 9999,
+              hostname: server.serverIp,
+              port: server.serverPort,
+              software: 'Unknown'
+            }];
+          }
+        });
+        
+      const results = await Promise.all(statusPromises);
+      results.forEach(([id, status]) => {
+        statusMap.set(id, status);
+      });
+      
+      console.log(`Successfully queried ${results.length} servers with live data`);
+      res.json(statusMap);
+    } catch (error) {
+      console.error("Server status query error:", error);
+      res.status(500).json({ message: "Failed to query server status" });
     }
   });
 
