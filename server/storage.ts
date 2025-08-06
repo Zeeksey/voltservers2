@@ -907,11 +907,14 @@ export class MemStorage implements IStorage {
   }
 
   private initializeBlogPosts() {
-    // Initialize comprehensive blog posts
+    // Clear any existing blog posts first
+    this.blogPosts.clear();
+    
+    // Initialize comprehensive professional blog posts
     const sampleBlogPosts = [
       {
         id: "minecraft-ultimate-guide-2025",
-        title: "Ultimate Minecraft Server Setup Guide 2025",
+        title: "Ultimate Minecraft Server Setup Guide 2025", 
         slug: "ultimate-minecraft-server-setup-guide-2025",
         excerpt: "Complete step-by-step guide to setting up and optimizing your Minecraft server for maximum performance and player satisfaction.",
         content: `# Ultimate Minecraft Server Setup Guide 2025
@@ -1539,19 +1542,6 @@ DDoS protection requires a comprehensive approach combining network architecture
         updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
         isPublished: true,
         tags: ["security", "ddos-protection", "networking", "server-management", "cybersecurity"]
-      },
-      {
-        id: "fallback-3",
-        title: "Game Server Security Best Practices",
-        slug: "game-server-security-best-practices",
-        excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
-        content: "# Game Server Security Best Practices\n\nKeeping your game server secure is crucial for maintaining player trust and preventing attacks.\n\n## Basic Security Measures\n\n### Strong Authentication\n- Use complex passwords\n- Enable two-factor authentication\n- Regular password updates\n- Secure admin accounts\n\n### Network Security\n- Configure firewalls properly\n- Use secure protocols (SSH, HTTPS)\n- Regular security updates\n- Monitor network traffic\n\n## DDoS Protection\n\nProtect against attacks:\n- Use DDoS mitigation services\n- Configure rate limiting\n- Monitor unusual traffic patterns\n- Have incident response plans\n\n## Player Data Protection\n\n### Privacy Measures\n- Encrypt sensitive data\n- Secure database connections\n- Regular security audits\n- GDPR compliance\n\n### Backup Security\n- Encrypted backups\n- Secure storage locations\n- Regular backup testing\n- Off-site backup copies\n\n## Monitoring and Logging\n\nImplement comprehensive monitoring:\n- Security event logging\n- Access monitoring\n- Performance tracking\n- Automated alerts\n\n## Regular Maintenance\n\n- Security patches\n- Software updates\n- Configuration reviews\n- Vulnerability assessments",
-        imageUrl: "/images/blog/security-tips.svg",
-        author: "VoltServers Team",
-        publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        isPublished: true,
-        tags: ["security", "hosting", "best-practices"]
       }
     ];
 
