@@ -23,7 +23,7 @@ interface ServerStatus {
 
 export default function DemoServers() {
   const [copying, setCopying] = useState<string | null>(null);
-  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
+  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(() => new Map());
   
   const { data: demoServers, isLoading } = useQuery<DemoServer[]>({
     queryKey: ['/api/demo-servers'],
@@ -60,7 +60,7 @@ export default function DemoServers() {
       });
 
       const results = await Promise.all(statusPromises);
-      const statusMap = new Map();
+      const statusMap = new Map<string, ServerStatus>();
       results.forEach(({ serverId, status }) => {
         statusMap.set(serverId, status);
       });
