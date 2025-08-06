@@ -1,8 +1,15 @@
 import { Gamepad2, Twitter, MessageCircle, Youtube, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
+  const { data: themeSettings } = useQuery({
+    queryKey: ['/api/theme-settings']
+  });
+
+  const siteName = (themeSettings as any)?.siteName || "VoltServers";
+  const logoUrl = (themeSettings as any)?.logoUrl;
   return (
     <footer id="support" className="bg-gaming-black-lighter py-12 lg:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -10,10 +17,20 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="md:col-span-2 lg:col-span-1">
             <div className="flex items-center space-x-3 mb-4 lg:mb-6">
-              <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
-                <Gamepad2 className="text-gaming-black text-xl" />
-              </div>
-              <span className="text-xl lg:text-2xl font-bold text-gaming-green">VoltServers</span>
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt={siteName} 
+                  className="h-10 max-w-32 object-contain"
+                />
+              ) : (
+                <>
+                  <div className="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
+                    <Gamepad2 className="text-gaming-black text-xl" />
+                  </div>
+                  <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
+                </>
+              )}
             </div>
             <p className="text-gaming-gray mb-6 text-sm lg:text-base leading-relaxed">
               The premier game server hosting platform trusted by thousands of gaming communities worldwide. 

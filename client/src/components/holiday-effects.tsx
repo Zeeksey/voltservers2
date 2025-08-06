@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import SnowAnimation from './snow-animation';
+import BoltAnimation from './bolt-animation';
 
 interface HolidayEffectsProps {
-  theme: 'none' | 'snow' | 'halloween' | 'easter' | 'christmas';
+  theme?: 'none' | 'snow' | 'halloween' | 'easter' | 'christmas' | 'bolts';
 }
 
-export default function HolidayEffects({ theme }: HolidayEffectsProps) {
+export default function HolidayEffects({ theme: propTheme }: HolidayEffectsProps) {
+  const { data: themeSettings } = useQuery({
+    queryKey: ['/api/theme-settings']
+  });
+
+  // Use theme from props or theme settings
+  const theme = propTheme || (themeSettings as any)?.holidayTheme || 'none';
   const [easterEggs, setEasterEggs] = useState<Array<{ id: number; x: number; y: number; emoji: string }>>([]);
 
   useEffect(() => {
@@ -31,6 +39,7 @@ export default function HolidayEffects({ theme }: HolidayEffectsProps) {
   return (
     <>
       {theme === 'snow' && <SnowAnimation />}
+      {theme === 'bolts' && <BoltAnimation />}
       
       {theme === 'halloween' && (
         <div className="holiday-halloween fixed inset-0 pointer-events-none z-10">

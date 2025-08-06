@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 interface ThemeSettings {
   siteName?: string;
+  logoUrl?: string;
 }
 
 export default function Navigation() {
@@ -16,6 +17,9 @@ export default function Navigation() {
     queryKey: ["/api/theme-settings"],
     retry: false,
   });
+
+  const siteName = themeSettings?.siteName || "VoltServers";
+  const logoUrl = themeSettings?.logoUrl;
 
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -38,10 +42,20 @@ export default function Navigation() {
         <div className="flex justify-between items-center py-3 lg:py-4">
           <Link href="/">
             <div className="flex items-center space-x-3 cursor-pointer group">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Zap className="text-gaming-black text-lg lg:text-xl" />
-              </div>
-              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{themeSettings?.siteName || "VoltServers"}</span>
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt={siteName} 
+                  className="h-8 lg:h-10 max-w-32 lg:max-w-40 object-contain group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <>
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Zap className="text-gaming-black text-lg lg:text-xl" />
+                  </div>
+                  <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
+                </>
+              )}
             </div>
           </Link>
           
