@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -42,6 +43,7 @@ interface AdminUser {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const isMobile = useIsMobile();
   const [isCreateIncidentOpen, setIsCreateIncidentOpen] = useState(false);
   const [editingIncident, setEditingIncident] = useState<any>(null);
   const [themeForm, setThemeForm] = useState({
@@ -510,7 +512,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gaming-black">
       <NavigationNew />
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 admin-mobile-header">
           <div>
             <h1 className="text-3xl font-bold text-gaming-white mb-2">Admin Dashboard</h1>
             <p className="text-gaming-gray">Welcome back, {adminUser.username}</p>
@@ -518,7 +520,7 @@ export default function AdminDashboard() {
           <Button
             onClick={handleLogout}
             variant="outline"
-            className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+            className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Logout
@@ -526,7 +528,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 admin-mobile-stats">
           <Card className="bg-gaming-black-light border-gaming-green/30">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-gaming-white">Games</CardTitle>
@@ -574,38 +576,58 @@ export default function AdminDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="games" className="space-y-6">
-          <TabsList className="bg-gaming-black-light border-gaming-green/30">
-            <TabsTrigger value="games" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <Gamepad2 className="w-4 h-4 mr-2" />
-              Games
-            </TabsTrigger>
-            <TabsTrigger value="blog" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <BookOpen className="w-4 h-4 mr-2" />
-              Blog Posts
-            </TabsTrigger>
-            <TabsTrigger value="demos" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <Server className="w-4 h-4 mr-2" />
-              Demo Servers
-            </TabsTrigger>
-            <TabsTrigger value="locations" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <MapPin className="w-4 h-4 mr-2" />
-              Locations
-            </TabsTrigger>
-            <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <Palette className="w-4 h-4 mr-2" />
-              Theme
-            </TabsTrigger>
-            <TabsTrigger value="incidents" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <Zap className="w-4 h-4 mr-2" />
-              Status & Incidents
-            </TabsTrigger>
-          </TabsList>
+          <div className="admin-mobile-tabs">
+            <TabsList className="bg-gaming-black-light border-gaming-green/30 admin-tabs-list">
+              <TabsTrigger 
+                value="games" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <Gamepad2 className="w-4 h-4 mr-2" />
+                Games
+              </TabsTrigger>
+              <TabsTrigger 
+                value="blog" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Blog Posts
+              </TabsTrigger>
+              <TabsTrigger 
+                value="demos" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <Server className="w-4 h-4 mr-2" />
+                Demo Servers
+              </TabsTrigger>
+              <TabsTrigger 
+                value="locations" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <MapPin className="w-4 h-4 mr-2" />
+                Locations
+              </TabsTrigger>
+              <TabsTrigger 
+                value="theme" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <Palette className="w-4 h-4 mr-2" />
+                Theme
+              </TabsTrigger>
+              <TabsTrigger 
+                value="incidents" 
+                className="data-[state=active]:bg-gaming-green data-[state=active]:text-black admin-mobile-tab-trigger"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Status & Incidents
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Games Tab */}
           <TabsContent value="games">
             <Card className="bg-gaming-black-light border-gaming-green/30">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between admin-mobile-stack">
                   <div>
                     <CardTitle className="text-gaming-white">Game Management</CardTitle>
                     <CardDescription className="text-gaming-gray">
@@ -614,7 +636,7 @@ export default function AdminDashboard() {
                   </div>
                   <Button
                     onClick={() => setLocation('/admin/games/new/edit')}
-                    className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                    className="bg-gaming-green text-black hover:bg-gaming-green/90 touch-target admin-mobile-full"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Create New Game
@@ -624,8 +646,8 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-4">
                   {games.map((game: Game) => (
-                    <div key={game.id} className="flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg">
-                      <div className="flex items-center space-x-4">
+                    <div key={game.id} className="flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg admin-mobile-item">
+                      <div className="admin-mobile-item-content">
                         <img 
                           src={game.imageUrl || '/api/placeholder/64/64'} 
                           alt={game.name}
@@ -633,7 +655,7 @@ export default function AdminDashboard() {
                         />
                         <div>
                           <h3 className="text-gaming-white font-medium">{game.name}</h3>
-                          <p className="text-gaming-gray text-sm">{game.description}</p>
+                          <p className="text-gaming-gray text-sm admin-mobile-text">{game.description}</p>
                           <div className="flex gap-2 mt-1">
                             {game.isPopular && (
                               <Badge variant="outline" className="border-gaming-green text-gaming-green text-xs">
@@ -648,30 +670,33 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="admin-mobile-item-actions">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => window.open(`/games/${game.slug}`, '_blank')}
-                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Eye className="w-4 h-4" />
+                          <span className="sr-only md:not-sr-only md:ml-2">View</span>
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setLocation(`/admin/games/${game.id}/edit`)}
-                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Edit2 className="w-4 h-4" />
+                          <span className="sr-only md:not-sr-only md:ml-2">Edit</span>
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => deleteGameMutation.mutate(game.id)}
-                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white touch-target"
                         >
                           <Trash2 className="w-4 h-4" />
+                          <span className="sr-only md:not-sr-only md:ml-2">Delete</span>
                         </Button>
                       </div>
                     </div>
@@ -685,7 +710,7 @@ export default function AdminDashboard() {
           <TabsContent value="blog">
             <Card className="bg-gaming-black-light border-gaming-green/30">
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className={`flex items-center justify-between ${isMobile ? 'admin-mobile-stack' : ''}`}>
                   <div>
                     <CardTitle className="text-gaming-white">Blog Management</CardTitle>
                     <CardDescription className="text-gaming-gray">
@@ -694,7 +719,7 @@ export default function AdminDashboard() {
                   </div>
                   <Button
                     onClick={() => setLocation('/admin/blog/new')}
-                    className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                    className={`bg-gaming-green text-black hover:bg-gaming-green/90 touch-target ${isMobile ? 'admin-mobile-full' : ''}`}
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Create New Post
@@ -704,8 +729,8 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-4">
                   {blogs.map((post: BlogPost) => (
-                    <div key={post.id} className="flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg">
-                      <div className="flex items-center space-x-4">
+                    <div key={post.id} className={`flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg ${isMobile ? 'admin-mobile-item' : ''}`}>
+                      <div className={`${isMobile ? 'admin-mobile-item-content' : 'flex items-center space-x-4'}`}>
                         <img 
                           src={post.imageUrl || '/api/placeholder/64/64'} 
                           alt={post.title}
@@ -713,7 +738,7 @@ export default function AdminDashboard() {
                         />
                         <div>
                           <h3 className="text-gaming-white font-medium">{post.title}</h3>
-                          <p className="text-gaming-gray text-sm">{post.excerpt}</p>
+                          <p className={`text-gaming-gray text-sm ${isMobile ? 'admin-mobile-text' : ''}`}>{post.excerpt}</p>
                           <div className="flex gap-2 mt-1">
                             <Badge variant="outline" className={`text-xs ${
                               post.isPublished 
@@ -725,30 +750,33 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className={`${isMobile ? 'admin-mobile-item-actions' : 'flex items-center space-x-2'}`}>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => window.open(`/blog/${post.slug}`, '_blank')}
-                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Eye className="w-4 h-4" />
+                          {isMobile && <span className="sr-only md:not-sr-only md:ml-2">View</span>}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => setLocation(`/admin/blog/${post.id}/edit`)}
-                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Edit2 className="w-4 h-4" />
+                          {isMobile && <span className="sr-only md:not-sr-only md:ml-2">Edit</span>}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => deleteBlogMutation.mutate(post.id)}
-                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white touch-target"
                         >
                           <Trash2 className="w-4 h-4" />
+                          {isMobile && <span className="sr-only md:not-sr-only md:ml-2">Delete</span>}
                         </Button>
                       </div>
                     </div>
