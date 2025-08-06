@@ -713,9 +713,15 @@ textarea::placeholder {
     }
     
     /* Ensure proper z-index for interactive elements */
-    button, .btn, [role="button"], a, input, select, textarea {
+    button, .btn, [role="button"], a {
       position: relative;
       z-index: 1;
+    }
+    
+    /* Form elements should have normal positioning */
+    input, select, textarea {
+      position: relative;
+      z-index: auto;
     }
     
     /* Mobile admin improvements */
@@ -728,13 +734,26 @@ textarea::placeholder {
       padding: 12px;
     }
     
-    /* Prevent iOS double-tap to zoom on buttons */
-    button, .btn, [role="button"], [type="button"], [type="submit"] {
+    /* Prevent iOS double-tap to zoom on buttons ONLY */
+    button:not([type="text"]):not([type="email"]):not([type="password"]):not([type="search"]), 
+    .btn, 
+    [role="button"], 
+    [type="button"], 
+    [type="submit"] {
       touch-action: manipulation;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
       user-select: none;
+    }
+    
+    /* Ensure form elements can still be selected/typed in */
+    input, textarea, select {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+      touch-action: auto;
     }
     
     /* Better tab/dialog interaction on mobile */
