@@ -1251,15 +1251,43 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Hero Section Settings */}
+              {/* Hero Section Content */}
               <Card className="bg-gaming-black-light border-gaming-green/30">
                 <CardHeader>
-                  <CardTitle className="text-gaming-white">Hero Section</CardTitle>
+                  <CardTitle className="text-gaming-white">Hero Section Content</CardTitle>
                   <CardDescription className="text-gaming-gray">
-                    Customize the hero section buttons and links
+                    Customize the main hero section text and messaging
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gaming-white">Hero Title</Label>
+                    <Input
+                      value={themeForm.heroTitle || ""}
+                      onChange={(e) => setThemeForm({...themeForm, heroTitle: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Deploy Your Game Server in Minutes"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Hero Subtitle</Label>
+                    <Input
+                      value={themeForm.heroSubtitle || ""}
+                      onChange={(e) => setThemeForm({...themeForm, heroSubtitle: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Experience lightning-fast deployment with our premium hosting platform"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Hero Description</Label>
+                    <Textarea
+                      value={themeForm.heroDescription || ""}
+                      onChange={(e) => setThemeForm({...themeForm, heroDescription: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers."
+                      rows={3}
+                    />
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label className="text-gaming-white">Primary Button Text</Label>
@@ -1569,12 +1597,111 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Social Media & Open Graph */}
+              {/* Social Media Links */}
               <Card className="bg-gaming-black-light border-gaming-green/30">
                 <CardHeader>
-                  <CardTitle className="text-gaming-white">Social Media & Open Graph</CardTitle>
+                  <CardTitle className="text-gaming-white">Social Media Links</CardTitle>
                   <CardDescription className="text-gaming-gray">
-                    Social sharing and Open Graph settings
+                    Manage your social media presence and community links
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Discord Server</Label>
+                      <Input
+                        value={themeForm.discordUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, discordUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://discord.gg/your-server"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Twitter/X Profile</Label>
+                      <Input
+                        value={themeForm.twitterUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, twitterUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://twitter.com/voltservers"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">YouTube Channel</Label>
+                      <Input
+                        value={themeForm.youtubeUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, youtubeUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://youtube.com/@voltservers"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Reddit Community</Label>
+                      <Input
+                        value={themeForm.redditUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, redditUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://reddit.com/r/voltservers"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Facebook Page</Label>
+                      <Input
+                        value={themeForm.facebookUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, facebookUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://facebook.com/voltservers"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Instagram Profile</Label>
+                      <Input
+                        value={themeForm.instagramUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, instagramUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://instagram.com/voltservers"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">TikTok Profile</Label>
+                      <Input
+                        value={themeForm.tiktokUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, tiktokUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://tiktok.com/@voltservers"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">GitHub Repository</Label>
+                      <Input
+                        value={themeForm.githubUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, githubUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://github.com/voltservers"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3 pt-2">
+                    <Switch
+                      checked={themeForm.showSocialIcons || true}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, showSocialIcons: checked})}
+                    />
+                    <Label className="text-gaming-white">Show Social Media Icons in Footer</Label>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Open Graph & SEO Meta */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Open Graph & Social Sharing</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Configure how your site appears when shared on social media
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
