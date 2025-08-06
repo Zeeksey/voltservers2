@@ -16,8 +16,43 @@ import {
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import { useQuery } from '@tanstack/react-query';
+
+interface ServerLocation {
+  id: string;
+  city: string;
+  country: string;
+  region: string;
+  provider: string;
+  ipAddress: string;
+  status: string;
+  ping?: number;
+  name?: string;
+  specs?: string;
+  score?: string;
+  cooling?: string;
+  isRecommended?: boolean;
+}
+
+interface LocationGroup {
+  region: string;
+  locations: {
+    name: string;
+    ping: string;
+    recommended: boolean;
+    specs: string;
+    score: string;
+    cooling?: string;
+    ip: string;
+  }[];
+}
 
 export default function HardwarePage() {
+  // Fetch server locations from the database
+  const { data: serverLocations = [], isLoading: locationsLoading } = useQuery<ServerLocation[]>({
+    queryKey: ['/api/server-locations'],
+  });
+
   // Primary server specifications
   const primaryServer = {
     processor: "AMD Ryzen 7 5800X",
@@ -33,22 +68,28 @@ export default function HardwarePage() {
     optimizedFor: "Gaming servers and virtual platforms"
   };
 
-  const locations = [
-    {
-      region: "North America",
-      locations: [
-        { 
-          name: "Virginia, Vinthill", 
-          ping: "13ms", 
-          recommended: true, 
-          specs: "AMD Ryzen 7 5800X @ 4.7 GHz", 
-          score: "4130", 
-          cooling: "Water Cooled",
-          ip: "104.196.223.28"
-        }
-      ]
+  // Group server locations by region for display
+  const groupedLocations = serverLocations.reduce((acc: Record<string, LocationGroup['locations']>, location: ServerLocation) => {
+    const region = location.region || 'Other';
+    if (!acc[region]) {
+      acc[region] = [];
     }
-  ];
+    acc[region].push({
+      name: location.name || `${location.city}, ${location.country}`,
+      ping: location.ping ? `${location.ping}ms` : 'N/A',
+      recommended: location.isRecommended || false,
+      specs: location.specs || 'High-Performance Gaming Server',
+      score: location.score || 'N/A',
+      cooling: location.cooling || '',
+      ip: location.ipAddress || ''
+    });
+    return acc;
+  }, {});
+
+  const locations: LocationGroup[] = Object.entries(groupedLocations).map(([region, locs]) => ({
+    region,
+    locations: locs
+  }));
 
   const features = [
     {
@@ -235,14 +276,26 @@ export default function HardwarePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gaming-white mb-4">
-              Our <span className="text-gaming-green">Server Location</span>
+              Our <span className="text-gaming-green">Server {locations.length === 1 ? 'Location' : 'Locations'}</span>
             </h2>
             <p className="text-gaming-gray text-lg">
-              Strategically located in Virginia for optimal performance and low latency gaming.
+              {locations.length === 1 
+                ? 'Strategically located for optimal performance and low latency gaming.'
+                : 'Strategically located worldwide for optimal performance and low latency gaming.'
+              }
             </p>
           </div>
 
-          {locations.map((region, regionIndex) => (
+          {locationsLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gaming-green mx-auto"></div>
+              <p className="text-gaming-gray mt-4">Loading server locations...</p>
+            </div>
+          ) : locations.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gaming-gray">No server locations configured yet.</p>
+            </div>
+          ) : locations.map((region, regionIndex) => (
             <div key={regionIndex} className="mb-16">
               <div className="flex items-center gap-4 mb-8">
                 <h3 className="text-2xl font-bold text-gaming-white">{region.region}</h3>
@@ -250,7 +303,7 @@ export default function HardwarePage() {
               </div>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {region.locations.map((location, index) => (
+                {region.locations.map((location: LocationGroup['locations'][0], index: number) => (
                   <Card key={index} className={`bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 ${location.recommended ? 'border-gaming-green' : ''}`}>
                     {location.recommended && (
                       <div className="bg-gaming-green text-gaming-black text-center py-2 text-sm font-semibold">
@@ -266,13 +319,15 @@ export default function HardwarePage() {
                         </div>
                       </div>
                       
-                      <div className="mb-4 p-3 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Globe className="w-4 h-4 text-gaming-green" />
-                          <span className="text-gaming-white font-medium">Server IP:</span>
+                      {location.ip && (
+                        <div className="mb-4 p-3 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Globe className="w-4 h-4 text-gaming-green" />
+                            <span className="text-gaming-white font-medium">Server IP:</span>
+                          </div>
+                          <span className="text-gaming-green font-mono text-sm">{location.ip}</span>
                         </div>
-                        <span className="text-gaming-green font-mono text-sm">{location.ip}</span>
-                      </div>
+                      )}
                       
                       {location.cooling && (
                         <Badge className="bg-blue-500/20 text-blue-400 mb-3">
@@ -293,10 +348,12 @@ export default function HardwarePage() {
                           <HardDrive className="w-4 h-4 text-gaming-gray" />
                           <span className="text-gaming-white text-sm">DDR4/DDR5 RAM</span>
                         </div>
-                        <div className="flex justify-between items-center pt-2">
-                          <span className="text-gaming-gray text-sm">Single Thread Score</span>
-                          <span className="text-gaming-green font-semibold">{location.score}</span>
-                        </div>
+                        {location.score && location.score !== 'N/A' && (
+                          <div className="flex justify-between items-center pt-2">
+                            <span className="text-gaming-gray text-sm">Single Thread Score</span>
+                            <span className="text-gaming-green font-semibold">{location.score}</span>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
