@@ -491,12 +491,6 @@ export default function GamePage() {
                   className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4">
-                    <div className="text-sm text-gaming-green font-semibold mb-1">Now Playing</div>
-                    <div className="text-white text-lg">Epic {game.name} Adventures</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
