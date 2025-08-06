@@ -6,6 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Shield, 
   LogOut, 
@@ -17,7 +22,10 @@ import {
   Server,
   Users,
   Settings,
-  Eye
+  Eye,
+  Save,
+  MapPin,
+  Palette
 } from "lucide-react";
 import type { Game, BlogPost } from "@shared/schema";
 import NavigationNew from "@/components/navigation-new";
@@ -32,6 +40,39 @@ interface AdminUser {
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [themeForm, setThemeForm] = useState({
+    siteName: "VoltServers",
+    siteTagline: "Professional Game Server Hosting",
+    primaryColor: "#00cc6a",
+    secondaryColor: "#1a1a1a",
+    accentColor: "#00cc6a",
+    backgroundColor: "#0a0a0a",
+    textColor: "#ffffff"
+  });
+  const [locationForm, setLocationForm] = useState({
+    city: "",
+    country: "",
+    region: "",
+    provider: "",
+    ipAddress: "",
+    status: "online" as "online" | "offline" | "maintenance"
+  });
+  const [demoServerForm, setDemoServerForm] = useState({
+    serverName: "",
+    gameId: "",
+    host: "",
+    port: "",
+    playerCount: "",
+    maxPlayers: "",
+    isOnline: true,
+    version: "",
+    description: "",
+    location: "",
+    playtime: ""
+  });
+  const [editingLocation, setEditingLocation] = useState<any>(null);
+  const [editingDemoServer, setEditingDemoServer] = useState<any>(null);
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -80,6 +121,24 @@ export default function AdminDashboard() {
     }
   });
 
+  const { data: serverLocations = [] } = useQuery({
+    queryKey: ['/api/server-locations'],
+    queryFn: async () => {
+      const response = await fetch('/api/server-locations');
+      if (!response.ok) throw new Error('Failed to fetch server locations');
+      return response.json();
+    }
+  });
+
+  const { data: themeSettings } = useQuery({
+    queryKey: ['/api/theme-settings'],
+    queryFn: async () => {
+      const response = await fetch('/api/theme-settings');
+      if (!response.ok) throw new Error('Failed to fetch theme settings');
+      return response.json();
+    }
+  });
+
   // Statistics
   const stats = {
     totalGames: games.length,
@@ -87,6 +146,169 @@ export default function AdminDashboard() {
     activeServers: demoServers.filter((server: any) => server.isOnline !== false).length,
     totalPlayers: demoServers.reduce((sum: number, server: any) => sum + (server.playerCount || 0), 0)
   };
+
+  // Update theme settings when data loads
+  React.useEffect(() => {
+    if (themeSettings) {
+      setThemeForm({
+        siteName: themeSettings.siteName || "VoltServers",
+        siteTagline: themeSettings.siteTagline || "Professional Game Server Hosting",
+        primaryColor: themeSettings.primaryColor || "#00cc6a",
+        secondaryColor: themeSettings.secondaryColor || "#1a1a1a",
+        accentColor: themeSettings.accentColor || "#00cc6a",
+        backgroundColor: themeSettings.backgroundColor || "#0a0a0a",
+        textColor: themeSettings.textColor || "#ffffff"
+      });
+    }
+  }, [themeSettings]);
+
+  // Theme mutation
+  const updateThemeMutation = useMutation({
+    mutationFn: async (themeData: any) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch('/api/admin/theme-settings', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(themeData)
+      });
+      if (!response.ok) throw new Error('Failed to update theme settings');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/theme-settings'] });
+      toast({ title: "Success", description: "Theme settings updated successfully" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to update theme settings", variant: "destructive" });
+    }
+  });
+
+  // Location mutations
+  const createLocationMutation = useMutation({
+    mutationFn: async (locationData: any) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch('/api/admin/server-locations', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(locationData)
+      });
+      if (!response.ok) throw new Error('Failed to create server location');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/server-locations'] });
+      setLocationForm({ city: "", country: "", region: "", provider: "", ipAddress: "", status: "online" });
+      toast({ title: "Success", description: "Server location created successfully" });
+    }
+  });
+
+  const updateLocationMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/server-locations/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update server location');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/server-locations'] });
+      setEditingLocation(null);
+      setLocationForm({ city: "", country: "", region: "", provider: "", ipAddress: "", status: "online" });
+      toast({ title: "Success", description: "Server location updated successfully" });
+    }
+  });
+
+  const deleteLocationMutation = useMutation({
+    mutationFn: async (locationId: string) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/server-locations/${locationId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to delete server location');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/server-locations'] });
+      toast({ title: "Success", description: "Server location deleted successfully" });
+    }
+  });
+
+  // Demo server mutations
+  const createDemoServerMutation = useMutation({
+    mutationFn: async (serverData: any) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch('/api/admin/demo-servers', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(serverData)
+      });
+      if (!response.ok) throw new Error('Failed to create demo server');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/demo-servers'] });
+      setDemoServerForm({
+        serverName: "", gameId: "", host: "", port: "", playerCount: "", 
+        maxPlayers: "", isOnline: true, version: "", description: "", location: "", playtime: ""
+      });
+      toast({ title: "Success", description: "Demo server created successfully" });
+    }
+  });
+
+  const updateDemoServerMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/demo-servers/${id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update demo server');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/demo-servers'] });
+      setEditingDemoServer(null);
+      setDemoServerForm({
+        serverName: "", gameId: "", host: "", port: "", playerCount: "", 
+        maxPlayers: "", isOnline: true, version: "", description: "", location: "", playtime: ""
+      });
+      toast({ title: "Success", description: "Demo server updated successfully" });
+    }
+  });
+
+  const deleteDemoServerMutation = useMutation({
+    mutationFn: async (serverId: string) => {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`/api/admin/demo-servers/${serverId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error('Failed to delete demo server');
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/demo-servers'] });
+      toast({ title: "Success", description: "Demo server deleted successfully" });
+    }
+  });
 
   // Delete mutations
   const deleteGameMutation = useMutation({
@@ -214,9 +436,17 @@ export default function AdminDashboard() {
               <BookOpen className="w-4 h-4 mr-2" />
               Blog Posts
             </TabsTrigger>
-            <TabsTrigger value="settings" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
-              <Settings className="w-4 h-4 mr-2" />
-              Settings
+            <TabsTrigger value="demos" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
+              <Server className="w-4 h-4 mr-2" />
+              Demo Servers
+            </TabsTrigger>
+            <TabsTrigger value="locations" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
+              <MapPin className="w-4 h-4 mr-2" />
+              Locations
+            </TabsTrigger>
+            <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-black">
+              <Palette className="w-4 h-4 mr-2" />
+              Theme
             </TabsTrigger>
           </TabsList>
 
@@ -377,61 +607,443 @@ export default function AdminDashboard() {
             </Card>
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings">
+          {/* Demo Servers Tab */}
+          <TabsContent value="demos">
             <Card className="bg-gaming-black-light border-gaming-green/30">
               <CardHeader>
-                <CardTitle className="text-gaming-white">Site Settings</CardTitle>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-gaming-white">Demo Server Management</CardTitle>
+                    <CardDescription className="text-gaming-gray">
+                      Manage demo servers shown on the homepage
+                    </CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setEditingDemoServer(null);
+                      setDemoServerForm({
+                        serverName: "", gameId: "", host: "", port: "", playerCount: "", 
+                        maxPlayers: "", isOnline: true, version: "", description: "", location: "", playtime: ""
+                      });
+                    }}
+                    className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Demo Server
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 mb-6">
+                  {demoServers.map((server: any) => (
+                    <div key={server.id} className="flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg">
+                      <div>
+                        <h3 className="text-gaming-white font-medium">{server.name || server.serverName}</h3>
+                        <p className="text-gaming-gray text-sm">{server.host || server.serverIp}:{server.port || server.serverPort}</p>
+                        <div className="flex gap-2 mt-1">
+                          <Badge variant="outline" className={`text-xs ${
+                            server.isOnline !== false ? 'border-gaming-green text-gaming-green' : 'border-red-500 text-red-500'
+                          }`}>
+                            {server.isOnline !== false ? 'Online' : 'Offline'}
+                          </Badge>
+                          <Badge variant="outline" className="border-blue-500 text-blue-500 text-xs">
+                            {server.playerCount || 0}/{server.maxPlayers || 100} players
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingDemoServer(server);
+                            setDemoServerForm({
+                              serverName: server.name || server.serverName || "",
+                              gameId: server.gameId || "",
+                              host: server.host || server.serverIp || "",
+                              port: server.port?.toString() || server.serverPort?.toString() || "",
+                              playerCount: server.playerCount?.toString() || "0",
+                              maxPlayers: server.maxPlayers?.toString() || "100",
+                              isOnline: server.isOnline ?? true,
+                              version: server.version || "",
+                              description: server.description || "",
+                              location: server.location || "",
+                              playtime: server.playtime?.toString() || ""
+                            });
+                          }}
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteDemoServerMutation.mutate(server.id)}
+                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Demo Server Form */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const serverData = {
+                      serverName: demoServerForm.serverName,
+                      gameId: demoServerForm.gameId,
+                      serverIp: demoServerForm.host,
+                      serverPort: parseInt(demoServerForm.port),
+                      playerCount: parseInt(demoServerForm.playerCount),
+                      maxPlayers: parseInt(demoServerForm.maxPlayers),
+                      isOnline: demoServerForm.isOnline,
+                      version: demoServerForm.version,
+                      description: demoServerForm.description,
+                      location: demoServerForm.location,
+                      playtime: demoServerForm.playtime ? parseInt(demoServerForm.playtime) : null
+                    };
+                    
+                    if (editingDemoServer) {
+                      updateDemoServerMutation.mutate({ id: editingDemoServer.id, data: serverData });
+                    } else {
+                      createDemoServerMutation.mutate(serverData);
+                    }
+                  }}
+                  className="space-y-4 border-t border-gaming-green/20 pt-6"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Server Name</Label>
+                      <Input
+                        value={demoServerForm.serverName}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, serverName: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="My Awesome Server"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Game</Label>
+                      <Select value={demoServerForm.gameId} onValueChange={(value) => setDemoServerForm({...demoServerForm, gameId: value})}>
+                        <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                          <SelectValue placeholder="Select game" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {games.map((game: Game) => (
+                            <SelectItem key={game.id} value={game.id}>{game.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Host/IP</Label>
+                      <Input
+                        value={demoServerForm.host}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, host: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="127.0.0.1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Port</Label>
+                      <Input
+                        value={demoServerForm.port}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, port: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="25565"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Player Count</Label>
+                      <Input
+                        type="number"
+                        value={demoServerForm.playerCount}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, playerCount: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="0"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Max Players</Label>
+                      <Input
+                        type="number"
+                        value={demoServerForm.maxPlayers}
+                        onChange={(e) => setDemoServerForm({...demoServerForm, maxPlayers: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="100"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      checked={demoServerForm.isOnline}
+                      onCheckedChange={(checked) => setDemoServerForm({...demoServerForm, isOnline: checked})}
+                    />
+                    <Label className="text-gaming-white">Server Online</Label>
+                  </div>
+                  <Button type="submit" className="bg-gaming-green text-black hover:bg-gaming-green/90">
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingDemoServer ? 'Update' : 'Create'} Demo Server
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Server Locations Tab */}
+          <TabsContent value="locations">
+            <Card className="bg-gaming-black-light border-gaming-green/30">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-gaming-white">Server Location Management</CardTitle>
+                    <CardDescription className="text-gaming-gray">
+                      Manage server locations displayed to users
+                    </CardDescription>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setEditingLocation(null);
+                      setLocationForm({ city: "", country: "", region: "", provider: "", ipAddress: "", status: "online" });
+                    }}
+                    className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Location
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-4 mb-6">
+                  {serverLocations.map((location: any) => (
+                    <div key={location.id} className="flex items-center justify-between p-4 border border-gaming-green/20 rounded-lg">
+                      <div>
+                        <h3 className="text-gaming-white font-medium">{location.city}, {location.country}</h3>
+                        <p className="text-gaming-gray text-sm">{location.provider} - {location.region}</p>
+                        <Badge variant="outline" className={`text-xs mt-1 ${
+                          location.status === 'online' ? 'border-gaming-green text-gaming-green' :
+                          location.status === 'maintenance' ? 'border-yellow-500 text-yellow-500' :
+                          'border-red-500 text-red-500'
+                        }`}>
+                          {location.status}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingLocation(location);
+                            setLocationForm({
+                              city: location.city,
+                              country: location.country,
+                              region: location.region,
+                              provider: location.provider,
+                              ipAddress: location.ipAddress || "",
+                              status: location.status
+                            });
+                          }}
+                          className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deleteLocationMutation.mutate(location.id)}
+                          className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Location Form */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (editingLocation) {
+                      updateLocationMutation.mutate({ id: editingLocation.id, data: locationForm });
+                    } else {
+                      createLocationMutation.mutate(locationForm);
+                    }
+                  }}
+                  className="space-y-4 border-t border-gaming-green/20 pt-6"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">City</Label>
+                      <Input
+                        value={locationForm.city}
+                        onChange={(e) => setLocationForm({...locationForm, city: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="New York"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Country</Label>
+                      <Input
+                        value={locationForm.country}
+                        onChange={(e) => setLocationForm({...locationForm, country: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="United States"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Region</Label>
+                      <Input
+                        value={locationForm.region}
+                        onChange={(e) => setLocationForm({...locationForm, region: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="North America"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Provider</Label>
+                      <Input
+                        value={locationForm.provider}
+                        onChange={(e) => setLocationForm({...locationForm, provider: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="AWS"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Status</Label>
+                      <Select value={locationForm.status} onValueChange={(value: any) => setLocationForm({...locationForm, status: value})}>
+                        <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="online">Online</SelectItem>
+                          <SelectItem value="maintenance">Maintenance</SelectItem>
+                          <SelectItem value="offline">Offline</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button type="submit" className="bg-gaming-green text-black hover:bg-gaming-green/90">
+                    <Save className="w-4 h-4 mr-2" />
+                    {editingLocation ? 'Update' : 'Create'} Location
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Theme Settings Tab */}
+          <TabsContent value="theme">
+            <Card className="bg-gaming-black-light border-gaming-green/30">
+              <CardHeader>
+                <CardTitle className="text-gaming-white">Theme Settings</CardTitle>
                 <CardDescription className="text-gaming-gray">
-                  Basic site configuration and preferences
+                  Customize the appearance and branding of your site
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="text-gaming-white">
-                    <h3 className="text-lg font-medium mb-2">Quick Actions</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => window.open('/', '_blank')}
-                        className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black justify-start"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Site
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setLocation('/admin/theme')}
-                        className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black justify-start"
-                      >
-                        <Settings className="w-4 h-4 mr-2" />
-                        Theme Settings
-                      </Button>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    updateThemeMutation.mutate(themeForm);
+                  }}
+                  className="space-y-6"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label className="text-gaming-white">Site Name</Label>
+                      <Input
+                        value={themeForm.siteName}
+                        onChange={(e) => setThemeForm({...themeForm, siteName: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="VoltServers"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Site Tagline</Label>
+                      <Input
+                        value={themeForm.siteTagline}
+                        onChange={(e) => setThemeForm({...themeForm, siteTagline: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="Professional Game Server Hosting"
+                      />
                     </div>
                   </div>
-                  
-                  <div className="border-t border-gaming-green/20 pt-6">
-                    <h3 className="text-gaming-white text-lg font-medium mb-4">System Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="text-gaming-gray">Total Games:</span>
-                        <span className="text-gaming-white ml-2">{stats.totalGames}</span>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Primary Color</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="color"
+                          value={themeForm.primaryColor}
+                          onChange={(e) => setThemeForm({...themeForm, primaryColor: e.target.value})}
+                          className="w-16 h-10 bg-gaming-black border-gaming-green/30"
+                        />
+                        <Input
+                          value={themeForm.primaryColor}
+                          onChange={(e) => setThemeForm({...themeForm, primaryColor: e.target.value})}
+                          className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                          placeholder="#00cc6a"
+                        />
                       </div>
-                      <div>
-                        <span className="text-gaming-gray">Blog Posts:</span>
-                        <span className="text-gaming-white ml-2">{stats.totalPosts}</span>
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Background Color</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="color"
+                          value={themeForm.backgroundColor}
+                          onChange={(e) => setThemeForm({...themeForm, backgroundColor: e.target.value})}
+                          className="w-16 h-10 bg-gaming-black border-gaming-green/30"
+                        />
+                        <Input
+                          value={themeForm.backgroundColor}
+                          onChange={(e) => setThemeForm({...themeForm, backgroundColor: e.target.value})}
+                          className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                          placeholder="#0a0a0a"
+                        />
                       </div>
-                      <div>
-                        <span className="text-gaming-gray">Demo Servers:</span>
-                        <span className="text-gaming-white ml-2">{stats.activeServers}</span>
-                      </div>
-                      <div>
-                        <span className="text-gaming-gray">Online Players:</span>
-                        <span className="text-gaming-white ml-2">{stats.totalPlayers}</span>
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Text Color</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="color"
+                          value={themeForm.textColor}
+                          onChange={(e) => setThemeForm({...themeForm, textColor: e.target.value})}
+                          className="w-16 h-10 bg-gaming-black border-gaming-green/30"
+                        />
+                        <Input
+                          value={themeForm.textColor}
+                          onChange={(e) => setThemeForm({...themeForm, textColor: e.target.value})}
+                          className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                          placeholder="#ffffff"
+                        />
                       </div>
                     </div>
                   </div>
-                </div>
+
+                  <div className="flex justify-between items-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => window.open('/', '_blank')}
+                      className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      Preview Site
+                    </Button>
+                    <Button type="submit" className="bg-gaming-green text-black hover:bg-gaming-green/90">
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Theme Settings
+                    </Button>
+                  </div>
+                </form>
               </CardContent>
             </Card>
           </TabsContent>
