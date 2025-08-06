@@ -47,7 +47,40 @@ export default function AdminDashboard() {
     secondaryColor: "#1a1a1a",
     accentColor: "#00cc6a",
     backgroundColor: "#0a0a0a",
-    textColor: "#ffffff"
+    textColor: "#ffffff",
+    logoUrl: "",
+    faviconUrl: "",
+    footerText: "",
+    fontFamily: "Inter",
+    borderRadius: "0.5rem",
+    holidayTheme: "none",
+    customCss: "",
+    // SEO & Meta Tags
+    metaTitle: "",
+    metaDescription: "",
+    metaKeywords: "",
+    ogTitle: "",
+    ogDescription: "",
+    ogImage: "",
+    twitterCard: "summary_large_image",
+    twitterSite: "",
+    // Analytics & Tracking
+    googleAnalyticsId: "",
+    googleTagManagerId: "",
+    facebookPixelId: "",
+    customHeadCode: "",
+    customBodyCode: "",
+    // Site Management
+    maintenanceMode: false,
+    maintenanceMessage: "We're currently performing maintenance. Please check back soon!",
+    announcementBanner: "",
+    announcementType: "info",
+    showAnnouncementBanner: false,
+    // Cookie Policy Settings
+    showCookieBanner: true,
+    cookieConsentRequired: true,
+    cookiePolicyText: "We use cookies to enhance your experience and analyze site traffic.",
+    cookiePolicyUrl: "/privacy-policy"
   });
   const [locationForm, setLocationForm] = useState({
     city: "",
@@ -157,7 +190,40 @@ export default function AdminDashboard() {
         secondaryColor: themeSettings.secondaryColor || "#1a1a1a",
         accentColor: themeSettings.accentColor || "#00cc6a",
         backgroundColor: themeSettings.backgroundColor || "#0a0a0a",
-        textColor: themeSettings.textColor || "#ffffff"
+        textColor: themeSettings.textColor || "#ffffff",
+        logoUrl: themeSettings.logoUrl || "",
+        faviconUrl: themeSettings.faviconUrl || "",
+        footerText: themeSettings.footerText || "",
+        fontFamily: themeSettings.fontFamily || "Inter",
+        borderRadius: themeSettings.borderRadius || "0.5rem",
+        holidayTheme: themeSettings.holidayTheme || "none",
+        customCss: themeSettings.customCss || "",
+        // SEO & Meta Tags
+        metaTitle: themeSettings.metaTitle || "",
+        metaDescription: themeSettings.metaDescription || "",
+        metaKeywords: themeSettings.metaKeywords || "",
+        ogTitle: themeSettings.ogTitle || "",
+        ogDescription: themeSettings.ogDescription || "",
+        ogImage: themeSettings.ogImage || "",
+        twitterCard: themeSettings.twitterCard || "summary_large_image",
+        twitterSite: themeSettings.twitterSite || "",
+        // Analytics & Tracking
+        googleAnalyticsId: themeSettings.googleAnalyticsId || "",
+        googleTagManagerId: themeSettings.googleTagManagerId || "",
+        facebookPixelId: themeSettings.facebookPixelId || "",
+        customHeadCode: themeSettings.customHeadCode || "",
+        customBodyCode: themeSettings.customBodyCode || "",
+        // Site Management
+        maintenanceMode: themeSettings.maintenanceMode || false,
+        maintenanceMessage: themeSettings.maintenanceMessage || "We're currently performing maintenance. Please check back soon!",
+        announcementBanner: themeSettings.announcementBanner || "",
+        announcementType: themeSettings.announcementType || "info",
+        showAnnouncementBanner: themeSettings.showAnnouncementBanner || false,
+        // Cookie Policy Settings
+        showCookieBanner: themeSettings.showCookieBanner !== false,
+        cookieConsentRequired: themeSettings.cookieConsentRequired !== false,
+        cookiePolicyText: themeSettings.cookiePolicyText || "We use cookies to enhance your experience and analyze site traffic.",
+        cookiePolicyUrl: themeSettings.cookiePolicyUrl || "/privacy-policy"
       });
     }
   }, [themeSettings]);
@@ -938,21 +1004,16 @@ export default function AdminDashboard() {
 
           {/* Theme Settings Tab */}
           <TabsContent value="theme">
-            <Card className="bg-gaming-black-light border-gaming-green/30">
-              <CardHeader>
-                <CardTitle className="text-gaming-white">Theme Settings</CardTitle>
-                <CardDescription className="text-gaming-gray">
-                  Customize the appearance and branding of your site
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    updateThemeMutation.mutate(themeForm);
-                  }}
-                  className="space-y-6"
-                >
+            <div className="space-y-6">
+              {/* Basic Theme Settings */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Basic Theme Settings</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Customize site branding and appearance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <Label className="text-gaming-white">Site Name</Label>
@@ -972,9 +1033,32 @@ export default function AdminDashboard() {
                         placeholder="Professional Game Server Hosting"
                       />
                     </div>
+                    <div>
+                      <Label className="text-gaming-white">Logo URL</Label>
+                      <Input
+                        value={themeForm.logoUrl}
+                        onChange={(e) => setThemeForm({...themeForm, logoUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Font Family</Label>
+                      <Select value={themeForm.fontFamily} onValueChange={(value) => setThemeForm({...themeForm, fontFamily: value})}>
+                        <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Inter">Inter</SelectItem>
+                          <SelectItem value="Roboto">Roboto</SelectItem>
+                          <SelectItem value="Open Sans">Open Sans</SelectItem>
+                          <SelectItem value="Poppins">Poppins</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
                       <Label className="text-gaming-white">Primary Color</Label>
                       <div className="flex gap-2">
@@ -989,6 +1073,23 @@ export default function AdminDashboard() {
                           onChange={(e) => setThemeForm({...themeForm, primaryColor: e.target.value})}
                           className="bg-gaming-black border-gaming-green/30 text-gaming-white"
                           placeholder="#00cc6a"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Secondary Color</Label>
+                      <div className="flex gap-2">
+                        <Input
+                          type="color"
+                          value={themeForm.secondaryColor}
+                          onChange={(e) => setThemeForm({...themeForm, secondaryColor: e.target.value})}
+                          className="w-16 h-10 bg-gaming-black border-gaming-green/30"
+                        />
+                        <Input
+                          value={themeForm.secondaryColor}
+                          onChange={(e) => setThemeForm({...themeForm, secondaryColor: e.target.value})}
+                          className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                          placeholder="#1a1a1a"
                         />
                       </div>
                     </div>
@@ -1027,25 +1128,214 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
 
-                  <div className="flex justify-between items-center">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => window.open('/', '_blank')}
-                      className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview Site
-                    </Button>
-                    <Button type="submit" className="bg-gaming-green text-black hover:bg-gaming-green/90">
-                      <Save className="w-4 h-4 mr-2" />
-                      Save Theme Settings
-                    </Button>
+              {/* SEO Settings */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">SEO & Meta Tags</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Optimize your site for search engines and social media
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Meta Title</Label>
+                      <Input
+                        value={themeForm.metaTitle}
+                        onChange={(e) => setThemeForm({...themeForm, metaTitle: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="VoltServers - Game Server Hosting"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Twitter Site</Label>
+                      <Input
+                        value={themeForm.twitterSite}
+                        onChange={(e) => setThemeForm({...themeForm, twitterSite: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="@voltservers"
+                      />
+                    </div>
                   </div>
-                </form>
-              </CardContent>
-            </Card>
+                  <div>
+                    <Label className="text-gaming-white">Meta Description</Label>
+                    <Textarea
+                      value={themeForm.metaDescription}
+                      onChange={(e) => setThemeForm({...themeForm, metaDescription: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Professional game server hosting with DDoS protection..."
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Meta Keywords</Label>
+                    <Input
+                      value={themeForm.metaKeywords}
+                      onChange={(e) => setThemeForm({...themeForm, metaKeywords: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="game server hosting, minecraft hosting, gaming"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Analytics & Tracking */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Analytics & Tracking</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Add tracking codes and analytics
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Google Analytics ID</Label>
+                      <Input
+                        value={themeForm.googleAnalyticsId}
+                        onChange={(e) => setThemeForm({...themeForm, googleAnalyticsId: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="GA-XXXXXXXXX-X"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Google Tag Manager ID</Label>
+                      <Input
+                        value={themeForm.googleTagManagerId}
+                        onChange={(e) => setThemeForm({...themeForm, googleTagManagerId: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="GTM-XXXXXXX"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Facebook Pixel ID</Label>
+                      <Input
+                        value={themeForm.facebookPixelId}
+                        onChange={(e) => setThemeForm({...themeForm, facebookPixelId: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="123456789012345"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Custom Head Code</Label>
+                    <Textarea
+                      value={themeForm.customHeadCode}
+                      onChange={(e) => setThemeForm({...themeForm, customHeadCode: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white font-mono text-sm"
+                      placeholder="<script>...</script>"
+                      rows={4}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Site Management */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Site Management</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Maintenance mode and announcements
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={themeForm.maintenanceMode}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, maintenanceMode: checked})}
+                    />
+                    <Label className="text-gaming-white">Maintenance Mode</Label>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Maintenance Message</Label>
+                    <Textarea
+                      value={themeForm.maintenanceMessage}
+                      onChange={(e) => setThemeForm({...themeForm, maintenanceMessage: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="We're currently performing maintenance..."
+                      rows={2}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={themeForm.showAnnouncementBanner}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, showAnnouncementBanner: checked})}
+                    />
+                    <Label className="text-gaming-white">Show Announcement Banner</Label>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Announcement Text</Label>
+                    <Input
+                      value={themeForm.announcementBanner}
+                      onChange={(e) => setThemeForm({...themeForm, announcementBanner: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="New features available now!"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Advanced Settings */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Advanced Settings</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Custom CSS and additional customizations
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gaming-white">Holiday Theme</Label>
+                    <Select value={themeForm.holidayTheme} onValueChange={(value) => setThemeForm({...themeForm, holidayTheme: value})}>
+                      <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">None</SelectItem>
+                        <SelectItem value="snow">Snow Effect</SelectItem>
+                        <SelectItem value="halloween">Halloween</SelectItem>
+                        <SelectItem value="christmas">Christmas</SelectItem>
+                        <SelectItem value="easter">Easter</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Custom CSS</Label>
+                    <Textarea
+                      value={themeForm.customCss}
+                      onChange={(e) => setThemeForm({...themeForm, customCss: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white font-mono text-sm"
+                      placeholder=".custom-class { color: #00cc6a; }"
+                      rows={6}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Save Button */}
+              <div className="flex justify-between items-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => window.open('/', '_blank')}
+                  className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview Site
+                </Button>
+                <Button 
+                  onClick={() => updateThemeMutation.mutate(themeForm)}
+                  className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                  disabled={updateThemeMutation.isPending}
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {updateThemeMutation.isPending ? 'Saving...' : 'Save Theme Settings'}
+                </Button>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

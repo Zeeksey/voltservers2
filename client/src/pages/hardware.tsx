@@ -18,12 +18,29 @@ import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 
 export default function HardwarePage() {
+  // Primary server specifications - OVH Rise-Game-2
+  const primaryServer = {
+    name: "Rise-Game-2",
+    provider: "OVHcloud",
+    processor: "AMD Ryzen 7 5800X",
+    cores: "8 cores",
+    baseSpeed: "3.8 GHz",
+    boostSpeed: "4.7 GHz",
+    architecture: "AMD Ryzen 5000 series",
+    multithreading: "SMT (Simultaneous Multithreading)",
+    cooling: "Water Cooling Technology",
+    ddosProtection: "Exclusive Game DDoS Protection",
+    traffic: "Unlimited Traffic",
+    performance: "26% more performance than previous generation",
+    optimizedFor: "Video processing, encoding, virtual gaming platforms"
+  };
+
   const locations = [
     {
       region: "North America",
       locations: [
-        { name: "Virginia", ping: "13ms", recommended: true, specs: "AMD EPYC 4464P @ Max 5.40 GHz", score: "4130", cooling: "Water Cooled" },
-        { name: "Quebec", ping: "36ms", specs: "AMD EPYC 4464P @ Max 5.40 GHz", score: "4130", cooling: "Water Cooled" },
+        { name: "Virginia", ping: "13ms", recommended: true, specs: "OVH Rise-Game-2 (Ryzen 7 5800X @ 4.7 GHz)", score: "4130", cooling: "Water Cooled" },
+        { name: "Quebec", ping: "36ms", specs: "OVH Rise-Game-2 (Ryzen 7 5800X @ 4.7 GHz)", score: "4130", cooling: "Water Cooled" },
         { name: "Florida", ping: "42ms", specs: "AMD Ryzen 9 7950X @ Max 5.70 GHz", score: "4266" },
         { name: "Texas", ping: "46ms", specs: "Intel Xeon E-2276G @ Max 4.90 GHz", score: "2880" },
         { name: "California", ping: "86ms", specs: "AMD EPYC 4564P @ Max 5.70 GHz", score: "4266" },
@@ -113,6 +130,94 @@ export default function HardwarePage() {
                 View Specs
               </Button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Primary Server Showcase - OVH Rise-Game-2 */}
+      <section className="py-16 px-4 bg-gaming-black-light">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gaming-white mb-4">
+              Our Primary Gaming Server
+            </h2>
+            <p className="text-xl text-gaming-gray">
+              OVH Rise-Game-2 - Professional gaming hardware with 26% more performance
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <Card className="bg-gaming-black border-gaming-green/30 p-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                <div>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 bg-gaming-green/10 rounded-lg flex items-center justify-center">
+                      <Server className="w-8 h-8 text-gaming-green" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-gaming-white">{primaryServer.name}</h3>
+                      <p className="text-gaming-gray">by {primaryServer.provider}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <Cpu className="w-5 h-5 text-gaming-green" />
+                      <span className="text-gaming-white font-medium">Processor:</span>
+                      <span className="text-gaming-gray">{primaryServer.processor} ({primaryServer.cores})</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-gaming-green" />
+                      <span className="text-gaming-white font-medium">Speed:</span>
+                      <span className="text-gaming-gray">{primaryServer.baseSpeed} base, {primaryServer.boostSpeed} boost</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Activity className="w-5 h-5 text-gaming-green" />
+                      <span className="text-gaming-white font-medium">Technology:</span>
+                      <span className="text-gaming-gray">{primaryServer.multithreading}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Zap className="w-5 h-5 text-gaming-green" />
+                      <span className="text-gaming-white font-medium">Cooling:</span>
+                      <span className="text-gaming-gray">{primaryServer.cooling}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <h4 className="text-lg font-semibold text-gaming-white mb-4">Key Features</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <Shield className="w-5 h-5 text-gaming-green mt-0.5" />
+                      <div>
+                        <p className="text-gaming-white font-medium">{primaryServer.ddosProtection}</p>
+                        <p className="text-gaming-gray text-sm">Built-in protection against gaming attacks</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Globe className="w-5 h-5 text-gaming-green mt-0.5" />
+                      <div>
+                        <p className="text-gaming-white font-medium">{primaryServer.traffic}</p>
+                        <p className="text-gaming-gray text-sm">No bandwidth limitations or overage charges</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <Activity className="w-5 h-5 text-gaming-green mt-0.5" />
+                      <div>
+                        <p className="text-gaming-white font-medium">{primaryServer.performance}</p>
+                        <p className="text-gaming-gray text-sm">Optimized for {primaryServer.optimizedFor}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 p-4 bg-gaming-green/10 rounded-lg border border-gaming-green/30">
+                    <p className="text-gaming-green font-semibold text-sm">Performance Boost</p>
+                    <p className="text-gaming-white text-lg">Up to 4.7GHz with Boost Mode</p>
+                    <p className="text-gaming-gray text-sm">Water cooling ensures consistent performance</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>
