@@ -10,7 +10,7 @@ import { getServerStatus } from "./server-query";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize database with default data
-  await initializeDatabase();
+  await initializeDatabase(storage);
   
   // Health check endpoint for Render
   app.get("/api/health", (req, res) => {
