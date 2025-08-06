@@ -96,10 +96,38 @@ export default function AdminGameCustomization() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch game data
-  const { data: game, isLoading: gameLoading } = useQuery<Game>({
+  // Fetch game data with proper error handling and fallback
+  const { data: game, isLoading: gameLoading, error: gameError } = useQuery<Game>({
     queryKey: ['/api/games', gameId],
     enabled: !!gameId,
+    queryFn: async () => {
+      // First try to get game from the general games API
+      try {
+        const response = await fetch(`/api/games/${gameId}`);
+        if (response.ok) {
+          return response.json();
+        }
+      } catch (error) {
+        console.log('Failed to fetch individual game, trying from games list');
+      }
+      
+      // Fallback: get all games and find the one we need
+      const allGamesResponse = await fetch('/api/games');
+      if (!allGamesResponse.ok) {
+        throw new Error('Failed to fetch games data');
+      }
+      
+      const allGames = await allGamesResponse.json();
+      const foundGame = allGames.find((g: any) => g.id === gameId);
+      
+      if (!foundGame) {
+        throw new Error('Game not found');
+      }
+      
+      return foundGame;
+    },
+    retry: 2,
+    staleTime: 0,
   });
 
   // Page builder state
@@ -193,12 +221,38 @@ export default function AdminGameCustomization() {
     setSections(newSections);
   };
 
+  // API request helper function for admin operations
+  const makeApiRequest = async (url: string, options: RequestInit = {}) => {
+    const token = localStorage.getItem("adminToken");
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminUser");
+      throw new Error("Unauthorized");
+    }
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Request failed");
+    }
+
+    return response.json();
+  };
+
   // Save page structure mutation
   const savePageMutation = useMutation({
     mutationFn: async () => {
       const pageStructure = JSON.stringify({ sections });
       
-      return apiRequest(`/api/admin/games/${gameId}`, {
+      return makeApiRequest(`/api/admin/games/${gameId}`, {
         method: 'PUT',
         body: JSON.stringify({
           ...game,
