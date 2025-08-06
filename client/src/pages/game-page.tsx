@@ -78,7 +78,7 @@ function CustomSection({ section, game }: { section: any; game: Game }) {
 export default function GamePage() {
   const [match, params] = useRoute("/games/:slug");
   const slug = params?.slug;
-  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "biannual" | "annual">("monthly");
+  const [billingPeriod, setBillingPeriod] = useState<"monthly" | "quarterly" | "biannual" | "annual">("monthly");
 
   const { data: game, isLoading } = useQuery<Game>({
     queryKey: ["/api/games", slug],
@@ -160,7 +160,8 @@ export default function GamePage() {
   // Pricing tier multipliers (discounts for longer terms)
   const pricingMultipliers = {
     monthly: 1.0,
-    biannual: 0.85, // 15% discount
+    quarterly: 0.90, // 10% discount
+    biannual: 0.80, // 20% discount
     annual: 0.75    // 25% discount
   };
 
@@ -172,7 +173,8 @@ export default function GamePage() {
   const getBillingLabel = (period: string) => {
     switch(period) {
       case 'monthly': return 'Monthly';
-      case 'biannual': return 'Biannual (15% off)';
+      case 'quarterly': return 'Quarterly (10% off)';
+      case 'biannual': return 'Semi-Annual (20% off)';
       case 'annual': return 'Annual (25% off)';
       default: return 'Monthly';
     }
@@ -363,7 +365,7 @@ export default function GamePage() {
               <p className="text-gray-400 mb-4">Select a billing cycle to see your discounted rate:</p>
             </div>
             <div className="flex justify-center mb-8">
-              <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "biannual" | "annual")} className="w-auto">
+              <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "quarterly" | "biannual" | "annual")} className="w-auto">
                 <TabsList className="grid w-full grid-cols-4 bg-black/20 border border-zinc-700">
                   <TabsTrigger 
                     value="monthly" 
@@ -372,7 +374,7 @@ export default function GamePage() {
                     Monthly
                   </TabsTrigger>
                   <TabsTrigger 
-                    value="biannual" 
+                    value="quarterly" 
                     className="data-[state=active]:bg-gaming-green data-[state=active]:text-black"
                   >
                     Quarterly <span className="text-xs text-gaming-green">-10% OFF</span>
