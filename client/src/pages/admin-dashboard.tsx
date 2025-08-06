@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -44,8 +45,18 @@ export default function AdminDashboard() {
   const [, setLocation] = useLocation();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isCreateIncidentOpen, setIsCreateIncidentOpen] = useState(false);
   const [editingIncident, setEditingIncident] = useState<any>(null);
+  const [incidentForm, setIncidentForm] = useState({
+    title: "",
+    description: "",
+    severity: "minor",
+    status: "investigating",
+    affectedServices: [] as string[],
+    updates: ""
+  });
   const [themeForm, setThemeForm] = useState({
     siteName: "VoltServers",
     siteTagline: "Professional Game Server Hosting",
@@ -126,13 +137,11 @@ export default function AdminDashboard() {
   const [pingResults, setPingResults] = useState<Map<string, number>>(new Map());
   const [testingPing, setTestingPing] = useState<Set<string>>(new Set());
   
-  const { toast } = useToast();
-  
   // Ping testing function
   const testLocationPing = async (locationId: string, ipAddress: string, port: string = "80") => {
     if (!ipAddress) return;
     
-    setTestingPing(prev => new Set([...prev, locationId]));
+    setTestingPing(prev => new Set([...Array.from(prev), locationId]));
     
     try {
       const startTime = Date.now();
@@ -147,13 +156,13 @@ export default function AdminDashboard() {
       const pingTime = endTime - startTime;
       
       if (response.ok) {
-        setPingResults(prev => new Map([...prev, [locationId, pingTime]]));
+        setPingResults(prev => new Map([...Array.from(prev), [locationId, pingTime]]));
         toast({
           title: "Ping Test Successful",
           description: `${ipAddress}: ${pingTime}ms`,
         });
       } else {
-        setPingResults(prev => new Map([...prev, [locationId, -1]]));
+        setPingResults(prev => new Map([...Array.from(prev), [locationId, -1]]));
         toast({
           title: "Ping Test Failed",
           description: `Could not reach ${ipAddress}`,
@@ -161,7 +170,7 @@ export default function AdminDashboard() {
         });
       }
     } catch (error) {
-      setPingResults(prev => new Map([...prev, [locationId, -1]]));
+      setPingResults(prev => new Map([...Array.from(prev), [locationId, -1]]));
       toast({
         title: "Ping Test Error",
         description: `Network error testing ${ipAddress}`,
@@ -169,13 +178,24 @@ export default function AdminDashboard() {
       });
     } finally {
       setTestingPing(prev => {
-        const newSet = new Set(prev);
+        const newSet = new Set(Array.from(prev));
         newSet.delete(locationId);
         return newSet;
       });
     }
   };
-  const queryClient = useQueryClient();
+
+  // Mobile touch event handlers
+  const handleMobileClick = (callback: () => void) => (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    callback();
+  };
+
+  const handleMobileTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   // Check authentication
   useEffect(() => {
@@ -252,7 +272,111 @@ export default function AdminDashboard() {
   // Helper functions for incident management
   const editIncident = (incident: any) => {
     setEditingIncident(incident);
+    setIncidentForm({
+      title: incident.title || "",
+      description: incident.description || "",
+      severity: incident.severity || "minor",
+      status: incident.status || "investigating", 
+      affectedServices: incident.affectedServices || [],
+      updates: incident.updates || ""
+    });
     setIsCreateIncidentOpen(true);
+  };
+
+  // Create incident mutation
+  const createIncidentMutation = useMutation({
+    mutationFn: async (incidentData: any) => {
+      const response = await fetch('/api/incidents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(incidentData)
+      });
+      if (!response.ok) throw new Error('Failed to create incident');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/incidents'] });
+      setIsCreateIncidentOpen(false);
+      setIncidentForm({
+        title: "",
+        description: "",
+        severity: "minor", 
+        status: "investigating",
+        affectedServices: [],
+        updates: ""
+      });
+      toast({
+        title: "Success",
+        description: "Incident created successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error", 
+        description: error.message || "Failed to create incident",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update incident mutation
+  const updateIncidentMutation = useMutation({
+    mutationFn: async ({ id, ...incidentData }: any) => {
+      const response = await fetch(`/api/incidents/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(incidentData)
+      });
+      if (!response.ok) throw new Error('Failed to update incident');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/incidents'] });
+      setIsCreateIncidentOpen(false);
+      setEditingIncident(null);
+      setIncidentForm({
+        title: "",
+        description: "",
+        severity: "minor",
+        status: "investigating", 
+        affectedServices: [],
+        updates: ""
+      });
+      toast({
+        title: "Success",
+        description: "Incident updated successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update incident",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleSubmitIncident = () => {
+    if (!incidentForm.title.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter an incident title",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const incidentData = {
+      ...incidentForm,
+      startTime: new Date().toISOString(),
+      isResolved: incidentForm.status === 'resolved'
+    };
+
+    if (editingIncident) {
+      updateIncidentMutation.mutate({ id: editingIncident.id, ...incidentData });
+    } else {
+      createIncidentMutation.mutate(incidentData);
+    }
   };
 
   // Statistics
@@ -635,7 +759,19 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </div>
                   <Button
-                    onClick={() => setLocation('/admin/games/new/edit')}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setLocation('/admin/games/new/edit');
+                    }}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    style={{ 
+                      WebkitTapHighlightColor: 'transparent',
+                      touchAction: 'manipulation'
+                    }}
                     className="bg-gaming-green text-black hover:bg-gaming-green/90 touch-target admin-mobile-full"
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -674,7 +810,8 @@ export default function AdminDashboard() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => window.open(`/games/${game.slug}`, '_blank')}
+                          onClick={handleMobileClick(() => window.open(`/games/${game.slug}`, '_blank'))}
+                          onTouchStart={handleMobileTouchStart}
                           className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Eye className="w-4 h-4" />
@@ -683,7 +820,8 @@ export default function AdminDashboard() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => setLocation(`/admin/games/${game.id}/edit`)}
+                          onClick={handleMobileClick(() => setLocation(`/admin/games/${game.id}/edit`))}
+                          onTouchStart={handleMobileTouchStart}
                           className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black touch-target"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -692,7 +830,8 @@ export default function AdminDashboard() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => deleteGameMutation.mutate(game.id)}
+                          onClick={handleMobileClick(() => deleteGameMutation.mutate(game.id))}
+                          onTouchStart={handleMobileTouchStart}
                           className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white touch-target"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -718,7 +857,8 @@ export default function AdminDashboard() {
                     </CardDescription>
                   </div>
                   <Button
-                    onClick={() => setLocation('/admin/blog/new')}
+                    onClick={handleMobileClick(() => setLocation('/admin/blog/new'))}
+                    onTouchStart={handleMobileTouchStart}
                     className={`bg-gaming-green text-black hover:bg-gaming-green/90 touch-target ${isMobile ? 'admin-mobile-full' : ''}`}
                   >
                     <Plus className="w-4 h-4 mr-2" />
@@ -1997,8 +2137,9 @@ export default function AdminDashboard() {
                   <p className="text-gaming-gray">Manage service status and incident reports for your status page</p>
                 </div>
                 <Button 
-                  onClick={() => setIsCreateIncidentOpen(true)}
-                  className="bg-gaming-green text-black hover:bg-gaming-green/90"
+                  onClick={handleMobileClick(() => setIsCreateIncidentOpen(true))}
+                  onTouchStart={handleMobileTouchStart}
+                  className="bg-gaming-green text-black hover:bg-gaming-green/90 touch-target"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   New Incident
@@ -2104,6 +2245,121 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Incident Creation/Edit Dialog */}
+      <Dialog open={isCreateIncidentOpen} onOpenChange={setIsCreateIncidentOpen}>
+        <DialogContent className="bg-gaming-black-light border-gaming-green/30 text-gaming-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-gaming-white">
+              {editingIncident ? 'Edit Incident' : 'Create New Incident'}
+            </DialogTitle>
+            <DialogDescription className="text-gaming-gray">
+              {editingIncident ? 'Update incident details and status' : 'Report a new service incident or outage'}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className={`space-y-4 ${isMobile ? 'admin-mobile-form' : ''}`}>
+            <div className="form-group">
+              <Label className="text-gaming-white">Incident Title</Label>
+              <Input
+                value={incidentForm.title}
+                onChange={(e) => setIncidentForm({...incidentForm, title: e.target.value})}
+                placeholder="Brief description of the issue"
+                className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+              />
+            </div>
+
+            <div className="form-group">
+              <Label className="text-gaming-white">Description</Label>
+              <Textarea
+                value={incidentForm.description}
+                onChange={(e) => setIncidentForm({...incidentForm, description: e.target.value})}
+                placeholder="Detailed description of the incident and its impact"
+                rows={3}
+                className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="form-group">
+                <Label className="text-gaming-white">Severity</Label>
+                <Select value={incidentForm.severity} onValueChange={(value) => setIncidentForm({...incidentForm, severity: value})}>
+                  <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gaming-black border-gaming-green/30">
+                    <SelectItem value="minor">Minor</SelectItem>
+                    <SelectItem value="major">Major</SelectItem>
+                    <SelectItem value="critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="form-group">
+                <Label className="text-gaming-white">Status</Label>
+                <Select value={incidentForm.status} onValueChange={(value) => setIncidentForm({...incidentForm, status: value})}>
+                  <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gaming-black border-gaming-green/30">
+                    <SelectItem value="investigating">Investigating</SelectItem>
+                    <SelectItem value="identified">Identified</SelectItem>
+                    <SelectItem value="monitoring">Monitoring</SelectItem>
+                    <SelectItem value="resolved">Resolved</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="form-group">
+              <Label className="text-gaming-white">Status Updates (Optional)</Label>
+              <Textarea
+                value={incidentForm.updates}
+                onChange={(e) => setIncidentForm({...incidentForm, updates: e.target.value})}
+                placeholder="Additional updates or progress information"
+                rows={2}
+                className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+              />
+            </div>
+          </div>
+
+          <DialogFooter className={isMobile ? 'admin-mobile-buttons' : 'flex gap-2'}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsCreateIncidentOpen(false);
+                setEditingIncident(null);
+                setIncidentForm({
+                  title: "",
+                  description: "",
+                  severity: "minor",
+                  status: "investigating",
+                  affectedServices: [],
+                  updates: ""
+                });
+              }}
+              className="border-gaming-green/30 text-gaming-white hover:bg-gaming-green/10"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmitIncident}
+              disabled={createIncidentMutation.isPending || updateIncidentMutation.isPending}
+              className="bg-gaming-green text-black hover:bg-gaming-green/90"
+            >
+              {(createIncidentMutation.isPending || updateIncidentMutation.isPending) ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {editingIncident ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                editingIncident ? 'Update Incident' : 'Create Incident'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );

@@ -701,6 +701,46 @@ textarea::placeholder {
     button, .btn, [role="button"] {
       min-height: 48px;
       min-width: 48px;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+    
+    /* Fix button interactivity on mobile */
+    button:active, .btn:active, [role="button"]:active {
+      transform: scale(0.98);
+      transition: transform 0.1s ease;
+    }
+    
+    /* Ensure proper z-index for interactive elements */
+    button, .btn, [role="button"], a, input, select, textarea {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Mobile admin improvements */
+    .admin-mobile-button-area {
+      min-height: 50px;
+      min-width: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    
+    /* Prevent iOS double-tap to zoom on buttons */
+    button, .btn, [role="button"], [type="button"], [type="submit"] {
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+    
+    /* Better tab/dialog interaction on mobile */
+    [data-state="active"], [aria-selected="true"] {
+      background-color: var(--gaming-green) !important;
+      color: black !important;
     }
     
     /* Mobile-specific admin styles */
