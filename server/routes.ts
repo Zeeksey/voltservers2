@@ -1001,13 +1001,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.put("/api/admin/games/:id", requireAdmin, async (req, res) => {
     try {
-      const game = await storage.updateGame(req.params.id, req.body);
+      const gameId = req.params.id;
+      
+      // Validate gameId
+      if (!gameId || gameId === 'undefined' || gameId === 'null') {
+        return res.status(400).json({ 
+          message: "Invalid game ID provided",
+          error: "INVALID_GAME_ID" 
+        });
+      }
+      
+      const game = await storage.updateGame(gameId, req.body);
+      if (!game) {
+        return res.status(404).json({ 
+          message: "Game not found",
+          error: "GAME_NOT_FOUND" 
+        });
+      }
+      
       res.json(game);
     } catch (error) {
       console.error("Update game error:", error);
       // Try memory storage as fallback
       try {
-        const game = await memStorage.updateGame(req.params.id, req.body);
+        const gameId = req.params.id;
+        if (!gameId || gameId === 'undefined' || gameId === 'null') {
+          return res.status(400).json({ 
+            message: "Invalid game ID provided",
+            error: "INVALID_GAME_ID" 
+          });
+        }
+        
+        const game = await memStorage.updateGame(gameId, req.body);
+        if (!game) {
+          return res.status(404).json({ 
+            message: "Game not found",
+            error: "GAME_NOT_FOUND" 
+          });
+        }
+        
         res.json(game);
       } catch (memError) {
         console.error("Memory storage fallback failed:", memError);

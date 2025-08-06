@@ -140,7 +140,19 @@ export default function AdminGameEditor() {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.message || 'Failed to save game');
       }
-      return response.json();
+      
+      // Handle empty response body
+      const responseText = await response.text();
+      if (!responseText) {
+        throw new Error('Server returned empty response');
+      }
+      
+      try {
+        return JSON.parse(responseText);
+      } catch (e) {
+        console.error('Invalid JSON response:', responseText);
+        throw new Error('Invalid server response format');
+      }
     },
     onSuccess: (savedGame) => {
       toast({
@@ -376,7 +388,25 @@ export default function AdminGameEditor() {
               </Button>
             )}
             <Button
-              onClick={() => saveGameMutation.mutate(gameData)}
+              onClick={() => {
+                // Validate required fields
+                if (!gameData.name || !gameData.slug) {
+                  toast({
+                    title: "Validation Error",
+                    description: "Name and slug are required fields",
+                    variant: "destructive"
+                  });
+                  return;
+                }
+                
+                // Generate ID for new games
+                if (gameId === 'new' && !gameData.id) {
+                  gameData.id = `${gameData.slug}-${Date.now()}`;
+                }
+                
+                console.log('Saving game with ID:', gameId, 'Data:', gameData);
+                saveGameMutation.mutate(gameData);
+              }}
               disabled={saveGameMutation.isPending}
               className="bg-gaming-green text-black hover:bg-gaming-green/90"
             >
@@ -873,7 +903,25 @@ export default function AdminGameEditor() {
 
         <div className="flex justify-end mt-8">
           <Button
-            onClick={() => saveGameMutation.mutate(gameData)}
+            onClick={() => {
+              // Validate required fields
+              if (!gameData.name || !gameData.slug) {
+                toast({
+                  title: "Validation Error",
+                  description: "Name and slug are required fields",
+                  variant: "destructive"
+                });
+                return;
+              }
+              
+              // Generate ID for new games
+              if (gameId === 'new' && !gameData.id) {
+                gameData.id = `${gameData.slug}-${Date.now()}`;
+              }
+              
+              console.log('Saving game with ID:', gameId, 'Data:', gameData);
+              saveGameMutation.mutate(gameData);
+            }}
             disabled={saveGameMutation.isPending}
             size="lg"
             className="bg-gaming-green text-black hover:bg-gaming-green/90"
