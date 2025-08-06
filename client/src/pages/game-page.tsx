@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight } from "lucide-react";
+import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight, Database, ChevronDown } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
@@ -274,6 +274,8 @@ export default function GamePage() {
       {/* Hero Section - VoltServers Style */}
       <section className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gaming-black via-gaming-black-light to-gaming-black"></div>
+        <div className="absolute inset-0 bg-[url('/api/placeholder/1920/1080')] bg-cover bg-center opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-gaming-black/90 via-gaming-black/50 to-transparent"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="text-left">
@@ -319,13 +321,20 @@ export default function GamePage() {
               </div>
             </div>
             <div className="relative">
-              <div className="relative rounded-2xl overflow-hidden">
+              <div className="relative rounded-2xl overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-gaming-green/20 to-blue-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300 -z-10"></div>
                 <img 
                   src={game.heroImageUrl || game.imageUrl} 
                   alt={game.name}
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg p-4">
+                    <div className="text-sm text-gaming-green font-semibold mb-1">Now Playing</div>
+                    <div className="text-white text-lg">Epic {game.name} Adventures</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -526,6 +535,193 @@ export default function GamePage() {
         </div>
       </section>
 
+      {/* Server Specifications */}
+      <section className="py-20 bg-gradient-to-br from-zinc-900 to-black">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">Enterprise Hardware</h2>
+            <p className="text-gray-400 text-lg">Professional-grade infrastructure for optimal performance</p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-black/30 border border-zinc-700 rounded-xl p-6 hover:border-gaming-green/50 transition-colors">
+              <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mb-4">
+                <Server className="w-6 h-6 text-gaming-green" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">CPU</h3>
+              <p className="text-gray-300">Intel Xeon E-2236</p>
+              <p className="text-sm text-gray-400">3.4GHz Base, 4.8GHz Turbo</p>
+            </div>
+            <div className="bg-black/30 border border-zinc-700 rounded-xl p-6 hover:border-gaming-green/50 transition-colors">
+              <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mb-4">
+                <Database className="w-6 h-6 text-gaming-green" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Memory</h3>
+              <p className="text-gray-300">DDR4 ECC RAM</p>
+              <p className="text-sm text-gray-400">Up to 128GB capacity</p>
+            </div>
+            <div className="bg-black/30 border border-zinc-700 rounded-xl p-6 hover:border-gaming-green/50 transition-colors">
+              <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-gaming-green" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Storage</h3>
+              <p className="text-gray-300">NVMe SSD</p>
+              <p className="text-sm text-gray-400">6x faster than SATA</p>
+            </div>
+            <div className="bg-black/30 border border-zinc-700 rounded-xl p-6 hover:border-gaming-green/50 transition-colors">
+              <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-gaming-green" />
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Network</h3>
+              <p className="text-gray-300">1Gbps Bandwidth</p>
+              <p className="text-sm text-gray-400">DDoS Protection</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Performance Stats */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="bg-gradient-to-r from-gaming-green/10 to-blue-500/10 rounded-2xl p-8 md:p-12">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">Trusted by Thousands</h2>
+              <p className="text-gray-400 text-lg">Join the community of satisfied server owners</p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-gaming-green mb-2">99.9%</div>
+                <div className="text-gray-400">Uptime</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-gaming-green mb-2">24/7</div>
+                <div className="text-gray-400">Support</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-gaming-green mb-2">1000+</div>
+                <div className="text-gray-400">Servers</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-gaming-green mb-2">50K+</div>
+                <div className="text-gray-400">Players</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 bg-gaming-black-light">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">What Players Say</h2>
+            <p className="text-gray-400 text-lg">Real feedback from our community</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
+                  A
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Alex Thompson</div>
+                  <div className="text-sm text-gray-400">Server Owner</div>
+                </div>
+              </div>
+              <p className="text-gray-300 italic">"Best hosting service I've used. Setup was instant and performance is incredible. My players love the zero lag experience!"</p>
+              <div className="flex text-gaming-green mt-3">
+                {"★".repeat(5)}
+              </div>
+            </div>
+            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
+                  S
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Sarah Chen</div>
+                  <div className="text-sm text-gray-400">Community Manager</div>
+                </div>
+              </div>
+              <p className="text-gray-300 italic">"The control panel is amazing. I can manage everything easily, and the 24/7 support team is always helpful when needed."</p>
+              <div className="flex text-gaming-green mt-3">
+                {"★".repeat(5)}
+              </div>
+            </div>
+            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
+                  M
+                </div>
+                <div>
+                  <div className="font-semibold text-white">Mike Rodriguez</div>
+                  <div className="text-sm text-gray-400">Gaming Streamer</div>
+                </div>
+              </div>
+              <p className="text-gray-300 italic">"Switched from another host and the difference is night and day. Server performance is consistent and reliable for streaming."</p>
+              <div className="flex text-gaming-green mt-3">
+                {"★".repeat(5)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4">Frequently Asked Questions</h2>
+            <p className="text-gray-400 text-lg">Everything you need to know about {game.name} hosting</p>
+          </div>
+          <div className="max-w-4xl mx-auto space-y-6">
+            <div className="bg-black/20 border border-zinc-700 rounded-xl overflow-hidden">
+              <details className="group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-black/30">
+                  <span className="font-semibold text-white">How quickly can I get my server online?</span>
+                  <ChevronDown className="w-5 h-5 text-gaming-green group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="p-6 pt-0 text-gray-300">
+                  Your {game.name} server will be automatically deployed within 60 seconds of payment confirmation. Our automated system handles all the setup, so you can start playing immediately.
+                </div>
+              </details>
+            </div>
+            <div className="bg-black/20 border border-zinc-700 rounded-xl overflow-hidden">
+              <details className="group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-black/30">
+                  <span className="font-semibold text-white">Can I install mods and plugins?</span>
+                  <ChevronDown className="w-5 h-5 text-gaming-green group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="p-6 pt-0 text-gray-300">
+                  Absolutely! You have full administrative access to install any compatible mods, plugins, or custom configurations. Our control panel makes it easy to manage everything.
+                </div>
+              </details>
+            </div>
+            <div className="bg-black/20 border border-zinc-700 rounded-xl overflow-hidden">
+              <details className="group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-black/30">
+                  <span className="font-semibold text-white">What kind of support do you provide?</span>
+                  <ChevronDown className="w-5 h-5 text-gaming-green group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="p-6 pt-0 text-gray-300">
+                  We offer 24/7 technical support through live chat, email tickets, and our comprehensive knowledge base. Our expert team can help with server setup, optimization, and troubleshooting.
+                </div>
+              </details>
+            </div>
+            <div className="bg-black/20 border border-zinc-700 rounded-xl overflow-hidden">
+              <details className="group">
+                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-black/30">
+                  <span className="font-semibold text-white">Can I upgrade or downgrade my plan?</span>
+                  <ChevronDown className="w-5 h-5 text-gaming-green group-open:rotate-180 transition-transform" />
+                </summary>
+                <div className="p-6 pt-0 text-gray-300">
+                  Yes! You can upgrade or downgrade your plan at any time through our client portal. Changes take effect immediately and billing is prorated automatically.
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Custom Sections */}
       {customSections.length > 0 && customSections
         .sort((a: any, b: any) => a.sortOrder - b.sortOrder)
@@ -533,23 +729,20 @@ export default function GamePage() {
           <CustomSection key={section.id} section={section} game={game} />
         ))}
 
-      {/* Detailed Description */}
-      {(game.detailedDescription || game.description) && (
-        <section className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-4xl font-bold text-gaming-white mb-8 text-center">
-                Why Choose Our {game.name} Hosting?
-              </h2>
-              <div className="prose prose-lg prose-invert">
-                <p className="text-gaming-gray text-lg leading-relaxed">
-                  {game.detailedDescription || game.description}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+      {/* Final CTA */}
+      <section className="py-20 bg-gradient-to-r from-gaming-green to-blue-500">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold text-black mb-4">Ready to Launch Your {game.name} Server?</h2>
+          <p className="text-xl text-black/80 mb-8">Join thousands of players enjoying lag-free gameplay</p>
+          <Button 
+            size="lg" 
+            className="bg-black text-gaming-green hover:bg-black/90 px-8 py-4 text-lg"
+            onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Start Your Server Now
+          </Button>
+        </div>
+      </section>
 
       {/* Related Articles */}
       {relatedArticles && relatedArticles.length > 0 && (
