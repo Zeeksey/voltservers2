@@ -30,7 +30,6 @@ export default function Navigation() {
 
   const mainNavLinks = [
     { href: "/games", label: "Games" },
-    { href: "/pricing", label: "Pricing" },
     { href: "/hardware", label: "Hardware" },
     { href: "/status", label: "Status" },
     { href: "/support", label: "Support" }

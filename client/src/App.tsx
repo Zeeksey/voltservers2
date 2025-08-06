@@ -26,7 +26,7 @@ const HardwarePage = lazy(() => import("@/pages/hardware"));
 const AboutPage = lazy(() => import("@/pages/about"));
 const SupportPage = lazy(() => import("@/pages/support"));
 const ContactPage = lazy(() => import("@/pages/contact"));
-const PricingPage = lazy(() => import("@/pages/pricing"));
+
 const KnowledgebasePage = lazy(() => import("@/pages/knowledgebase"));
 const StatusPage = lazy(() => import("@/pages/status"));
 const GamesPage = lazy(() => import("@/pages/games"));
@@ -64,7 +64,7 @@ function Router() {
       <Route path="/about" component={(props) => <LazyWrapper Component={AboutPage} {...props} />} />
       <Route path="/support" component={(props) => <LazyWrapper Component={SupportPage} {...props} />} />
       <Route path="/contact" component={(props) => <LazyWrapper Component={ContactPage} {...props} />} />
-      <Route path="/pricing" component={(props) => <LazyWrapper Component={PricingPage} {...props} />} />
+
       <Route path="/knowledgebase" component={(props) => <LazyWrapper Component={KnowledgebasePage} {...props} />} />
       <Route path="/status" component={(props) => <LazyWrapper Component={StatusPage} {...props} />} />
       <Route path="/games" component={(props) => <LazyWrapper Component={GamesPage} {...props} />} />
