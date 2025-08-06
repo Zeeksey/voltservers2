@@ -563,19 +563,19 @@ export default function GamePage() {
           
           <div className="grid md:grid-cols-3 gap-8">
             {(customPricingTiers.length > 0 ? customPricingTiers : pricingPlans).map((plan: any, index: number) => (
-              <div 
-                key={index} 
-                className={`relative rounded-xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
-                  (plan.popular || plan.isPopular) 
-                    ? 'border-gaming-green bg-black/60 scale-105' 
-                    : 'border-zinc-700 bg-black/40 hover:border-gaming-green'
-                }`}
-              >
+              <div key={index} className="relative">
                 {(plan.popular || plan.isPopular) && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                    <Badge className="bg-gaming-green text-black font-medium px-3 py-1">Most Popular</Badge>
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                    <Badge className="bg-gaming-green text-black font-medium px-4 py-1 shadow-lg">Most Popular</Badge>
                   </div>
                 )}
+                <div 
+                  className={`relative rounded-xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                    (plan.popular || plan.isPopular) 
+                      ? 'border-gaming-green bg-black/60 scale-105 mt-4' 
+                      : 'border-zinc-700 bg-black/40 hover:border-gaming-green'
+                  }`}
+                >
                 <div className="text-center pb-8 pt-8 px-6">
                   <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
                   <div className="mt-4">
@@ -645,6 +645,7 @@ export default function GamePage() {
                   >
                     Select Plan
                   </Button>
+                </div>
                 </div>
               </div>
             ))}
