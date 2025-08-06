@@ -300,8 +300,24 @@ export default function AdminGameCustomization() {
   };
 
   const updateSection = (sectionId: string, updates: Partial<PageSection>) => {
-    setSections(sections.map(section => 
+    setSections(current => current.map(section => 
       section.id === sectionId ? { ...section, ...updates } : section
+    ));
+  };
+
+  const updateSectionContent = (sectionId: string, contentUpdates: any) => {
+    setSections(current => current.map(section => 
+      section.id === sectionId 
+        ? { ...section, content: { ...section.content, ...contentUpdates } }
+        : section
+    ));
+  };
+
+  const updateSectionStyle = (sectionId: string, styleUpdates: any) => {
+    setSections(current => current.map(section => 
+      section.id === sectionId 
+        ? { ...section, style: { ...section.style, ...styleUpdates } }
+        : section
     ));
   };
 
@@ -372,6 +388,7 @@ export default function AdminGameCustomization() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/games', gameId] });
+      queryClient.invalidateQueries({ queryKey: ['/api/games'] });
       toast({ title: 'Page structure saved successfully!' });
     },
     onError: (error: Error) => {
@@ -737,6 +754,8 @@ export default function AdminGameCustomization() {
               <SectionEditor
                 section={sections.find(s => s.id === selectedSection)!}
                 onUpdate={(updates) => updateSection(selectedSection, updates)}
+                onUpdateContent={(contentUpdates) => updateSectionContent(selectedSection, contentUpdates)}
+                onUpdateStyle={(styleUpdates) => updateSectionStyle(selectedSection, styleUpdates)}
                 game={game}
               />
             ) : (
@@ -756,20 +775,18 @@ export default function AdminGameCustomization() {
 interface SectionEditorProps {
   section: PageSection;
   onUpdate: (updates: Partial<PageSection>) => void;
+  onUpdateContent: (contentUpdates: any) => void;
+  onUpdateStyle: (styleUpdates: any) => void;
   game: Game;
 }
 
-function SectionEditor({ section, onUpdate, game }: SectionEditorProps) {
+function SectionEditor({ section, onUpdate, onUpdateContent, onUpdateStyle, game }: SectionEditorProps) {
   const updateContent = (contentUpdates: any) => {
-    onUpdate({
-      content: { ...section.content, ...contentUpdates }
-    });
+    onUpdateContent(contentUpdates);
   };
 
   const updateStyle = (styleUpdates: any) => {
-    onUpdate({
-      style: { ...section.style, ...styleUpdates }
-    });
+    onUpdateStyle(styleUpdates);
   };
 
   return (
@@ -872,61 +889,320 @@ function SectionEditor({ section, onUpdate, game }: SectionEditorProps) {
         </div>
       )}
 
-      {/* Style Editor */}
-      <div className="space-y-4 border-t border-gaming-green/20 pt-4">
-        <h4 className="text-sm font-semibold text-gaming-green flex items-center gap-2">
-          <Palette className="w-4 h-4" />
-          Section Style
-        </h4>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label className="text-gray-300">Background</Label>
-            <div className="flex items-center gap-2 mt-1">
-              <Input
-                type="color"
-                value={section.style.backgroundColor}
-                onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
-                className="w-12 h-10 rounded border-gaming-green/30"
-              />
-              <Input
-                value={section.style.backgroundColor}
-                onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
-                className="admin-input flex-1"
-              />
+      {/* Enhanced Content Editor with Tabs */}
+      <Tabs defaultValue="content" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 bg-gaming-black border-gaming-green/30">
+          <TabsTrigger value="content" className="data-[state=active]:bg-gaming-green/20">
+            <Type className="w-4 h-4 mr-2" />
+            Content
+          </TabsTrigger>
+          <TabsTrigger value="style" className="data-[state=active]:bg-gaming-green/20">
+            <Palette className="w-4 h-4 mr-2" />
+            Style
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="content" className="space-y-4 mt-4">
+          {/* Dynamic content editor based on section type */}
+          {section.type === 'hero' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Premium Game Hosting"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Textarea
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-textarea mt-1"
+                  rows={2}
+                  placeholder="Experience lag-free gaming..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300">Button Text</Label>
+                  <Input
+                    value={section.content.buttonText || ''}
+                    onChange={(e) => updateContent({ buttonText: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="Get Started"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-300">Button URL</Label>
+                  <Input
+                    value={section.content.buttonUrl || ''}
+                    onChange={(e) => updateContent({ buttonUrl: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="/order"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gray-300">Background Image URL</Label>
+                <Input
+                  value={section.content.backgroundImage || ''}
+                  onChange={(e) => updateContent({ backgroundImage: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+            </div>
+          )}
+
+          {section.type === 'features' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Why Choose Our Servers?"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Discover the advantages..."
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Features</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newFeatures = [...(section.content.features || []), { title: 'New Feature', description: 'Feature description', icon: 'star' }];
+                      updateContent({ features: newFeatures });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Feature
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  {(section.content.features || []).map((feature: any, index: number) => (
+                    <div key={index} className="grid grid-cols-2 gap-2">
+                      <Input
+                        value={feature.title || ''}
+                        onChange={(e) => {
+                          const newFeatures = [...section.content.features];
+                          newFeatures[index] = { ...feature, title: e.target.value };
+                          updateContent({ features: newFeatures });
+                        }}
+                        className="admin-input"
+                        placeholder="Feature title"
+                      />
+                      <div className="flex gap-2">
+                        <Input
+                          value={feature.description || ''}
+                          onChange={(e) => {
+                            const newFeatures = [...section.content.features];
+                            newFeatures[index] = { ...feature, description: e.target.value };
+                            updateContent({ features: newFeatures });
+                          }}
+                          className="admin-input"
+                          placeholder="Feature description"
+                        />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newFeatures = section.content.features.filter((_: any, i: number) => i !== index);
+                            updateContent({ features: newFeatures });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {section.type === 'pricing' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Server Plans"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Choose the perfect plan..."
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Plans</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newPlans = [...(section.content.plans || []), { name: 'New Plan', price: '$9.99', features: ['Feature 1', 'Feature 2'], highlight: false, buttonText: 'Get Started' }];
+                      updateContent({ plans: newPlans });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Plan
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.plans || []).map((plan: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-2 gap-2 flex-1">
+                          <Input
+                            value={plan.name || ''}
+                            onChange={(e) => {
+                              const newPlans = [...section.content.plans];
+                              newPlans[index] = { ...plan, name: e.target.value };
+                              updateContent({ plans: newPlans });
+                            }}
+                            placeholder="Plan name"
+                            className="admin-input"
+                          />
+                          <Input
+                            value={plan.price || ''}
+                            onChange={(e) => {
+                              const newPlans = [...section.content.plans];
+                              newPlans[index] = { ...plan, price: e.target.value };
+                              updateContent({ plans: newPlans });
+                            }}
+                            placeholder="$9.99"
+                            className="admin-input"
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newPlans = section.content.plans.filter((_: any, i: number) => i !== index);
+                            updateContent({ plans: newPlans });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={Array.isArray(plan.features) ? plan.features.join('\n') : ''}
+                        onChange={(e) => {
+                          const newPlans = [...section.content.plans];
+                          newPlans[index] = { ...plan, features: e.target.value.split('\n').filter(f => f.trim()) };
+                          updateContent({ plans: newPlans });
+                        }}
+                        placeholder="Feature 1&#10;Feature 2&#10;Feature 3"
+                        className="admin-textarea"
+                        rows={3}
+                      />
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Fallback for other section types */}
+          {!['hero', 'features', 'pricing'].includes(section.type) && (
+            <div className="text-center py-8 text-gray-400">
+              <Settings className="w-12 h-12 mx-auto mb-3" />
+              <p>Content editing for {section.type} sections coming soon!</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="style" className="space-y-4 mt-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label className="text-gray-300">Background</Label>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={section.style.backgroundColor}
+                  onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
+                  className="w-12 h-10 rounded border-gaming-green/30"
+                />
+                <Input
+                  value={section.style.backgroundColor}
+                  onChange={(e) => updateStyle({ backgroundColor: e.target.value })}
+                  className="admin-input flex-1"
+                  placeholder="#000000"
+                />
+              </div>
+            </div>
+            <div>
+              <Label className="text-gray-300">Text Color</Label>
+              <div className="flex items-center gap-2 mt-1">
+                <Input
+                  type="color"
+                  value={section.style.textColor}
+                  onChange={(e) => updateStyle({ textColor: e.target.value })}
+                  className="w-12 h-10 rounded border-gaming-green/30"
+                />
+                <Input
+                  value={section.style.textColor}
+                  onChange={(e) => updateStyle({ textColor: e.target.value })}
+                  className="admin-input flex-1"
+                  placeholder="#ffffff"
+                />
+              </div>
             </div>
           </div>
           <div>
-            <Label className="text-gray-300">Text Color</Label>
-            <div className="flex items-center gap-2 mt-1">
-              <Input
-                type="color"
-                value={section.style.textColor}
-                onChange={(e) => updateStyle({ textColor: e.target.value })}
-                className="w-12 h-10 rounded border-gaming-green/30"
-              />
-              <Input
-                value={section.style.textColor}
-                onChange={(e) => updateStyle({ textColor: e.target.value })}
-                className="admin-input flex-1"
-              />
-            </div>
+            <Label className="text-gray-300">Padding</Label>
+            <Select value={section.style.padding} onValueChange={(value) => updateStyle({ padding: value })}>
+              <SelectTrigger className="admin-input mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1rem">Small (1rem)</SelectItem>
+                <SelectItem value="2rem">Medium (2rem)</SelectItem>
+                <SelectItem value="3rem">Large (3rem)</SelectItem>
+                <SelectItem value="4rem">Extra Large (4rem)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-        </div>
-        <div>
-          <Label className="text-gray-300">Padding</Label>
-          <Select value={section.style.padding} onValueChange={(value) => updateStyle({ padding: value })}>
-            <SelectTrigger className="admin-input mt-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1rem">Small</SelectItem>
-              <SelectItem value="2rem">Medium</SelectItem>
-              <SelectItem value="3rem">Large</SelectItem>
-              <SelectItem value="4rem">Extra Large</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+          <div>
+            <Label className="text-gray-300">Layout</Label>
+            <Select value={section.style.layout} onValueChange={(value) => updateStyle({ layout: value })}>
+              <SelectTrigger className="admin-input mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="center">Center</SelectItem>
+                <SelectItem value="left">Left Aligned</SelectItem>
+                <SelectItem value="right">Right Aligned</SelectItem>
+                <SelectItem value="grid">Grid Layout</SelectItem>
+                <SelectItem value="cards">Card Layout</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
