@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight, Database, ChevronDown } from "lucide-react";
+import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight, Database, ChevronDown, Settings, Package, Wrench, Globe, Gamepad2, Hammer, Download, Upload } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
@@ -75,10 +75,172 @@ function CustomSection({ section, game }: { section: any; game: Game }) {
   );
 }
 
+
+
 export default function GamePage() {
   const [match, params] = useRoute("/games/:slug");
   const slug = params?.slug;
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "quarterly" | "biannual" | "annual">("monthly");
+
+  // Helper functions for game-specific content
+  const getGameSpecificFeatures = (gameSlug: string) => {
+    const features = {
+      minecraft: [
+        {
+          icon: Package,
+          title: "Modpack Support",
+          description: "Install popular modpacks like FTB, Tekkit, and custom packs with one click"
+        },
+        {
+          icon: Wrench,
+          title: "Plugin Manager",
+          description: "Easy installation and management of Bukkit, Spigot, and Paper plugins"
+        },
+        {
+          icon: Globe,
+          title: "World Management",
+          description: "Upload custom worlds, manage backups, and switch between worlds easily"
+        },
+        {
+          icon: Settings,
+          title: "Server Properties",
+          description: "Full control over server.properties, whitelist, and operator permissions"
+        },
+        {
+          icon: Download,
+          title: "Version Control",
+          description: "Switch between Minecraft versions and server software (Vanilla, Paper, Forge)"
+        },
+        {
+          icon: Database,
+          title: "Scheduled Restarts",
+          description: "Automated server restarts and maintenance to keep performance optimal"
+        }
+      ],
+      rust: [
+        {
+          icon: Hammer,
+          title: "Oxide/uMod Support",
+          description: "Pre-installed Oxide framework with easy plugin installation and management"
+        },
+        {
+          icon: Settings,
+          title: "Server Config",
+          description: "Full access to server.cfg, modify rates, rules, and gameplay settings"
+        },
+        {
+          icon: Globe,
+          title: "Map Management",
+          description: "Custom maps, seed control, and automated wipe scheduling"
+        },
+        {
+          icon: Users,
+          title: "Admin Tools",
+          description: "Advanced admin commands, player management, and ban/kick utilities"
+        },
+        {
+          icon: Package,
+          title: "Workshop Items",
+          description: "Steam Workshop integration for skins, items, and custom content"
+        },
+        {
+          icon: Zap,
+          title: "Performance Monitoring",
+          description: "Real-time FPS monitoring, lag detection, and automatic optimization"
+        }
+      ],
+      ark: [
+        {
+          icon: Gamepad2,
+          title: "Game Mode Support",
+          description: "PvP, PvE, and custom game modes with full configuration control"
+        },
+        {
+          icon: Globe,
+          title: "Map Selection",
+          description: "All official maps plus custom map support with easy switching"
+        },
+        {
+          icon: Package,
+          title: "Mod Support",
+          description: "Steam Workshop mod integration with automatic updates and management"
+        },
+        {
+          icon: Settings,
+          title: "Breeding & Taming",
+          description: "Customizable breeding intervals, taming speeds, and creature spawns"
+        },
+        {
+          icon: Users,
+          title: "Tribe Management",
+          description: "Advanced tribe controls, alliances, and player administration tools"
+        },
+        {
+          icon: Database,
+          title: "Save Management",
+          description: "Automated backups, save file management, and rollback capabilities"
+        }
+      ]
+    };
+    
+    return features[gameSlug as keyof typeof features] || features.minecraft;
+  };
+
+  const getGameRequirements = (gameSlug: string) => {
+    const requirements = {
+      minecraft: [
+        { component: "RAM", requirement: "Minimum 2GB, Recommended 4GB+ for modded servers" },
+        { component: "CPU", requirement: "2+ CPU cores for optimal performance" },
+        { component: "Storage", requirement: "10GB+ SSD space, more for large worlds" },
+        { component: "Network", requirement: "Stable internet connection for player connectivity" },
+        { component: "Java", requirement: "Java 17+ for Minecraft 1.17+ versions" }
+      ],
+      rust: [
+        { component: "RAM", requirement: "Minimum 4GB, Recommended 8GB+ for large maps" },
+        { component: "CPU", requirement: "3+ CPU cores for smooth gameplay" },
+        { component: "Storage", requirement: "20GB+ SSD space for maps and saves" },
+        { component: "Network", requirement: "High-speed connection for 100+ players" },
+        { component: "OS", requirement: "Linux or Windows Server support" }
+      ],
+      ark: [
+        { component: "RAM", requirement: "Minimum 6GB, Recommended 12GB+ with mods" },
+        { component: "CPU", requirement: "4+ CPU cores for complex AI and physics" },
+        { component: "Storage", requirement: "30GB+ SSD space for maps and saves" },
+        { component: "Network", requirement: "Dedicated connection for stability" },
+        { component: "Graphics", requirement: "GPU acceleration for map generation" }
+      ]
+    };
+    
+    return requirements[gameSlug as keyof typeof requirements] || requirements.minecraft;
+  };
+
+  const getGameSetupSteps = (gameSlug: string) => {
+    const steps = {
+      minecraft: [
+        { title: "Choose Server Type", description: "Select Vanilla, Paper, Fabric, or Forge based on your needs" },
+        { title: "Configure Settings", description: "Set world name, game mode, difficulty, and player limits" },
+        { title: "Install Plugins/Mods", description: "Add essential plugins like WorldEdit, Essentials, or mod packs" },
+        { title: "Set Permissions", description: "Configure operator permissions and player ranks" },
+        { title: "Launch & Connect", description: "Start your server and share the IP with your friends" }
+      ],
+      rust: [
+        { title: "Server Identity", description: "Set server name, description, and region for discovery" },
+        { title: "Game Rules", description: "Configure PvP settings, gather rates, and decay timers" },
+        { title: "Map Settings", description: "Choose map size, seed, and wipe schedule preferences" },
+        { title: "Install Oxide", description: "Add essential plugins for moderation and gameplay" },
+        { title: "Launch Server", description: "Start server and register with Rust server browser" }
+      ],
+      ark: [
+        { title: "Map Selection", description: "Choose from The Island, Ragnarok, or other official maps" },
+        { title: "Game Settings", description: "Set difficulty, XP rates, taming speeds, and harvest amounts" },
+        { title: "Add Mods", description: "Install popular mods from Steam Workshop" },
+        { title: "Admin Setup", description: "Configure admin passwords and whitelist trusted players" },
+        { title: "Server Launch", description: "Start server and configure automatic restarts" }
+      ]
+    };
+    
+    return steps[gameSlug as keyof typeof steps] || steps.minecraft;
+  };
 
   const { data: game, isLoading } = useQuery<Game>({
     queryKey: ["/api/games", slug],
@@ -579,87 +741,65 @@ export default function GamePage() {
         </div>
       </section>
 
-      {/* Performance Stats */}
+      {/* Game-Specific Features */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="bg-gradient-to-r from-gaming-green/10 to-blue-500/10 rounded-2xl p-8 md:p-12">
             <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">Trusted by Thousands</h2>
-              <p className="text-gray-400 text-lg">Join the community of satisfied server owners</p>
+              <h2 className="text-4xl font-bold text-white mb-4">{game.name}-Specific Features</h2>
+              <p className="text-gray-400 text-lg">Optimized hosting for the best {game.name} experience</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="text-4xl font-bold text-gaming-green mb-2">99.9%</div>
-                <div className="text-gray-400">Uptime</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-gaming-green mb-2">24/7</div>
-                <div className="text-gray-400">Support</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-gaming-green mb-2">1000+</div>
-                <div className="text-gray-400">Servers</div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-gaming-green mb-2">50K+</div>
-                <div className="text-gray-400">Players</div>
-              </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {getGameSpecificFeatures(game.slug).map((feature, index) => (
+                <div key={index} className="bg-black/20 rounded-xl p-6 border border-zinc-700 hover:border-gaming-green/50 transition-colors">
+                  <div className="w-12 h-12 bg-gaming-green/20 rounded-lg flex items-center justify-center mb-4">
+                    <feature.icon className="w-6 h-6 text-gaming-green" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
+                  <p className="text-gray-400">{feature.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Game Requirements & Setup */}
       <section className="py-20 bg-gaming-black-light">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">What Players Say</h2>
-            <p className="text-gray-400 text-lg">Real feedback from our community</p>
+            <h2 className="text-4xl font-bold text-white mb-4">{game.name} Server Setup</h2>
+            <p className="text-gray-400 text-lg">Everything you need to know to get started</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
-                  A
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Alex Thompson</div>
-                  <div className="text-sm text-gray-400">Server Owner</div>
-                </div>
-              </div>
-              <p className="text-gray-300 italic">"Best hosting service I've used. Setup was instant and performance is incredible. My players love the zero lag experience!"</p>
-              <div className="flex text-gaming-green mt-3">
-                {"★".repeat(5)}
-              </div>
-            </div>
-            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
-                  S
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Sarah Chen</div>
-                  <div className="text-sm text-gray-400">Community Manager</div>
-                </div>
-              </div>
-              <p className="text-gray-300 italic">"The control panel is amazing. I can manage everything easily, and the 24/7 support team is always helpful when needed."</p>
-              <div className="flex text-gaming-green mt-3">
-                {"★".repeat(5)}
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-6">System Requirements</h3>
+              <div className="space-y-4">
+                {getGameRequirements(game.slug).map((req, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-gaming-green mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold text-white">{req.component}</div>
+                      <div className="text-gray-400 text-sm">{req.requirement}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="bg-black/40 border border-zinc-700 rounded-xl p-6">
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-gaming-green rounded-full flex items-center justify-center text-black font-bold mr-3">
-                  M
-                </div>
-                <div>
-                  <div className="font-semibold text-white">Mike Rodriguez</div>
-                  <div className="text-sm text-gray-400">Gaming Streamer</div>
-                </div>
-              </div>
-              <p className="text-gray-300 italic">"Switched from another host and the difference is night and day. Server performance is consistent and reliable for streaming."</p>
-              <div className="flex text-gaming-green mt-3">
-                {"★".repeat(5)}
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-6">Quick Setup Guide</h3>
+              <div className="space-y-4">
+                {getGameSetupSteps(game.slug).map((step, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-gaming-green rounded-full flex items-center justify-center text-black text-sm font-bold flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-semibold text-white">{step.title}</div>
+                      <div className="text-gray-400 text-sm">{step.description}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
