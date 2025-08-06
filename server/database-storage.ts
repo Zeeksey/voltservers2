@@ -494,4 +494,27 @@ export class DatabaseStorage implements IStorage {
   async deleteGameFeature(id: string): Promise<void> {
     await db.delete(gameFeatures).where(eq(gameFeatures.id, id));
   }
+
+  // Pricing plan methods (implementation)
+  async getPricingPlansByGameId(gameId: string): Promise<PricingPlan[]> {
+    return await db.select().from(pricingPlans).where(eq(pricingPlans.gameId, gameId));
+  }
+
+  async createPricingPlan(plan: InsertPricingPlan): Promise<PricingPlan> {
+    const [newPlan] = await db.insert(pricingPlans).values(plan).returning();
+    return newPlan;
+  }
+
+  async updatePricingPlan(id: string, updates: Partial<PricingPlan>): Promise<PricingPlan | undefined> {
+    const [updatedPlan] = await db
+      .update(pricingPlans)
+      .set(updates)
+      .where(eq(pricingPlans.id, id))
+      .returning();
+    return updatedPlan;
+  }
+
+  async deletePricingPlan(id: string): Promise<void> {
+    await db.delete(pricingPlans).where(eq(pricingPlans.id, id));
+  }
 }

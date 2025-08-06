@@ -109,13 +109,13 @@ export default function GameCards() {
   // Never show loading state - always display games immediately
 
   return (
-    <section id="games" className="py-20 bg-gray-50 dark:bg-gaming-black-light">
+    <section id="games" className="py-20 bg-gaming-black-light">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-gray-900 dark:text-white">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
             Find the Perfect <span className="text-gaming-green">Game Server</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gaming-gray max-w-3xl mx-auto">
+          <p className="text-xl text-gaming-gray max-w-3xl mx-auto">
             Browse our collection of optimized game servers. From Minecraft to Rust, we've got your favorites covered with high-performance hosting.
           </p>
         </div>
@@ -123,47 +123,51 @@ export default function GameCards() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {games?.map((game: any) => (
             <Link key={game.id} href={`/games/${game.slug}`}>
-              <Card className="group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-gaming-green/10 transition-all duration-300 hover:border-gaming-green/30 flex flex-col h-full cursor-pointer">
-                <div className="relative">
+              <div className="rounded-xl border border-zinc-700 bg-black/40 overflow-hidden hover:border-gaming-green transition-all duration-300 hover:-translate-y-1 group cursor-pointer">
+                <div className="relative aspect-[2/1] overflow-hidden">
                   <GameImage 
                     src={game.imageUrl || `/images/games/${game.slug}.svg`} 
-                    alt={`${game.name} server interface`} 
+                    alt={game.name} 
                     gameSlug={game.slug}
-                    className="w-full h-48 object-cover rounded-t-xl" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                     loading="eager"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.src = `/images/games/default.svg`;
                     }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                  
                   {/* Badges positioned in top-left */}
                   <div className="absolute top-3 left-3 flex gap-1 flex-wrap">
                     {game.isPopular && (
-                      <Badge className="bg-gaming-green text-white text-xs px-2 py-1">
+                      <Badge className="bg-gaming-green text-black text-xs px-2 py-1 font-medium">
                         Popular
                       </Badge>
                     )}
                     {game.isTrending && (
-                      <Badge className="bg-orange-500 text-white text-xs px-2 py-1">
+                      <Badge className="bg-orange-500 text-white text-xs px-2 py-1 font-medium">
                         Trending
                       </Badge>
                     )}
                     {game.isNew && (
-                      <Badge className="bg-blue-500 text-white text-xs px-2 py-1">
+                      <Badge className="bg-blue-500 text-white text-xs px-2 py-1 font-medium">
                         New
                       </Badge>
                     )}
                   </div>
+                  
+                  {/* Game title overlay */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl font-bold text-white mb-1 group-hover:text-gaming-green transition-colors">
+                      {game.name}
+                    </h3>
+                  </div>
                 </div>
                 
-                <CardContent className="p-6 flex-1 flex flex-col">
-                  {/* Game Title */}
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-gaming-green transition-colors">
-                    {game.name}
-                  </h3>
-                  
+                <div className="p-6">
                   {/* Game Description */}
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 text-sm leading-relaxed flex-1">
+                  <p className="text-gray-300 mb-4 text-sm leading-relaxed">
                     {game.description}
                   </p>
                   
@@ -171,8 +175,8 @@ export default function GameCards() {
                   <div className="mb-4 space-y-1">
                     {game.features && game.features.length > 0 ? 
                       game.features.slice(0, 4).map((feature: string, index: number) => (
-                        <div key={index} className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                          <div className="w-1 h-1 bg-gaming-green rounded-full mr-2"></div>
+                        <div key={index} className="flex items-center text-sm text-gray-400">
+                          <div className="w-1 h-1 bg-gaming-green rounded-full mr-3"></div>
                           {feature}
                         </div>
                       )) :
@@ -182,8 +186,8 @@ export default function GameCards() {
                         "Mod Support",
                         "24/7 Support"
                       ].slice(0, 4).map((feature: string, index: number) => (
-                        <div key={index} className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                          <div className="w-1 h-1 bg-gaming-green rounded-full mr-2"></div>
+                        <div key={index} className="flex items-center text-sm text-gray-400">
+                          <div className="w-1 h-1 bg-gaming-green rounded-full mr-3"></div>
                           {feature}
                         </div>
                       ))
@@ -191,32 +195,32 @@ export default function GameCards() {
                   </div>
                   
                   {/* Pricing */}
-                  <div className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                    Starting at <span className="font-bold text-lg text-gray-900 dark:text-white">${game.basePrice}/mo</span>
+                  <div className="text-sm text-gray-400 mb-4">
+                    Starting at <span className="font-bold text-lg text-white">${game.basePrice}/mo</span>
                   </div>
                   
                   {/* View Plans Button */}
-                  <Button className="w-full bg-gaming-green hover:bg-gaming-green/90 text-white border-0 py-2.5 font-medium transition-all group-hover:bg-gaming-green/80">
+                  <Button className="w-full bg-gaming-green hover:bg-gaming-green/90 text-black border-0 py-2.5 font-medium transition-all">
                     View Plans
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </Link>
           ))}
           
           {/* More Games Card */}
-          <Card className="group bg-white dark:bg-gray-900 border-2 border-dashed border-gray-300 dark:border-gray-700 hover:border-gaming-green/50 rounded-xl transition-all duration-300 flex flex-col h-full">
-            <CardContent className="p-6 h-full flex flex-col items-center justify-center text-center">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gaming-green/10 transition-colors">
-                <Plus className="text-gray-400 dark:text-gray-500 group-hover:text-gaming-green text-2xl transition-colors" />
+          <div className="rounded-xl border-2 border-dashed border-zinc-700 bg-black/20 hover:border-gaming-green/50 transition-all duration-300 hover:-translate-y-1 group flex flex-col h-full">
+            <div className="p-6 h-full flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-zinc-800 rounded-lg flex items-center justify-center mb-4 group-hover:bg-gaming-green/10 transition-colors">
+                <Plus className="text-gray-400 group-hover:text-gaming-green text-2xl transition-colors" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-gaming-green transition-colors">Can't find your game?</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4 flex-1 text-sm">We support 50+ games with custom installations and setups.</p>
-              <Button variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-white mt-auto transition-all">
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gaming-green transition-colors">Can't find your game?</h3>
+              <p className="text-gray-300 mb-4 flex-1 text-sm">We support 50+ games with custom installations and setups.</p>
+              <Button variant="outline" className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black mt-auto transition-all">
                 Request a listing <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -120,7 +120,10 @@ export interface IStorage {
   // Pricing methods
   getAllPricingPlans(): Promise<PricingPlan[]>;
   getPricingPlan(id: string): Promise<PricingPlan | undefined>;
+  getPricingPlansByGameId(gameId: string): Promise<PricingPlan[]>;
   createPricingPlan(plan: InsertPricingPlan): Promise<PricingPlan>;
+  updatePricingPlan(id: string, updates: Partial<PricingPlan>): Promise<PricingPlan | undefined>;
+  deletePricingPlan(id: string): Promise<void>;
   
   // Server status methods
   getAllServerStatus(): Promise<ServerStatus[]>;

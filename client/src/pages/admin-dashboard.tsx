@@ -130,6 +130,23 @@ export default function AdminDashboard() {
 
   const [editingDemoServer, setEditingDemoServer] = useState<any>(null);
   
+  // Pricing plan management state
+  const [pricingPlanForm, setPricingPlanForm] = useState({
+    gameId: "",
+    name: "",
+    description: "",
+    players: "",
+    ram: "",
+    storage: "",
+    monthlyPrice: "",
+    biannualPrice: "",
+    annualPrice: "",
+    isPopular: false,
+    features: ""
+  });
+  const [editingPricingPlan, setEditingPricingPlan] = useState<any>(null);
+  const [showPricingPlanForm, setShowPricingPlanForm] = useState(false);
+  
   // Theme customization state
   const [themeForm, setThemeForm] = useState({
     siteName: "VoltServers",
@@ -243,6 +260,61 @@ export default function AdminDashboard() {
       toast({
         title: "Error",
         description: `Failed to ${editingFaqCategory ? 'update' : 'create'} FAQ category`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Pricing plan mutation
+  const pricingPlanMutation = useMutation({
+    mutationFn: async (planData: any) => {
+      const url = editingPricingPlan 
+        ? `/api/admin/pricing-plans/${editingPricingPlan.id}`
+        : '/api/admin/pricing-plans';
+      const method = editingPricingPlan ? 'PUT' : 'POST';
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...planData,
+          players: parseInt(planData.players),
+          monthlyPrice: parseFloat(planData.monthlyPrice),
+          biannualPrice: parseFloat(planData.biannualPrice),
+          annualPrice: parseFloat(planData.annualPrice),
+          features: planData.features.split(',').map((f: string) => f.trim()).filter(Boolean)
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to save pricing plan');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/games"] });
+      setPricingPlanForm({
+        gameId: "",
+        name: "",
+        description: "",
+        players: "",
+        ram: "",
+        storage: "",
+        monthlyPrice: "",
+        biannualPrice: "",
+        annualPrice: "",
+        isPopular: false,
+        features: ""
+      });
+      setEditingPricingPlan(null);
+      setShowPricingPlanForm(false);
+      toast({
+        title: "Success",
+        description: `Pricing plan ${editingPricingPlan ? 'updated' : 'created'} successfully`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: `Failed to ${editingPricingPlan ? 'update' : 'create'} pricing plan`,
         variant: "destructive",
       });
     },
@@ -786,6 +858,19 @@ export default function AdminDashboard() {
       isPublished: blog.isPublished
     });
     setEditingBlog(blog);
+  };
+
+  const handlePricingPlanSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pricingPlanForm.gameId || !pricingPlanForm.name) {
+      toast({
+        title: "Error",
+        description: "Please select a game and enter a plan name",
+        variant: "destructive",
+      });
+      return;
+    }
+    pricingPlanMutation.mutate(pricingPlanForm);
   };
 
   const handleEditDemoServer = (server: any) => {
@@ -1423,6 +1508,13 @@ export default function AdminDashboard() {
                             size="sm" 
                             variant="ghost" 
                             className="w-full text-gaming-green hover:bg-gaming-green/10"
+                            onClick={() => {
+                              setPricingPlanForm({
+                                ...pricingPlanForm,
+                                gameId: game.id
+                              });
+                              setShowPricingPlanForm(true);
+                            }}
                           >
                             <Plus className="w-4 h-4 mr-2" />
                             Add Plan for {game.name}
@@ -1434,6 +1526,190 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </div>
+            
+            {/* Pricing Plan Form Modal/Dialog */}
+            {showPricingPlanForm && (
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card mt-6">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green flex items-center justify-between">
+                    {editingPricingPlan ? "Edit Pricing Plan" : "Add New Pricing Plan"}
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => {
+                        setShowPricingPlanForm(false);
+                        setEditingPricingPlan(null);
+                        setPricingPlanForm({
+                          gameId: "",
+                          name: "",
+                          description: "",
+                          players: "",
+                          ram: "",
+                          storage: "",
+                          monthlyPrice: "",
+                          biannualPrice: "",
+                          annualPrice: "",
+                          isPopular: false,
+                          features: ""
+                        });
+                      }}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      ✕
+                    </Button>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handlePricingPlanSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Game</Label>
+                        <Select value={pricingPlanForm.gameId} onValueChange={(value) => setPricingPlanForm({...pricingPlanForm, gameId: value})}>
+                          <SelectTrigger className="admin-input">
+                            <SelectValue placeholder="Select a game" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {games.map((game: any) => (
+                              <SelectItem key={game.id} value={game.id}>
+                                {game.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Plan Name</Label>
+                        <Input
+                          value={pricingPlanForm.name}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, name: e.target.value})}
+                          className="admin-input"
+                          placeholder="Starter Plan"
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-gray-300">Description</Label>
+                      <Input
+                        value={pricingPlanForm.description}
+                        onChange={(e) => setPricingPlanForm({...pricingPlanForm, description: e.target.value})}
+                        className="admin-input"
+                        placeholder="Perfect for small communities"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Max Players</Label>
+                        <Input
+                          type="number"
+                          value={pricingPlanForm.players}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, players: e.target.value})}
+                          className="admin-input"
+                          placeholder="10"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">RAM</Label>
+                        <Input
+                          value={pricingPlanForm.ram}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, ram: e.target.value})}
+                          className="admin-input"
+                          placeholder="4GB"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Storage</Label>
+                        <Input
+                          value={pricingPlanForm.storage}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, storage: e.target.value})}
+                          className="admin-input"
+                          placeholder="25GB SSD"
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Monthly Price ($)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={pricingPlanForm.monthlyPrice}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, monthlyPrice: e.target.value})}
+                          className="admin-input"
+                          placeholder="9.99"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">6-Month Price ($)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={pricingPlanForm.biannualPrice}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, biannualPrice: e.target.value})}
+                          className="admin-input"
+                          placeholder="49.99"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Annual Price ($)</Label>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={pricingPlanForm.annualPrice}
+                          onChange={(e) => setPricingPlanForm({...pricingPlanForm, annualPrice: e.target.value})}
+                          className="admin-input"
+                          placeholder="89.99"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-gray-300">Features (comma-separated)</Label>
+                      <Textarea
+                        value={pricingPlanForm.features}
+                        onChange={(e) => setPricingPlanForm({...pricingPlanForm, features: e.target.value})}
+                        className="admin-textarea"
+                        placeholder="24/7 Support, DDoS Protection, Instant Setup, Full FTP Access"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Switch 
+                        checked={pricingPlanForm.isPopular}
+                        onCheckedChange={(checked) => setPricingPlanForm({...pricingPlanForm, isPopular: checked})}
+                      />
+                      <Label className="text-gray-300">Mark as Popular Plan</Label>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button 
+                        type="submit" 
+                        className="bg-gaming-green hover:bg-gaming-green/90 text-black flex-1"
+                        disabled={pricingPlanMutation.isPending}
+                      >
+                        {pricingPlanMutation.isPending ? "Saving..." : (editingPricingPlan ? "Update Plan" : "Create Plan")}
+                      </Button>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        onClick={() => setShowPricingPlanForm(false)}
+                        className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Blog Management */}

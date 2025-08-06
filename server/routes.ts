@@ -2372,6 +2372,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin pricing plan management endpoints
+  app.post("/api/admin/pricing-plans", requireAdmin, async (req, res) => {
+    try {
+      const planData = req.body;
+      const plan = await storage.createPricingPlan({
+        ...planData,
+        id: randomUUID(),
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      res.status(201).json(plan);
+    } catch (error) {
+      console.error("Error creating pricing plan:", error);
+      res.status(500).json({ message: "Failed to create pricing plan" });
+    }
+  });
+
+  app.put("/api/admin/pricing-plans/:id", requireAdmin, async (req, res) => {
+    try {
+      const plan = await storage.updatePricingPlan(req.params.id, {
+        ...req.body,
+        updatedAt: new Date()
+      });
+      if (!plan) {
+        return res.status(404).json({ message: "Pricing plan not found" });
+      }
+      res.json(plan);
+    } catch (error) {
+      console.error("Error updating pricing plan:", error);
+      res.status(500).json({ message: "Failed to update pricing plan" });
+    }
+  });
+
+  app.delete("/api/admin/pricing-plans/:id", requireAdmin, async (req, res) => {
+    try {
+      await storage.deletePricingPlan(req.params.id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Error deleting pricing plan:", error);
+      res.status(500).json({ message: "Failed to delete pricing plan" });
+    }
+  });
+
   app.get("/api/whmcs/products", async (req, res) => {
     if (!whmcsIntegration) {
       return res.status(503).json({ message: "WHMCS integration not configured" });
