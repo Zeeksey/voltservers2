@@ -118,13 +118,26 @@ export default function AdminGameEditor() {
   // Save game mutation
   const saveGameMutation = useMutation({
     mutationFn: async (data: GameData) => {
-      const method = gameId === 'new' ? 'POST' : 'PUT';
-      const url = gameId === 'new' ? '/api/admin/games' : `/api/admin/games/${gameId}`;
-      
       // Get admin token
       const token = localStorage.getItem("adminToken");
       if (!token) {
         throw new Error('Admin authentication required');
+      }
+
+      let method: string;
+      let url: string;
+      let gameDataToSend = { ...data };
+
+      if (gameId === 'new') {
+        method = 'POST';
+        url = '/api/admin/games';
+        // Generate a unique ID for new games
+        gameDataToSend.id = `${data.slug}-${Date.now()}`;
+      } else {
+        method = 'PUT';
+        url = `/api/admin/games/${gameId}`;
+        // Use the existing game ID
+        gameDataToSend.id = gameId;
       }
       
       const response = await fetch(url, {
@@ -133,7 +146,7 @@ export default function AdminGameEditor() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(gameDataToSend)
       });
       
       if (!response.ok) {
@@ -397,11 +410,6 @@ export default function AdminGameEditor() {
                     variant: "destructive"
                   });
                   return;
-                }
-                
-                // Generate ID for new games
-                if (gameId === 'new' && !gameData.id) {
-                  gameData.id = `${gameData.slug}-${Date.now()}`;
                 }
                 
                 console.log('Saving game with ID:', gameId, 'Data:', gameData);
@@ -912,11 +920,6 @@ export default function AdminGameEditor() {
                   variant: "destructive"
                 });
                 return;
-              }
-              
-              // Generate ID for new games
-              if (gameId === 'new' && !gameData.id) {
-                gameData.id = `${gameData.slug}-${Date.now()}`;
               }
               
               console.log('Saving game with ID:', gameId, 'Data:', gameData);
