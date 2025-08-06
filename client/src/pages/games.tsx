@@ -30,6 +30,7 @@ import {
 import Navigation from '@/components/navigation';
 import PromoBanner from '@/components/promo-banner';
 import Footer from '@/components/footer';
+import SEOHead from '@/components/seo-head';
 import { Link } from 'wouter';
 
 interface Game {
@@ -49,6 +50,23 @@ interface Game {
   minPlayers?: number;
   maxPlayers?: number;
 }
+
+const gamesSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Game Server Hosting Options",
+  "description": "Browse our complete collection of game server hosting options",
+  "url": "https://voltservers.com/games",
+  "numberOfItems": 50,
+  "itemListElement": [
+    {
+      "@type": "Product",
+      "name": "Minecraft Server Hosting",
+      "description": "Professional Minecraft server hosting with plugin support",
+      "url": "https://voltservers.com/games/minecraft"
+    }
+  ]
+};
 
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -181,8 +199,15 @@ export default function GamesPage() {
 
   return (
     <div className="min-h-screen bg-gaming-black">
-      <title>Browse Games - VoltServers | Premium Game Server Hosting</title>
-      <meta name="description" content="Browse our extensive collection of game servers. From Minecraft to CS2, Rust, and more. Deploy instantly with 99.9% uptime guarantee." />
+      <SEOHead
+        title="Browse Games - VoltServers | Premium Game Server Hosting"
+        description="Browse our extensive collection of game servers. From Minecraft to CS2, Rust, and more. Deploy instantly with 99.9% uptime guarantee."
+        keywords="game servers, minecraft hosting, rust server, cs2 hosting, valheim server, ark hosting, gaming servers, multiplayer hosting"
+        ogTitle="Browse Games - All Game Servers Available | VoltServers"
+        ogDescription="Browse our extensive collection of game servers. From Minecraft to CS2, Rust, and more."
+        canonicalUrl="https://voltservers.com/games"
+        schema={gamesSchema}
+      />
       
       <PromoBanner />
       <Navigation />

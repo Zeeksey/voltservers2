@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://voltservers.com/sitemap.xml
+
+# Allow specific pages
+Allow: /games
+Allow: /minecraft
+Allow: /pricing
+Allow: /blog
+Allow: /knowledgebase
+Allow: /status
+Allow: /contact
+Allow: /about
+
+# Disallow admin and internal pages
+Disallow: /admin-login
+Disallow: /admin-dashboard
+Disallow: /client-portal
+Disallow: /dashboard
+Disallow: /api/
+
+# Crawl delay for better server performance
+Crawl-delay: 1

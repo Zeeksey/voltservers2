@@ -6,11 +6,11 @@ import { ArrowLeft, Calendar, User, Clock } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import SEOHead from "@/components/seo-head";
 import { BlogPost } from "@shared/schema";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github-dark.css';
 import 'highlight.js/styles/github-dark.css';
 
 export default function BlogPostPage() {
@@ -63,16 +63,41 @@ export default function BlogPostPage() {
     );
   }
 
+  const blogPostSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.imageUrl,
+    "author": {
+      "@type": "Person",
+      "name": post.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "VoltServers",
+      "logo": "https://voltservers.com/logo.png"
+    },
+    "datePublished": post.publishedAt || new Date().toISOString(),
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://voltservers.com/blog/${post.slug}`
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gaming-black">
-      <title>{post.title} - VoltServers Blog</title>
-      <meta name="description" content={post.excerpt} />
-      
-      <meta property="og:title" content={post.title} />
-      <meta property="og:description" content={post.excerpt} />
-      <meta property="og:type" content="article" />
-      <meta property="og:image" content={post.imageUrl} />
-      <meta property="og:site_name" content="VoltServers" />
+      <SEOHead
+        title={`${post.title} - VoltServers Blog`}
+        description={post.excerpt}
+        keywords={`gaming, server hosting, ${post.tags?.join(', ')}, tutorial, guide`}
+        ogTitle={post.title}
+        ogDescription={post.excerpt}
+        ogType="article"
+        ogImage={post.imageUrl}
+        canonicalUrl={`https://voltservers.com/blog/${post.slug}`}
+        schema={blogPostSchema}
+      />
       
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={post.title} />

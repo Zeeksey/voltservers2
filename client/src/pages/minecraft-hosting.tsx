@@ -20,7 +20,31 @@ import {
 import Navigation from '@/components/navigation';
 import PromoBanner from '@/components/promo-banner';
 import Footer from '@/components/footer';
+import SEOHead from '@/components/seo-head';
 import { Link } from 'wouter';
+
+const minecraftSchema = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Minecraft Server Hosting",
+  "description": "Premium Minecraft server hosting with instant setup, mod support, and 24/7 uptime",
+  "image": "https://voltservers.com/images/games/minecraft.jpg",
+  "brand": {
+    "@type": "Brand",
+    "name": "VoltServers"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "4.99",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "200"
+  }
+};
 
 export default function MinecraftHostingPage() {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'biannual' | 'annual'>('monthly');
@@ -181,6 +205,16 @@ export default function MinecraftHostingPage() {
 
   return (
     <div className="min-h-screen bg-gaming-black">
+      <SEOHead
+        title="Minecraft Server Hosting | Premium Java & Bedrock | VoltServers"
+        description="Premium Minecraft server hosting with instant setup, mod support, and 99.9% uptime guarantee. Java & Bedrock support. Starting at $4.99/mo with DDoS protection."
+        keywords="minecraft hosting, minecraft server hosting, java server, bedrock server, minecraft mods, bukkit hosting, spigot hosting, minecraft plugins"
+        ogTitle="Minecraft Server Hosting | Premium Java & Bedrock | VoltServers"
+        ogDescription="Premium Minecraft server hosting with instant setup, mod support, and 99.9% uptime guarantee."
+        canonicalUrl="https://voltservers.com/minecraft"
+        schema={minecraftSchema}
+      />
+      
       <PromoBanner />
       <Navigation />
       
