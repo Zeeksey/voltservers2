@@ -12,16 +12,31 @@ import {
   Activity,
   MapPin,
   RefreshCw,
-  Eye,
-  EyeOff
+  Cpu
 } from "lucide-react";
 import Navigation from "@/components/navigation";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import { useQuery } from '@tanstack/react-query';
+
+interface ServerLocation {
+  id: string;
+  city: string;
+  country: string;
+  region: string;
+  provider: string;
+  ipAddress: string;
+  status: string;
+  ping?: number;
+}
 
 export default function StatusPage() {
   const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [hideIPs, setHideIPs] = useState(false);
+
+  // Fetch server locations from the database
+  const { data: serverLocations = [], isLoading: locationsLoading } = useQuery<ServerLocation[]>({
+    queryKey: ['/api/server-locations'],
+  });
 
   const overallStatus = "operational"; // operational, degraded, down
 
@@ -34,20 +49,14 @@ export default function StatusPage() {
     { name: "Billing System", status: "operational", uptime: "99.96%" }
   ];
 
-  const locations = [
-    { name: "Virginia, US", status: "operational", ping: "13ms", players: "2,847", ip: "198.51.100.42" },
-    { name: "Quebec, Canada", status: "operational", ping: "36ms", players: "1,623", ip: "203.0.113.89" },
-    { name: "Florida, US", status: "operational", ping: "42ms", players: "1,945", ip: "192.0.2.156" },
-    { name: "Texas, US", status: "operational", ping: "46ms", players: "2,156", ip: "198.51.100.73" },
-    { name: "California, US", status: "operational", ping: "86ms", players: "3,214", ip: "203.0.113.201" },
-    { name: "Oregon, US", status: "operational", ping: "91ms", players: "1,789", ip: "192.0.2.88" },
-    { name: "United Kingdom", status: "operational", ping: "86ms", players: "2,634", ip: "198.51.100.134" },
-    { name: "Germany", status: "operational", ping: "99ms", players: "3,521", ip: "203.0.113.67" },
-    { name: "Netherlands", status: "operational", ping: "102ms", players: "2,967", ip: "192.0.2.192" },
-    { name: "France", status: "operational", ping: "97ms", players: "2,145", ip: "198.51.100.205" },
-    { name: "Australia", status: "operational", ping: "221ms", players: "1,456", ip: "203.0.113.123" },
-    { name: "Singapore", status: "operational", ping: "252ms", players: "1,789", ip: "192.0.2.45" }
-  ];
+  // Convert server locations to status format
+  const locations = serverLocations.map(location => ({
+    name: `${location.city}, ${location.country}`,
+    status: location.status,
+    ping: location.ping ? `${location.ping}ms` : 'N/A',
+    players: Math.floor(Math.random() * 3000 + 1000).toLocaleString(), // Simulated player count
+    specs: 'High-Performance Gaming Server'
+  }));
 
   const incidents = [
     {
@@ -192,63 +201,61 @@ export default function StatusPage() {
             </h2>
             <p className="text-gaming-gray text-lg">Performance metrics from our global data centers</p>
             
-            {/* IP Visibility Toggle */}
-            <div className="flex justify-center mb-8">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setHideIPs(!hideIPs)}
-                className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
-              >
-                {hideIPs ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                {hideIPs ? 'Show IPs' : 'Hide IPs'}
-              </Button>
-            </div>
+
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {locations.map((location, index) => (
-              <Card key={index} className="bg-gaming-black-lighter border-gaming-black-lighter hover:border-gaming-green/30 transition-colors">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-gaming-green" />
-                      <h3 className="text-gaming-white font-semibold text-sm sm:text-base">{location.name}</h3>
-                    </div>
-                    {getStatusIcon(location.status)}
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+          {locationsLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gaming-green mx-auto"></div>
+              <p className="text-gaming-gray mt-4">Loading server locations...</p>
+            </div>
+          ) : locations.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gaming-gray">No server locations configured yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+              {locations.map((location, index) => (
+                <Card key={index} className="bg-gaming-black-lighter border-gaming-black-lighter hover:border-gaming-green/30 transition-colors">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <Wifi className="w-4 h-4 text-gaming-gray" />
-                        <span className="text-gaming-gray text-xs sm:text-sm">Ping</span>
+                        <MapPin className="w-4 h-4 text-gaming-green" />
+                        <h3 className="text-gaming-white font-semibold text-sm sm:text-base">{location.name}</h3>
                       </div>
-                      <span className="text-gaming-green font-semibold text-sm">{location.ping}</span>
+                      {getStatusIcon(location.status)}
                     </div>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-gaming-gray" />
-                        <span className="text-gaming-gray text-xs sm:text-sm">Players</span>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-gaming-gray" />
+                          <span className="text-gaming-gray text-xs sm:text-sm">Ping</span>
+                        </div>
+                        <span className="text-gaming-green font-semibold text-sm">{location.ping}</span>
                       </div>
-                      <span className="text-gaming-white font-semibold text-sm">{location.players}</span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Server className="w-4 h-4 text-gaming-gray" />
-                        <span className="text-gaming-gray text-xs sm:text-sm">IP</span>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Activity className="w-4 h-4 text-gaming-gray" />
+                          <span className="text-gaming-gray text-xs sm:text-sm">Players</span>
+                        </div>
+                        <span className="text-gaming-white font-semibold text-sm">{location.players}</span>
                       </div>
-                      <span className="text-gaming-white font-mono text-sm">
-                        {hideIPs ? '•••.•••.•••.•••' : location.ip}
-                      </span>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Cpu className="w-4 h-4 text-gaming-gray" />
+                          <span className="text-gaming-gray text-xs sm:text-sm">Specs</span>
+                        </div>
+                        <span className="text-gaming-white text-xs">{location.specs}</span>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
