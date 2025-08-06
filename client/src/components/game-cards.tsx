@@ -7,36 +7,36 @@ import { Link } from "wouter";
 import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
 
-// Static games data to prevent flashing  
+// Static games data to prevent flashing - shows immediately without API calls
 const staticGames = [
   {
     id: "51ffadcd-d9dc-4956-8f7b-cb0735a6dfa3",
     name: "Minecraft",
     slug: "minecraft",
-    description: "Build, explore, and survive in blocky worlds with unlimited creativity and adventure.",
+    description: "Java & Bedrock support, unlimited mods, automatic backups",
     imageUrl: "/images/games/minecraft.svg",
     basePrice: "$2.99",
-    playerCount: 100,
+    playerCount: 2847,
     isPopular: true
   },
   {
     id: "a8b2c3d4-e5f6-7890-1234-567890abcdef", 
-    name: "Counter-Strike 2",
+    name: "CS2",
     slug: "cs2",
-    description: "Tactical FPS with competitive gameplay, precise shooting mechanics, and strategic team play.",
+    description: "Counter-Strike 2 servers with custom maps and plugins",
     imageUrl: "/images/games/cs2.svg",
     basePrice: "$4.99",
-    playerCount: 64,
+    playerCount: 1234,
     isPopular: true
   },
   {
     id: "b9c3d4e5-f6g7-8901-2345-678901bcdefg",
     name: "Rust", 
     slug: "rust",
-    description: "Survival multiplayer game where you gather resources, build bases, and fight other players.",
+    description: "Survival servers with oxide plugins and custom maps",
     imageUrl: "/images/games/rust.svg",
     basePrice: "$6.99", 
-    playerCount: 200,
+    playerCount: 892,
     isPopular: true
   },
   {
@@ -46,8 +46,48 @@ const staticGames = [
     description: "Physics sandbox that lets you experiment with objects, create contraptions, and play game modes.",
     imageUrl: "/images/games/gmod.svg",
     basePrice: "$3.99",
-    playerCount: 128,
+    playerCount: 556,
     isPopular: true
+  },
+  {
+    id: "d1e5f6g7-h8i9-0123-4567-890123defghi",
+    name: "ARK: Survival Evolved",
+    slug: "ark",
+    description: "Dinosaur survival with clusters and mod support",
+    imageUrl: "/images/games/ark.svg",
+    basePrice: "$8.99",
+    playerCount: 445,
+    isPopular: false
+  },
+  {
+    id: "e2f6g7h8-i9j0-1234-5678-901234efghij",
+    name: "Valheim",
+    slug: "valheim",
+    description: "Viking survival servers with dedicated worlds",
+    imageUrl: "/images/games/valheim.svg",
+    basePrice: "$5.99",
+    playerCount: 678,
+    isPopular: false
+  },
+  {
+    id: "f3g7h8i9-j0k1-2345-6789-012345fghijk",
+    name: "7 Days to Die",
+    slug: "7dtd",
+    description: "Zombie survival with custom mods and maps",
+    imageUrl: "/images/games/7dtd.svg",
+    basePrice: "$4.99",
+    playerCount: 234,
+    isPopular: false
+  },
+  {
+    id: "g4h8i9j0-k1l2-3456-7890-123456ghijkl",
+    name: "Terraria",
+    slug: "terraria",
+    description: "2D adventure sandbox with multiplayer building",
+    imageUrl: "/images/games/terraria.svg",
+    basePrice: "$3.99",
+    playerCount: 123,
+    isPopular: false
   }
 ];
 
