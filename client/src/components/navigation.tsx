@@ -46,7 +46,7 @@ export default function Navigation() {
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-8 lg:h-10 max-w-32 lg:max-w-40 object-contain group-hover:scale-105 transition-transform"
+                  className="h-12 lg:h-16 max-w-48 lg:max-w-64 object-contain group-hover:scale-105 transition-transform"
                 />
               ) : (
                 <>
