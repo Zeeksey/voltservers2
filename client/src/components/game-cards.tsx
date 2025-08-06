@@ -8,15 +8,18 @@ import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
 
 export default function GameCards() {
-  const { data: games = [], isLoading, isFetching, isInitialLoading } = useQuery<Game[]>({
+  const { data: games = [], isInitialLoading } = useQuery<Game[]>({
     queryKey: ['/api/games'],
-    staleTime: 60 * 60 * 1000, // 1 hour - much longer to prevent flashing
+    staleTime: Infinity,
+    gcTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
-    gcTime: 2 * 60 * 60 * 1000, // Keep in cache for 2 hours
-    placeholderData: [], // Prevent flash by showing empty array initially
-    notifyOnChangeProps: ['data', 'isLoading'], // Only re-render when these change
+    refetchOnReconnect: false,
+    placeholderData: [],
+    retry: false,
+    structuralSharing: true,
+    notifyOnChangeProps: ['data'],
   });
 
   if (isInitialLoading) {

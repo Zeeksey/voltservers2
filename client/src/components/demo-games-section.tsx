@@ -38,15 +38,18 @@ export default function DemoGamesSection() {
   const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
 
   // Fetch demo servers from API
-  const { data: demoServers = [], isLoading, isFetching, isInitialLoading } = useQuery<DemoServer[]>({
+  const { data: demoServers = [], isInitialLoading } = useQuery<DemoServer[]>({
     queryKey: ['/api/demo-servers'],
-    staleTime: 60 * 60 * 1000, // 1 hour - much longer to prevent flashing
+    staleTime: Infinity,
+    gcTime: Infinity,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
-    gcTime: 2 * 60 * 60 * 1000, // Keep in cache for 2 hours
-    placeholderData: [], // Prevent flash
-    notifyOnChangeProps: ['data', 'isLoading'], // Only re-render when these change
+    refetchOnReconnect: false,
+    placeholderData: [],
+    retry: false,
+    structuralSharing: true,
+    notifyOnChangeProps: ['data'],
   });
 
   // Query each server's live status

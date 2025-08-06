@@ -30,6 +30,15 @@ interface ThemeSettings {
 export default function ProfessionalHero() {
   const { data: themeSettings } = useQuery<ThemeSettings>({
     queryKey: ["/api/theme-settings"],
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    refetchOnReconnect: false,
+    retry: false,
+    structuralSharing: true,
+    notifyOnChangeProps: ['data'],
   });
   const features = [
     { icon: <Zap className="w-5 h-5" />, text: "Deploy in 60 seconds" },

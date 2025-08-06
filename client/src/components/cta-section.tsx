@@ -17,6 +17,15 @@ interface ThemeSettings {
 export default function CtaSection() {
   const { data: themeSettings } = useQuery<ThemeSettings>({
     queryKey: ["/api/theme-settings"],
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    refetchOnReconnect: false,
+    retry: false,
+    structuralSharing: true,
+    notifyOnChangeProps: ['data'],
   });
 
   return (
