@@ -907,33 +907,638 @@ export class MemStorage implements IStorage {
   }
 
   private initializeBlogPosts() {
-    // Initialize sample blog posts
+    // Initialize comprehensive blog posts
     const sampleBlogPosts = [
       {
-        id: "fallback-1",
-        title: "Getting Started with GameHost Pro",
-        slug: "getting-started-gamehost-pro",
-        excerpt: "Learn how to set up your first game server with our comprehensive hosting platform.",
-        content: "# Getting Started with GameHost Pro\n\nWelcome to GameHost Pro! This comprehensive guide will help you get started with your first game server.\n\n## Creating Your Account\n\nFirst, create your account and verify your email address. This ensures secure access to your server management dashboard.\n\n## Choosing Your Game\n\nWe support popular games including:\n- Minecraft (Java & Bedrock)\n- Rust\n- ARK: Survival Evolved\n- CS2\n- Valheim\n- And many more!\n\n## Server Configuration\n\nOnce you've selected your game, choose your server specifications:\n- RAM allocation\n- Player slots\n- Server region\n- Additional features\n\n## Managing Your Server\n\nUse our intuitive control panel to:\n- Start/stop your server\n- Install mods and plugins\n- Monitor performance\n- Access server files\n- View logs\n\n## Support\n\nOur 24/7 support team is here to help with any questions or issues you may encounter.",
+        id: "minecraft-ultimate-guide-2025",
+        title: "Ultimate Minecraft Server Setup Guide 2025",
+        slug: "ultimate-minecraft-server-setup-guide-2025",
+        excerpt: "Complete step-by-step guide to setting up and optimizing your Minecraft server for maximum performance and player satisfaction.",
+        content: `# Ultimate Minecraft Server Setup Guide 2025
+
+Setting up a Minecraft server can seem daunting, but with the right guidance, you'll have players exploring your world in no time. This comprehensive guide covers everything from basic setup to advanced optimization techniques.
+
+## Getting Started
+
+### 1. Choosing Your Server Type
+
+**Vanilla Minecraft**: Perfect for pure gameplay experience
+- **Pros**: Stable, no compatibility issues, authentic experience
+- **Cons**: Limited customization, fewer features
+- **Best for**: Small groups, pure survival gameplay
+
+**Modded Servers (Forge/Fabric)**: Enhanced gameplay with mods
+- **Pros**: Unlimited customization, enhanced features, community content
+- **Cons**: More complex setup, potential stability issues
+- **Best for**: Players wanting enhanced gameplay
+
+**Plugin Servers (Bukkit/Spigot/Paper)**: Server-side enhancements
+- **Pros**: Easy management, performance optimizations, admin tools
+- **Cons**: Some limitations compared to mods
+- **Best for**: Server administrators, multiplayer communities
+
+### 2. Server Specifications
+
+**RAM Requirements:**
+- 1-10 players: 2-4GB RAM
+- 10-20 players: 4-6GB RAM  
+- 20-50 players: 6-8GB RAM
+- 50+ players: 8GB+ RAM
+
+**CPU Considerations:**
+- Minecraft is single-threaded for world generation
+- Higher clock speeds > more cores
+- Intel processors often perform better
+
+**Storage:**
+- SSD strongly recommended for world loading
+- Minimum 10GB free space
+- Regular backups essential
+
+## Installation Process
+
+### Step 1: Download Server Files
+
+\`\`\`bash
+# Download latest Minecraft server
+wget https://launcher.mojang.com/v1/objects/server.jar
+
+# For Paper (recommended)
+wget https://papermc.io/downloads/paper
+\`\`\`
+
+### Step 2: Initial Configuration
+
+Create \`server.properties\` with optimal settings:
+
+\`\`\`properties
+# Basic Settings
+server-name=Your Server Name
+motd=Welcome to Your Server!
+max-players=20
+difficulty=normal
+gamemode=survival
+
+# Performance Settings
+spawn-protection=0
+view-distance=10
+simulation-distance=10
+entity-broadcast-range-percentage=100
+
+# Security
+online-mode=true
+spawn-monsters=true
+spawn-animals=true
+\`\`\`
+
+### Step 3: Memory Allocation
+
+Launch with proper JVM flags:
+
+\`\`\`bash
+java -Xmx4G -Xms4G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -jar server.jar nogui
+\`\`\`
+
+## Essential Plugins
+
+### Management Plugins
+- **EssentialsX**: Core commands and utilities
+- **WorldGuard**: Area protection and management
+- **PermissionsEx**: Player permission management
+- **Vault**: Economy and permission bridge
+
+### Performance Plugins
+- **ClearLag**: Remove entities to improve performance
+- **NoChunkLag**: Optimize chunk loading
+- **LagAssist**: Monitor and reduce server lag
+
+### Quality of Life
+- **Dynmap**: Live web map of your world
+- **GriefPrevention**: Automatic grief protection
+- **McMMO**: RPG skills and abilities
+
+## Security Best Practices
+
+### 1. Access Control
+- Use strong RCON passwords
+- Limit SSH access to specific IPs
+- Regular security updates
+- Monitor player activity
+
+### 2. Backup Strategy
+\`\`\`bash
+#!/bin/bash
+# Daily backup script
+DATE=$(date +%Y%m%d_%H%M%S)
+tar -czf "/backups/minecraft_$DATE.tar.gz" /path/to/minecraft/world/
+\`\`\`
+
+### 3. DDoS Protection
+- Use Cloudflare or similar service
+- Configure firewall rules
+- Monitor connection patterns
+- Consider managed hosting
+
+## Troubleshooting Common Issues
+
+### Performance Problems
+1. Check TPS with \`/tps\` command
+2. Monitor RAM usage
+3. Review entity counts
+4. Check for problematic chunks
+
+### Connection Issues
+1. Verify port forwarding (25565)
+2. Check firewall settings
+3. Confirm server IP/domain
+4. Test with direct IP connection
+
+**Need help with your server setup?** Consider our managed Minecraft hosting solutions - we handle the technical details so you can focus on building your community!`,
         imageUrl: "/images/blog/minecraft-setup.svg",
-        author: "GameHost Team",
+        author: "VoltServers Team",
         publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
         updatedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
         isPublished: true,
-        tags: ["tutorial", "getting-started"]
+        tags: ["minecraft", "server-setup", "guide", "gaming", "tutorial"]
       },
       {
-        id: "fallback-2",
-        title: "Minecraft Server Optimization Guide",
-        slug: "minecraft-server-optimization",
-        excerpt: "Maximize your Minecraft server performance with these proven optimization techniques.",
-        content: "# Minecraft Server Optimization Guide\n\nOptimizing your Minecraft server is crucial for providing the best experience for your players. Here's our comprehensive guide.\n\n## Server Hardware\n\nChoose the right specifications:\n- **CPU**: High single-core performance is key\n- **RAM**: At least 4GB for vanilla, 8GB+ for modded\n- **Storage**: SSD storage for faster world loading\n- **Network**: Low latency connection\n\n## Server Settings\n\nOptimize your server.properties:\n```\nview-distance=8\nmax-players=20\nsimulation-distance=6\nentity-broadcast-range-percentage=100\n```\n\n## Plugin Optimization\n\nEssential optimization plugins:\n- **Paper**: High-performance server software\n- **ClearLag**: Remove unnecessary entities\n- **WorldBorder**: Limit world size\n- **LimitPillagers**: Control mob spawning\n\n## World Management\n\n- Pre-generate chunks to reduce lag\n- Regular world cleanups\n- Backup management\n- Monitor world size\n\n## Monitoring Tools\n\nUse these tools to track performance:\n- Spark profiler\n- Server TPS monitoring\n- Memory usage tracking\n- Player connection analysis",
+        id: "rust-server-optimization-2025",
+        title: "Rust Server Optimization: Performance Tuning Guide",
+        slug: "rust-server-optimization-performance-guide",
+        excerpt: "Master Rust server performance with advanced optimization techniques, memory management, and player capacity planning.",
+        content: `# Rust Server Optimization: Performance Tuning Guide
+
+Running a smooth Rust server requires understanding the game's unique resource demands and optimization strategies. This guide covers comprehensive performance tuning techniques.
+
+## Understanding Rust Server Resources
+
+### Memory Requirements
+- **Minimum**: 4GB RAM for 50 players
+- **Recommended**: 8GB RAM for 100 players
+- **Optimal**: 16GB+ RAM for 200+ players
+- **Map Size Impact**: Larger maps require exponentially more RAM
+
+### CPU Considerations
+- Rust is heavily multi-threaded
+- Higher core count significantly improves performance
+- AMD Ryzen processors excel for Rust hosting
+- Intel 12th gen+ also performs excellently
+
+### Storage Requirements
+- NVMe SSD essential for map loading
+- 20-50GB per server instance
+- Regular wipe storage cleanup needed
+- Automatic backup systems recommended
+
+## Server Configuration Optimization
+
+### 1. Server.cfg Essentials
+
+\`\`\`cfg
+# Performance Settings
+fps.limit 60
+physics.substeps 1
+physics.iterations 7
+
+# Network Optimization
+server.maxplayers 100
+server.netcache true
+server.netcachesize 100
+
+# Security Settings
+server.secure true
+server.encryption 2
+server.anticheat true
+
+# Resource Management
+spawn.min_rate 0.5
+spawn.max_rate 1.0
+spawn.min_density 0.5
+spawn.max_density 1.0
+\`\`\`
+
+### 2. Launch Parameters
+
+\`\`\`bash
+./RustDedicated -batchmode \\
+  -nographics \\
+  -server.ip 0.0.0.0 \\
+  -server.port 28015 \\
+  -server.maxplayers 100 \\
+  -server.hostname "Your Server Name" \\
+  -server.identity "server1" \\
+  -server.seed 12345 \\
+  -server.worldsize 3000 \\
+  -server.saveinterval 300 \\
+  -logfile /rust/logs/server.log
+\`\`\`
+
+### 3. Oxide/uMod Plugin Optimization
+
+Essential performance plugins:
+- **AdminHammer**: Quick building/destruction
+- **CopyPaste**: Efficient structure management  
+- **NightLantern**: Automatic lighting systems
+- **AutoPurge**: Remove inactive player bases
+- **BetterLoot**: Optimized loot distribution
+
+## Map and World Generation
+
+### 1. Map Size Considerations
+
+- **1000 size**: 50-75 players maximum
+- **2000 size**: 75-125 players optimal
+- **3000 size**: 125-200 players
+- **4000+ size**: 200+ players (high-end hardware)
+
+### 2. Procedural Generation Settings
+
+\`\`\`cfg
+# World generation optimization
+world.seed 12345
+world.size 3000
+world.monuments 10
+world.roads true
+world.rivers true
+\`\`\`
+
+## Monitoring and Maintenance
+
+### 1. Performance Monitoring
+
+\`\`\`bash
+#!/bin/bash
+# Performance monitoring script
+echo "=== Rust Server Performance Report ===" > perf_report.log
+echo "CPU Usage:" >> perf_report.log
+top -b -n1 | grep RustDedicated >> perf_report.log
+echo "Memory Usage:" >> perf_report.log
+free -h >> perf_report.log
+\`\`\`
+
+### 2. Automated Maintenance
+
+- Schedule regular server restarts
+- Implement automatic updates
+- Clean old log files
+- Monitor player count patterns
+
+## Security Considerations
+
+### 1. Anti-Cheat Configuration
+\`\`\`cfg
+server.anticheat true
+server.stats true
+server.official false
+server.secure true
+\`\`\`
+
+### 2. DDoS Protection
+- Use services like Cloudflare
+- Configure proper firewall rules
+- Monitor traffic patterns
+- Have mitigation plans ready
+
+## Conclusion
+
+Optimizing a Rust server is an ongoing process that requires attention to hardware, software, and community management. Regular monitoring, proactive maintenance, and understanding your player base's needs are key to success.
+
+**Ready to launch your optimized Rust server?** Our managed hosting solutions include all these optimizations pre-configured, plus 24/7 monitoring and support.`,
         imageUrl: "/images/blog/server-optimization.svg",
-        author: "GameHost Team",
+        author: "VoltServers Team",
         publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
         isPublished: true,
-        tags: ["minecraft", "optimization", "performance"]
+        tags: ["rust", "server-optimization", "performance", "gaming", "hosting"]
+      },
+      {
+        id: "ark-server-administration-2025",
+        title: "ARK Server Administration: Complete Management Guide",
+        slug: "ark-server-administration-complete-guide", 
+        excerpt: "Everything you need to know about managing ARK: Survival Evolved servers, from basic setup to advanced cluster management.",
+        content: `# ARK Server Administration: Complete Management Guide
+
+ARK: Survival Evolved servers require specialized knowledge for optimal performance. This comprehensive guide covers everything from initial setup to advanced cluster management.
+
+## ARK Server Basics
+
+### System Requirements
+- **Minimum RAM**: 6GB for basic server
+- **Recommended RAM**: 12GB for modded server
+- **CPU**: Intel i5-8400 or AMD Ryzen 5 2600+
+- **Storage**: 100GB+ SSD space
+- **Network**: 100Mbps+ upload speed
+
+### Initial Server Setup
+
+\`\`\`bash
+# Steam CMD installation
+./steamcmd.exe +login anonymous +force_install_dir /ark +app_update 376030 +quit
+
+# Launch parameters
+./ShooterGameServer.exe "TheIsland?listen?SessionName=Your Server?ServerPassword=yourpass?ServerAdminPassword=adminpass?Port=7777?QueryPort=27015?MaxPlayers=20" -server -log
+\`\`\`
+
+## Game.ini Configuration
+
+### 1. Essential Settings
+
+\`\`\`ini
+[ServerSettings]
+; Experience and leveling
+OverrideOfficialDifficulty=1.0
+DifficultyOffset=1.0
+MaxDifficulty=true
+
+; Player settings  
+PlayerLevelMultiplier=1.5
+PlayerCharacterStaminaDrainMultiplier=0.8
+PlayerCharacterHealthRecoveryMultiplier=1.2
+
+; Taming settings
+TamingSpeedMultiplier=3.0
+DinoCharacterFoodDrainMultiplier=0.5
+WildDinoCharacterFoodDrainMultiplier=0.8
+
+; Resource gathering
+HarvestAmountMultiplier=2.0
+HarvestHealthMultiplier=1.5
+ResourcesRespawnPeriodMultiplier=0.5
+
+; Quality of life
+ShowMapPlayerLocation=true
+AllowThirdPersonPlayer=true
+AllowCaveBuildingPvE=true
+DisableStructureDecayPvE=true
+\`\`\`
+
+## Mod Management
+
+### 1. Popular Server Mods
+
+**Quality of Life Mods:**
+- **Structures Plus (S+)**: Enhanced building
+- **Awesome Teleporters**: Fast travel system  
+- **HG Stacking Mod**: Increased stack sizes
+- **Dino Tracker**: Find lost dinosaurs
+
+**Content Mods:**
+- **Primal Fear**: New creatures and bosses
+- **Extinction Core**: Hardcore survival
+- **Crystal Isles**: New map content
+- **Additional Creatures**: Expanded fauna
+
+### 2. Mod Installation Process
+
+\`\`\`bash
+# Download mods via Steam CMD
+./steamcmd.exe +login anonymous +workshop_download_item 346110 MODID +quit
+
+# Configure GameUserSettings.ini
+[ServerSettings]
+ActiveMods=731604991,1404697612,1300713111
+\`\`\`
+
+## Performance Optimization
+
+### 1. Memory Management
+
+\`\`\`ini
+[ServerSettings]
+; Memory optimization
+bUseVSync=false
+bUseFastTurnaroundTime=true
+bForceCanRideFliers=true
+
+; Reduce memory usage
+TheMaxStructuresInRange=10500
+MaxPersonalTamedDinos=500
+PersonalTamedDinosSaddleStructureCost=19
+MaxNumberOfPlayersInTribe=10
+\`\`\`
+
+### 2. Automated Maintenance
+
+\`\`\`bash
+#!/bin/bash
+# Daily maintenance script
+ARK_DIR="/ark/ShooterGame"
+LOG_DIR="/ark/logs"
+DATE=$(date +%Y%m%d)
+
+# Backup saves
+tar -czf "/ark/backups/ark_save_$DATE.tar.gz" "$ARK_DIR/Saved"
+
+# Clean old logs
+find "$LOG_DIR" -name "*.log" -mtime +7 -delete
+
+# Restart server for memory cleanup
+systemctl restart ark-server
+\`\`\`
+
+## Admin Commands and Tools
+
+### 1. Essential Admin Commands
+
+\`\`\`
+; Player management
+SetPlayerPos 0 0 0
+TeleportPlayerNameToMe PlayerName
+BanPlayer PlayerName
+UnbanPlayer PlayerName
+
+; Spawning and cheats
+GiveItemNum 1 1 1 0
+Summon Rex_Character_BP_C
+ForceTame
+
+; Server management
+SaveWorld
+DestroyWildDinos
+Broadcast Your message here
+\`\`\`
+
+## Conclusion
+
+ARK server administration requires ongoing attention and optimization. Regular maintenance, proper configuration, and proactive monitoring are essential for a successful server.
+
+**Looking for managed ARK hosting?** Our team handles all the technical complexity while you focus on building your community and creating engaging gameplay experiences.`,
+        imageUrl: "/images/blog/ark-management.svg",
+        author: "VoltServers Team",
+        publishedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
+        isPublished: true,
+        tags: ["ark", "server-administration", "management", "gaming", "survival"]
+      },
+      {
+        id: "ddos-protection-guide-2025",
+        title: "DDoS Protection for Game Servers: Security Guide",
+        slug: "ddos-protection-game-servers-security-guide",
+        excerpt: "Comprehensive guide to protecting your game servers from DDoS attacks with practical mitigation strategies and monitoring tools.",
+        content: `# DDoS Protection for Game Servers: Security Guide
+
+DDoS attacks are one of the biggest threats to game server stability. This guide provides comprehensive protection strategies to keep your servers online and your community playing.
+
+## Understanding DDoS Attacks
+
+### Types of DDoS Attacks
+
+**1. Volumetric Attacks**
+- UDP floods
+- ICMP floods
+- Amplification attacks
+- Target: Overwhelm bandwidth
+
+**2. Protocol Attacks**
+- SYN flood
+- Ping of death
+- Smurf attacks
+- Target: Exhaust server resources
+
+**3. Application Layer Attacks**
+- HTTP floods
+- Slowloris attacks
+- Game-specific exploits
+- Target: Application vulnerabilities
+
+## Prevention Strategies
+
+### 1. Network Architecture
+
+\`\`\`
+Internet → CDN/WAF → Load Balancer → Firewall → Game Servers
+                                        ↓
+                                   DDoS Scrubbing Center
+\`\`\`
+
+### 2. Firewall Configuration
+
+\`\`\`bash
+#!/bin/bash
+# IPTables DDoS protection rules
+
+# Rate limiting for new connections
+iptables -A INPUT -p tcp --dport 22 -m conntrack --ctstate NEW -m limit --limit 2/min --limit-burst 2 -j ACCEPT
+
+# Block common attack patterns
+iptables -A INPUT -p tcp --tcp-flags ALL NONE -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL ALL -j DROP
+iptables -A INPUT -p tcp --tcp-flags ALL FIN,PSH,URG -j DROP
+
+# Game server specific protection
+iptables -A INPUT -p udp --dport 27015 -m limit --limit 50/sec --limit-burst 100 -j ACCEPT
+iptables -A INPUT -p tcp --dport 27015 -m limit --limit 25/sec --limit-burst 50 -j ACCEPT
+\`\`\`
+
+### 3. Real-time Monitoring
+
+\`\`\`python
+#!/usr/bin/env python3
+import psutil
+import time
+from datetime import datetime
+
+class DDoSMonitor:
+    def __init__(self):
+        self.baseline_connections = 0
+        self.alert_threshold = 1000
+        self.email_alerts = True
+    
+    def monitor_connections(self):
+        connections = len(psutil.net_connections())
+        
+        if connections > self.alert_threshold:
+            self.send_alert(f"High connection count detected: {connections}")
+            return True
+        return False
+    
+    def send_alert(self, message):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"{timestamp}: {message}")
+
+if __name__ == "__main__":
+    monitor = DDoSMonitor()
+    
+    while True:
+        monitor.monitor_connections()
+        time.sleep(30)
+\`\`\`
+
+## Mitigation Techniques
+
+### 1. Rate Limiting
+
+Use services like Cloudflare or implement custom rate limiting:
+
+\`\`\`nginx
+# Nginx rate limiting configuration
+http {
+    limit_req_zone $binary_remote_addr zone=gameserver:10m rate=10r/s;
+    
+    server {
+        listen 80;
+        server_name your-game-server.com;
+        
+        location / {
+            limit_req zone=gameserver burst=20 nodelay;
+            proxy_pass http://backend_gameservers;
+        }
+    }
+}
+\`\`\`
+
+### 2. Application-Level Protection
+
+Implement connection validation in your game server:
+
+\`\`\`python
+class ConnectionValidator:
+    def __init__(self):
+        self.connection_history = {}
+        self.rate_limits = {
+            'connections_per_ip': 5,
+            'packets_per_second': 50,
+            'max_packet_size': 1024
+        }
+    
+    def validate_connection(self, ip_address, packet_data):
+        # Check rate limits and validate packet content
+        if self.check_rate_limits(ip_address):
+            return True, "Valid connection"
+        return False, "Rate limit exceeded"
+\`\`\`
+
+## Best Practices Summary
+
+### 1. Preparation
+- Implement layered security architecture
+- Configure monitoring and alerting systems
+- Develop and test incident response procedures
+- Establish relationships with DDoS mitigation providers
+
+### 2. During an Attack
+- Remain calm and follow procedures
+- Document the attack for analysis
+- Communicate with stakeholders
+- Activate mitigation measures incrementally
+
+### 3. Post-Attack
+- Analyze attack patterns and sources
+- Update protection measures
+- Review and improve procedures
+- Consider additional security investments
+
+## Conclusion
+
+DDoS protection requires a comprehensive approach combining network architecture, monitoring, automated responses, and human expertise. Regular testing and updates of your protection measures are essential for maintaining effective defense against evolving attack methods.
+
+**Need professional DDoS protection?** Our enterprise hosting solutions include advanced DDoS mitigation with 24/7 monitoring and instant response capabilities.`,
+        imageUrl: "/images/blog/security-guide.svg",
+        author: "VoltServers Security Team",
+        publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        updatedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        isPublished: true,
+        tags: ["security", "ddos-protection", "networking", "server-management", "cybersecurity"]
       },
       {
         id: "fallback-3",

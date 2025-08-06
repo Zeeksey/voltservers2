@@ -442,11 +442,11 @@ export default function KnowledgebasePage() {
                       <div className="flex justify-between">
                         <span className="text-gaming-gray">Ping:</span>
                         <span className={`font-mono ${
-                          location.ping <= 20 ? 'text-green-400' : 
-                          location.ping <= 50 ? 'text-yellow-400' : 
+                          (location.ping && location.ping <= 20) ? 'text-green-400' : 
+                          (location.ping && location.ping <= 50) ? 'text-yellow-400' : 
                           'text-red-400'
                         }`}>
-                          {location.ping}ms
+                          {location.ping || 'N/A'}ms
                         </span>
                       </div>
                       {location.ipAddress && (
