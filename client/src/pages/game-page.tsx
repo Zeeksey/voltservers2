@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight, Database, ChevronDown, Settings, Package, Wrench, Globe, Gamepad2, Hammer, Download, Upload } from "lucide-react";
 import StickyHeader from "@/components/sticky-header";
+import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
 import { Game } from "@shared/schema";
 
