@@ -76,6 +76,11 @@ export const games = pgTable("games", {
   heroSubtitle: text("hero_subtitle"),
   heroImageUrl: text("hero_image_url"),
   features: text("features").array().default(sql`'{}'::text[]`),
+  // Enhanced game properties
+  category: text("category").notNull().default("survival"),
+  minRam: text("min_ram").notNull().default("2GB"),
+  recommendedRam: text("recommended_ram").notNull().default("4GB"), 
+  setupComplexity: text("setup_complexity").notNull().default("Easy"),
   pricingPlans: jsonb("pricing_plans").default(sql`'[]'::jsonb`),
 
   detailedDescription: text("detailed_description"),

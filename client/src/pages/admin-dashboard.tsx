@@ -85,7 +85,13 @@ export default function AdminDashboard() {
     playerCount: "0",
     isPopular: false,
     isNew: false,
-    isTrending: false
+    isTrending: false,
+    features: "",
+    heroSubtitle: "",
+    category: "survival",
+    minRam: "2GB",
+    recommendedRam: "4GB", 
+    setupComplexity: "Easy"
   });
   const [blogForm, setBlogForm] = useState({
     title: "",
@@ -795,9 +801,95 @@ export default function AdminDashboard() {
       playerCount: "0",
       isPopular: false,
       isNew: false,
-      isTrending: false
+      isTrending: false,
+      features: "",
+      heroSubtitle: "",
+      category: "survival",
+      minRam: "2GB",
+      recommendedRam: "4GB",
+      setupComplexity: "Easy"
     });
     setEditingGame(null);
+  };
+
+  // Game template system
+  const gameTemplates = {
+    minecraft: {
+      name: "Minecraft Java Edition",
+      slug: "minecraft-java",
+      description: "The classic Minecraft experience with unlimited potential for creativity and adventure.",
+      heroSubtitle: "Build, explore, and survive in the ultimate sandbox world",
+      category: "sandbox",
+      basePrice: "5.99",
+      playerCount: "50000",
+      minRam: "2GB",
+      recommendedRam: "4GB",
+      setupComplexity: "Easy",
+      features: "Unlimited Players\nPlugin Support\nMod Support\nFull Control Panel\n24/7 Support\nAutomatic Backups"
+    },
+    rust: {
+      name: "Rust",
+      slug: "rust",
+      description: "Survive, build, and thrive in the ultimate survival multiplayer experience.",
+      heroSubtitle: "Forge alliances and survive in a harsh, unforgiving world",
+      category: "survival",
+      basePrice: "12.99",
+      playerCount: "25000", 
+      minRam: "4GB",
+      recommendedRam: "8GB",
+      setupComplexity: "Medium",
+      features: "Up to 300 Players\nOxide Plugin Support\nAdmin Tools\nAutomatic Updates\nRCON Access\nCustom Maps"
+    },
+    ark: {
+      name: "ARK: Survival Evolved",
+      slug: "ark",
+      description: "Tame dinosaurs and build your tribe in this prehistoric survival adventure.",
+      heroSubtitle: "Survive and thrive in a world full of dinosaurs",
+      category: "survival",
+      basePrice: "15.99",
+      playerCount: "15000",
+      minRam: "6GB",
+      recommendedRam: "12GB",
+      setupComplexity: "Hard",
+      features: "Dinosaur Taming\nTribe System\nCustom Maps\nMod Support\nCluster Support\nAdmin Tools"
+    },
+    valheim: {
+      name: "Valheim",
+      slug: "valheim",
+      description: "Explore and survive in a Norse mythology-inspired world with friends.",
+      heroSubtitle: "Prove your worth to the gods in Viking purgatory",
+      category: "survival",
+      basePrice: "8.99",
+      playerCount: "12000",
+      minRam: "4GB",
+      recommendedRam: "6GB",
+      setupComplexity: "Easy",
+      features: "Co-op Gameplay\nWorld Seed Control\nBackup System\nMod Support\nDedicated Server\nPvP Options"
+    },
+    csgo: {
+      name: "Counter-Strike 2",
+      slug: "cs2",
+      description: "The legendary tactical FPS returns with enhanced graphics and gameplay.",
+      heroSubtitle: "Master the art of tactical combat",
+      category: "fps",
+      basePrice: "9.99",
+      playerCount: "30000",
+      minRam: "2GB",
+      recommendedRam: "4GB",
+      setupComplexity: "Medium",
+      features: "Custom Maps\nPlugin Support\nAnti-Cheat\nRank System\nMatch Making\nDemo Recording"
+    }
+  };
+
+  const applyGameTemplate = (templateKey: string) => {
+    const template = gameTemplates[templateKey as keyof typeof gameTemplates];
+    if (template) {
+      setGameForm({
+        ...gameForm,
+        ...template,
+        imageUrl: `/images/games/${template.slug}.svg`
+      });
+    }
   };
 
   const resetBlogForm = () => {
@@ -841,7 +933,13 @@ export default function AdminDashboard() {
       playerCount: game.playerCount.toString(),
       isPopular: game.isPopular,
       isNew: game.isNew,
-      isTrending: game.isTrending
+      isTrending: game.isTrending,
+      features: Array.isArray(game.features) ? game.features.join('\n') : '',
+      heroSubtitle: game.heroSubtitle || '',
+      category: game.category || 'survival',
+      minRam: game.minRam || '2GB',
+      recommendedRam: game.recommendedRam || '4GB',
+      setupComplexity: game.setupComplexity || 'Easy'
     });
     setEditingGame(game);
   };
@@ -908,6 +1006,7 @@ export default function AdminDashboard() {
       imageUrl,
       basePrice: gameForm.basePrice,
       playerCount: parseInt(gameForm.playerCount),
+      features: gameForm.features.split('\n').filter(f => f.trim()),
     };
 
     if (editingGame) {
@@ -1179,9 +1278,40 @@ export default function AdminDashboard() {
               {/* Game Form */}
               <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
-                  <CardTitle className="text-gaming-green">
-                    {editingGame ? "Edit Game" : "Add New Game"}
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-gaming-green">
+                      {editingGame ? "Edit Game" : "Add New Game"}
+                    </CardTitle>
+                    {editingGame && (
+                      <Button
+                        variant="outline" 
+                        size="sm"
+                        onClick={resetGameForm}
+                        className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                      >
+                        Cancel Edit
+                      </Button>
+                    )}
+                  </div>
+                  {!editingGame && (
+                    <div className="pt-4">
+                      <Label className="text-gray-300 mb-2 block">Quick Start Templates</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
+                        {Object.entries(gameTemplates).map(([key, template]) => (
+                          <Button
+                            key={key}
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => applyGameTemplate(key)}
+                            className="border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10 text-xs p-2"
+                          >
+                            {template.name.split(' ')[0]}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleGameSubmit} className="space-y-4">
@@ -1257,6 +1387,95 @@ export default function AdminDashboard() {
                         />
                       </div>
                     </div>
+                    
+                    <div>
+                      <Label className="text-gray-300">Hero Subtitle</Label>
+                      <Textarea
+                        value={gameForm.heroSubtitle}
+                        onChange={(e) => setGameForm({...gameForm, heroSubtitle: e.target.value})}
+                        className="admin-textarea"
+                        placeholder="Engaging subtitle for the game hero section"
+                        rows={2}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-gray-300">Game Features</Label>
+                      <Textarea
+                        value={gameForm.features}
+                        onChange={(e) => setGameForm({...gameForm, features: e.target.value})}
+                        className="admin-textarea"
+                        placeholder="Enter features, one per line"
+                        rows={5}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">Enter each feature on a new line</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Category</Label>
+                        <Select value={gameForm.category} onValueChange={(value) => setGameForm({...gameForm, category: value})}>
+                          <SelectTrigger className="admin-input">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sandbox">Sandbox</SelectItem>
+                            <SelectItem value="survival">Survival</SelectItem>
+                            <SelectItem value="fps">FPS</SelectItem>
+                            <SelectItem value="mmo">MMO</SelectItem>
+                            <SelectItem value="strategy">Strategy</SelectItem>
+                            <SelectItem value="racing">Racing</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Min RAM</Label>
+                        <Select value={gameForm.minRam} onValueChange={(value) => setGameForm({...gameForm, minRam: value})}>
+                          <SelectTrigger className="admin-input">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1GB">1GB</SelectItem>
+                            <SelectItem value="2GB">2GB</SelectItem>
+                            <SelectItem value="4GB">4GB</SelectItem>
+                            <SelectItem value="6GB">6GB</SelectItem>
+                            <SelectItem value="8GB">8GB</SelectItem>
+                            <SelectItem value="16GB">16GB</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Recommended RAM</Label>
+                        <Select value={gameForm.recommendedRam} onValueChange={(value) => setGameForm({...gameForm, recommendedRam: value})}>
+                          <SelectTrigger className="admin-input">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="2GB">2GB</SelectItem>
+                            <SelectItem value="4GB">4GB</SelectItem>
+                            <SelectItem value="6GB">6GB</SelectItem>
+                            <SelectItem value="8GB">8GB</SelectItem>
+                            <SelectItem value="12GB">12GB</SelectItem>
+                            <SelectItem value="16GB">16GB</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-gray-300">Setup Complexity</Label>
+                      <Select value={gameForm.setupComplexity} onValueChange={(value) => setGameForm({...gameForm, setupComplexity: value})}>
+                        <SelectTrigger className="admin-input">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Easy">Easy</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="Hard">Hard</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div className="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0">
                       <div className="flex items-center space-x-2">
                         <Switch

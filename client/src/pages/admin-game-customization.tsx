@@ -201,6 +201,64 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
       padding: '3rem',
       layout: 'table'
     }
+  },
+  'game-features': {
+    type: 'game-features',
+    title: 'Game-Specific Features',
+    content: {
+      headline: '{{GAME_NAME}}-Specific Features',
+      subheadline: 'Optimized hosting for the best {{GAME_NAME}} experience',
+      features: [
+        { icon: 'Package', title: 'Plugin Support', description: 'Easy installation and management of game-specific plugins' },
+        { icon: 'Settings', title: 'Server Config', description: 'Full access to configuration files and settings' },
+        { icon: 'Globe', title: 'World Management', description: 'Upload custom worlds and manage backups easily' }
+      ]
+    },
+    style: {
+      backgroundColor: '#0f0f0f',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'grid'
+    }
+  },
+  requirements: {
+    type: 'requirements',
+    title: 'System Requirements',
+    content: {
+      headline: '{{GAME_NAME}} Server Setup',
+      subheadline: 'Everything you need to know to get started',
+      requirements: [
+        { component: 'RAM', requirement: 'Minimum 2GB, Recommended 4GB+ for optimal performance' },
+        { component: 'CPU', requirement: '2+ CPU cores for smooth gameplay' },
+        { component: 'Storage', requirement: '10GB+ SSD space for maps and saves' },
+        { component: 'Network', requirement: 'Stable internet connection for player connectivity' }
+      ]
+    },
+    style: {
+      backgroundColor: '#1a1a1a',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'split'
+    }
+  },
+  'setup-steps': {
+    type: 'setup-steps',
+    title: 'Setup Guide',
+    content: {
+      headline: 'Quick Setup Guide',
+      subheadline: 'Get your {{GAME_NAME}} server running in minutes',
+      steps: [
+        { title: 'Choose Server Type', description: 'Select the best server configuration for your needs' },
+        { title: 'Configure Settings', description: 'Set world name, game mode, and player limits' },
+        { title: 'Launch & Connect', description: 'Start your server and share the IP with friends' }
+      ]
+    },
+    style: {
+      backgroundColor: '#1a1a1a',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'split'
+    }
   }
 };
 
@@ -668,6 +726,9 @@ export default function AdminGameCustomization() {
                     {key === 'faq' && <HelpCircle className="w-4 h-4" />}
                     {key === 'cta' && <ArrowRight className="w-4 h-4" />}
                     {key === 'specs' && <Monitor className="w-4 h-4" />}
+                    {key === 'game-features' && <Package className="w-4 h-4" />}
+                    {key === 'requirements' && <FileText className="w-4 h-4" />}
+                    {key === 'setup-steps' && <Settings className="w-4 h-4" />}
                     <div className="text-left">
                       <div className="font-medium text-sm">{section.title}</div>
                       <div className="text-xs text-gray-400 capitalize">{key}</div>
@@ -1553,6 +1614,262 @@ function SectionEditor({ section, onUpdate, onUpdateContent, onUpdateStyle, game
                           onClick={() => {
                             const newSpecs = section.content.specs.filter((_: any, i: number) => i !== index);
                             updateContent({ specs: newSpecs });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Game-Specific Features Section Editor */}
+          {section.type === 'game-features' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Game-Specific Features"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Optimized for the best gaming experience"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Features</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newFeatures = [...(section.content.features || []), { icon: 'Package', title: 'New Feature', description: 'Feature description' }];
+                      updateContent({ features: newFeatures });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Feature
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.features || []).map((feature: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-1 gap-2 flex-1">
+                          <Input
+                            value={feature.title || ''}
+                            onChange={(e) => {
+                              const newFeatures = [...section.content.features];
+                              newFeatures[index] = { ...feature, title: e.target.value };
+                              updateContent({ features: newFeatures });
+                            }}
+                            placeholder="Feature title"
+                            className="admin-input"
+                          />
+                          <Textarea
+                            value={feature.description || ''}
+                            onChange={(e) => {
+                              const newFeatures = [...section.content.features];
+                              newFeatures[index] = { ...feature, description: e.target.value };
+                              updateContent({ features: newFeatures });
+                            }}
+                            placeholder="Feature description"
+                            className="admin-textarea"
+                            rows={2}
+                          />
+                          <Input
+                            value={feature.icon || ''}
+                            onChange={(e) => {
+                              const newFeatures = [...section.content.features];
+                              newFeatures[index] = { ...feature, icon: e.target.value };
+                              updateContent({ features: newFeatures });
+                            }}
+                            placeholder="Icon name (e.g., Package, Wrench, Globe)"
+                            className="admin-input"
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newFeatures = section.content.features.filter((_: any, i: number) => i !== index);
+                            updateContent({ features: newFeatures });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Requirements Section Editor */}
+          {section.type === 'requirements' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="System Requirements"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Everything you need to know"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Requirements</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newReqs = [...(section.content.requirements || []), { component: 'Component', requirement: 'Requirement details' }];
+                      updateContent({ requirements: newReqs });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Requirement
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.requirements || []).map((req: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-1 gap-2 flex-1">
+                          <Input
+                            value={req.component || ''}
+                            onChange={(e) => {
+                              const newReqs = [...section.content.requirements];
+                              newReqs[index] = { ...req, component: e.target.value };
+                              updateContent({ requirements: newReqs });
+                            }}
+                            placeholder="Component (e.g., RAM, CPU, Storage)"
+                            className="admin-input"
+                          />
+                          <Textarea
+                            value={req.requirement || ''}
+                            onChange={(e) => {
+                              const newReqs = [...section.content.requirements];
+                              newReqs[index] = { ...req, requirement: e.target.value };
+                              updateContent({ requirements: newReqs });
+                            }}
+                            placeholder="Requirement details"
+                            className="admin-textarea"
+                            rows={2}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newReqs = section.content.requirements.filter((_: any, i: number) => i !== index);
+                            updateContent({ requirements: newReqs });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Setup Steps Section Editor */}
+          {section.type === 'setup-steps' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Quick Setup Guide"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Get your server running in minutes"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Setup Steps</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newSteps = [...(section.content.steps || []), { title: 'Step Title', description: 'Step description' }];
+                      updateContent({ steps: newSteps });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Step
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.steps || []).map((step: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-1 gap-2 flex-1">
+                          <Input
+                            value={step.title || ''}
+                            onChange={(e) => {
+                              const newSteps = [...section.content.steps];
+                              newSteps[index] = { ...step, title: e.target.value };
+                              updateContent({ steps: newSteps });
+                            }}
+                            placeholder="Step title"
+                            className="admin-input"
+                          />
+                          <Textarea
+                            value={step.description || ''}
+                            onChange={(e) => {
+                              const newSteps = [...section.content.steps];
+                              newSteps[index] = { ...step, description: e.target.value };
+                              updateContent({ steps: newSteps });
+                            }}
+                            placeholder="Step description"
+                            className="admin-textarea"
+                            rows={2}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newSteps = section.content.steps.filter((_: any, i: number) => i !== index);
+                            updateContent({ steps: newSteps });
                           }}
                           className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
                         >

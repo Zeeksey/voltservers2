@@ -869,20 +869,7 @@ export default function GamePage() {
           <CustomSection key={section.id} section={section} game={game} />
         ))}
 
-      {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-gaming-green to-blue-500">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-black mb-4">Ready to Launch Your {game.name} Server?</h2>
-          <p className="text-xl text-black/80 mb-8">Join thousands of players enjoying lag-free gameplay</p>
-          <Button 
-            size="lg" 
-            className="bg-black text-gaming-green hover:bg-black/90 px-8 py-4 text-lg"
-            onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Start Your Server Now
-          </Button>
-        </div>
-      </section>
+
 
       {/* Related Articles */}
       {relatedArticles && relatedArticles.length > 0 && (
