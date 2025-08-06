@@ -590,23 +590,28 @@ export default function GamePage() {
                         <span className="text-4xl font-bold text-gaming-green">
                           ${billingPeriod === 'monthly' 
                             ? (plan.monthlyPrice || plan.price)
+                            : billingPeriod === 'quarterly'
+                            ? (plan.quarterlyPrice || (plan.price * pricingMultipliers.quarterly).toFixed(2))
                             : billingPeriod === 'biannual' 
                             ? (plan.biannualPrice || (plan.price * pricingMultipliers.biannual).toFixed(2))
                             : (plan.annualPrice || (plan.price * pricingMultipliers.annual).toFixed(2))
                           }
                         </span>
-                        <span className="text-gray-400 text-lg">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
+                        <span className="text-gray-400 text-lg">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'quarterly' ? '3 mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
                       </div>
                       {billingPeriod !== 'monthly' && (
                         <div className="flex items-center gap-2 text-sm">
                           <span className="text-gray-500 line-through">${plan.originalPrice}</span>
                           <Badge className="bg-gaming-green/20 text-gaming-green text-xs">
-                            {billingPeriod === 'biannual' ? 'Save 15%' : 'Save 25%'}
+                            {billingPeriod === 'quarterly' ? 'Save 10%' : billingPeriod === 'biannual' ? 'Save 20%' : 'Save 25%'}
                           </Badge>
                         </div>
                       )}
                       {billingPeriod === 'monthly' && (
                         <p className="text-gray-400 text-sm">Billed monthly</p>
+                      )}
+                      {billingPeriod === 'quarterly' && (
+                        <p className="text-gray-400 text-sm">Billed every 3 months</p>
                       )}
                       {billingPeriod === 'biannual' && (
                         <p className="text-gray-400 text-sm">Billed every 6 months</p>
