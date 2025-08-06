@@ -1456,21 +1456,269 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
 
-              {/* Site Management */}
+              {/* Brand Assets */}
               <Card className="bg-gaming-black-light border-gaming-green/30">
                 <CardHeader>
-                  <CardTitle className="text-gaming-white">Site Management</CardTitle>
+                  <CardTitle className="text-gaming-white">Brand Assets</CardTitle>
                   <CardDescription className="text-gaming-gray">
-                    Maintenance mode and announcements
+                    Logo, favicon, and footer text customization
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Logo URL</Label>
+                      <Input
+                        value={themeForm.logoUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, logoUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://example.com/logo.png"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Favicon URL</Label>
+                      <Input
+                        value={themeForm.faviconUrl || ""}
+                        onChange={(e) => setThemeForm({...themeForm, faviconUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="https://example.com/favicon.ico"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Footer Text</Label>
+                    <Input
+                      value={themeForm.footerText || ""}
+                      onChange={(e) => setThemeForm({...themeForm, footerText: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="© 2025 VoltServers. All rights reserved."
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Typography & Layout */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Typography & Layout</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Font family and border radius settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Font Family</Label>
+                      <Select value={themeForm.fontFamily || "Inter"} onValueChange={(value) => setThemeForm({...themeForm, fontFamily: value})}>
+                        <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gaming-black border-gaming-green/30">
+                          <SelectItem value="Inter">Inter</SelectItem>
+                          <SelectItem value="Roboto">Roboto</SelectItem>
+                          <SelectItem value="Open Sans">Open Sans</SelectItem>
+                          <SelectItem value="Poppins">Poppins</SelectItem>
+                          <SelectItem value="Montserrat">Montserrat</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Border Radius</Label>
+                      <Select value={themeForm.borderRadius || "Medium (8px)"} onValueChange={(value) => setThemeForm({...themeForm, borderRadius: value})}>
+                        <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gaming-black border-gaming-green/30">
+                          <SelectItem value="None (0px)">None (0px)</SelectItem>
+                          <SelectItem value="Small (4px)">Small (4px)</SelectItem>
+                          <SelectItem value="Medium (8px)">Medium (8px)</SelectItem>
+                          <SelectItem value="Large (12px)">Large (12px)</SelectItem>
+                          <SelectItem value="XLarge (16px)">Extra Large (16px)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Holiday Themes */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Holiday Themes</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Special seasonal themes and decorations
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gaming-white">Special Theme</Label>
+                    <Select value={themeForm.specialTheme || "None"} onValueChange={(value) => setThemeForm({...themeForm, specialTheme: value})}>
+                      <SelectTrigger className="bg-gaming-black border-gaming-green/30 text-gaming-white">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gaming-black border-gaming-green/30">
+                        <SelectItem value="None">None</SelectItem>
+                        <SelectItem value="Halloween">Halloween</SelectItem>
+                        <SelectItem value="Christmas">Christmas</SelectItem>
+                        <SelectItem value="New Year">New Year</SelectItem>
+                        <SelectItem value="Valentine">Valentine's Day</SelectItem>
+                        <SelectItem value="Easter">Easter</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Social Media & Open Graph */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Social Media & Open Graph</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Social sharing and Open Graph settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Open Graph Title</Label>
+                      <Input
+                        value={themeForm.ogTitle || ""}
+                        onChange={(e) => setThemeForm({...themeForm, ogTitle: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="Title for social sharing"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Twitter Handle</Label>
+                      <Input
+                        value={themeForm.twitterHandle || ""}
+                        onChange={(e) => setThemeForm({...themeForm, twitterHandle: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="@voltservers"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Open Graph Description</Label>
+                    <Textarea
+                      value={themeForm.ogDescription || ""}
+                      onChange={(e) => setThemeForm({...themeForm, ogDescription: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Description for social media sharing"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Open Graph Image URL</Label>
+                    <Input
+                      value={themeForm.ogImageUrl || ""}
+                      onChange={(e) => setThemeForm({...themeForm, ogImageUrl: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="https://example.com/og-image.jpg"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Cookie Policy & GDPR */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Cookie Policy & GDPR</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Cookie consent and privacy compliance
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center space-x-3">
                     <Switch
-                      checked={themeForm.maintenanceMode}
+                      checked={themeForm.showCookieBanner || false}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, showCookieBanner: checked})}
+                    />
+                    <Label className="text-gaming-white">Show Cookie Banner</Label>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={themeForm.requireCookieConsent || false}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, requireCookieConsent: checked})}
+                    />
+                    <Label className="text-gaming-white">Require Cookie Consent</Label>
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Cookie Policy Text</Label>
+                    <Textarea
+                      value={themeForm.cookiePolicyText || ""}
+                      onChange={(e) => setThemeForm({...themeForm, cookiePolicyText: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="We use cookies to enhance your experience and analyze site traffic."
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Privacy Policy URL</Label>
+                    <Input
+                      value={themeForm.privacyPolicyUrl || ""}
+                      onChange={(e) => setThemeForm({...themeForm, privacyPolicyUrl: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="/privacy-policy"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Advanced Customization */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Advanced Customization</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Custom CSS and additional body code
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gaming-white">Custom CSS</Label>
+                    <Textarea
+                      value={themeForm.customCss || ""}
+                      onChange={(e) => setThemeForm({...themeForm, customCss: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white font-mono text-sm"
+                      placeholder="/* Add your custom CSS here */&#10;.custom-class {&#10;  background: linear-gradient(45deg, #00ff88, #00cc6a);&#10;}"
+                      rows={8}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">Custom Body Code</Label>
+                    <Textarea
+                      value={themeForm.customBodyCode || ""}
+                      onChange={(e) => setThemeForm({...themeForm, customBodyCode: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white font-mono text-sm"
+                      placeholder="<!-- Custom scripts at end of body -->"
+                      rows={4}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Site Management */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Site Management</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Maintenance mode and announcement settings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={themeForm.maintenanceMode || false}
                       onCheckedChange={(checked) => setThemeForm({...themeForm, maintenanceMode: checked})}
                     />
                     <Label className="text-gaming-white">Maintenance Mode</Label>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Switch
+                      checked={themeForm.showAnnouncementBanner || false}
+                      onCheckedChange={(checked) => setThemeForm({...themeForm, showAnnouncementBanner: checked})}
+                    />
+                    <Label className="text-gaming-white">Show Announcement Banner</Label>
                   </div>
                   <div>
                     <Label className="text-gaming-white">Maintenance Message</Label>
