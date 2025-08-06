@@ -111,13 +111,15 @@ export default function BlogSection() {
         </div>
         
         <div className="text-center mt-12">
-          <Button 
-            variant="outline"
-            className="border-2 border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
-          >
-            <BookOpen className="mr-2 h-4 w-4" />
-            View All Articles
-          </Button>
+          <Link href="/knowledgebase">
+            <Button 
+              variant="outline"
+              className="border-2 border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black"
+            >
+              <BookOpen className="mr-2 h-4 w-4" />
+              View All Articles
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

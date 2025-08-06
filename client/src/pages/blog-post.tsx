@@ -94,7 +94,7 @@ export default function BlogPostPage() {
             <img 
               src={post.imageUrl || "/images/blog/minecraft-setup.svg"} 
               alt={post.title}
-              className="w-full h-96 object-contain rounded-lg bg-gaming-black-lighter p-8"
+              className="w-full h-96 object-cover rounded-lg"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = "/images/blog/minecraft-setup.svg";

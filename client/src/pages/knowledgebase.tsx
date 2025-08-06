@@ -177,27 +177,27 @@ export default function KnowledgebasePage() {
 
       <div className="container mx-auto px-4 py-16">
         <Tabs defaultValue="articles" className="space-y-8">
-          <TabsList className="bg-gaming-black-lighter border border-gaming-green/20 p-1">
+          <TabsList className="bg-gaming-black-lighter border border-gaming-green/20 p-1 grid grid-cols-1 md:grid-cols-3 h-auto w-full">
             <TabsTrigger 
               value="articles" 
-              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black"
+              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black py-3 px-4 flex items-center justify-center text-sm md:text-base"
             >
-              <BookOpen className="w-4 h-4 mr-2" />
-              Articles & Guides
+              <BookOpen className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Articles & Guides</span>
             </TabsTrigger>
             <TabsTrigger 
               value="faq" 
-              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black"
+              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black py-3 px-4 flex items-center justify-center text-sm md:text-base"
             >
-              <HelpCircle className="w-4 h-4 mr-2" />
-              Frequently Asked Questions
+              <HelpCircle className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">FAQ</span>
             </TabsTrigger>
             <TabsTrigger 
               value="locations" 
-              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black"
+              className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black py-3 px-4 flex items-center justify-center text-sm md:text-base"
             >
-              <Server className="w-4 h-4 mr-2" />
-              Server Locations
+              <Server className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Server Status</span>
             </TabsTrigger>
           </TabsList>
 
