@@ -39,14 +39,15 @@ export default function Navigation() {
   return (
     <nav className="glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4 lg:py-5">
+        <div className="flex justify-between items-center py-2 lg:py-2">
           <Link href="/">
             <div className="flex items-center space-x-3 cursor-pointer group">
               {logoUrl ? (
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-12 lg:h-16 max-w-48 lg:max-w-64 object-contain group-hover:scale-105 transition-transform"
+                  className="w-auto max-w-none object-contain group-hover:scale-105 transition-transform"
+                  style={{ width: '130px', height: '130px', minWidth: '130px', minHeight: '130px' }}
                 />
               ) : (
                 <>

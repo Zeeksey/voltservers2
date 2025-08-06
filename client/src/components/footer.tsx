@@ -4,16 +4,12 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Footer() {
-  const { data: themeSettings } = useQuery<{
-    siteName?: string;
-    logoUrl?: string;
-  }>({
-    queryKey: ['/api/theme-settings'],
-    retry: false,
+  const { data: themeSettings } = useQuery({
+    queryKey: ['/api/theme-settings']
   });
 
-  const siteName = themeSettings?.siteName || "VoltServers";
-  const logoUrl = themeSettings?.logoUrl;
+  const siteName = (themeSettings as any)?.siteName || "VoltServers";
+  const logoUrl = (themeSettings as any)?.logoUrl;
   return (
     <footer id="support" className="bg-gaming-black-lighter py-12 lg:py-16">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +21,8 @@ export default function Footer() {
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-14 max-w-48 object-contain"
+                  className="h-16 w-auto max-w-none object-contain"
+                  style={{ minHeight: '64px', maxHeight: '64px' }}
                 />
               ) : (
                 <>
