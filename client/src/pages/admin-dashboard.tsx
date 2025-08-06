@@ -1077,6 +1077,10 @@ export default function AdminDashboard() {
               <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">FAQ</span>
             </TabsTrigger>
+            <TabsTrigger value="pricing" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
+              <DollarSign className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Pricing</span>
+            </TabsTrigger>
             <TabsTrigger value="theme" className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black text-xs sm:text-sm p-2 sm:p-3">
               <Palette className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
               <span className="hidden sm:inline">Theme</span>
@@ -1253,6 +1257,174 @@ export default function AdminDashboard() {
                             disabled={deleteGameMutation.isPending}
                           >
                             <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* Pricing Plans Management */}
+          <TabsContent value="pricing" className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
+              {/* Pricing Plan Form */}
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green">Pricing Plan Management</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gray-300">Select Game</Label>
+                    <select 
+                      className="admin-input w-full" 
+                      onChange={(e) => {
+                        // Handle game selection for pricing management
+                        console.log('Selected game:', e.target.value);
+                      }}
+                    >
+                      <option value="">Choose a game...</option>
+                      {games.map((game: Game) => (
+                        <option key={game.id} value={game.id}>{game.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-4 p-4 bg-gaming-black-lighter rounded-lg">
+                    <h4 className="text-gaming-green font-semibold">Add Pricing Plan</h4>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Plan Name</Label>
+                        <Input className="admin-input" placeholder="Starter Plan" />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Players</Label>
+                        <Input className="admin-input" placeholder="10" />
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label className="text-gray-300">Monthly Price ($)</Label>
+                        <Input className="admin-input" placeholder="9.99" />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">6-Month Price ($)</Label>
+                        <Input className="admin-input" placeholder="49.99" />
+                        <p className="text-xs text-gaming-green font-medium mt-1">Save 16%</p>
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Annual Price ($)</Label>
+                        <Input className="admin-input" placeholder="89.99" />
+                        <p className="text-xs text-gaming-green font-medium mt-1">Save 25%</p>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-gray-300">RAM</Label>
+                        <Input className="admin-input" placeholder="4GB" />
+                      </div>
+                      <div>
+                        <Label className="text-gray-300">Storage</Label>
+                        <Input className="admin-input" placeholder="25GB SSD" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <Label className="text-gray-300">Features (one per line)</Label>
+                      <Textarea 
+                        className="admin-textarea" 
+                        placeholder="24/7 Support&#10;DDoS Protection&#10;Instant Setup&#10;Full FTP Access"
+                        rows={4}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <Switch />
+                        <Label className="text-gray-300">Popular Plan</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Switch />
+                        <Label className="text-gray-300">Enabled</Label>
+                      </div>
+                    </div>
+                    
+                    <Button className="bg-gaming-green hover:bg-gaming-green/90 text-gaming-black w-full">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Pricing Plan
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Pricing Plans List */}
+              <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
+                <CardHeader>
+                  <CardTitle className="text-gaming-green">Existing Pricing Plans</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {games.map((game: Game) => (
+                      <div key={game.id} className="p-3 bg-gaming-dark-lighter rounded-lg">
+                        <h4 className="font-semibold text-white mb-2">{game.name}</h4>
+                        
+                        <div className="space-y-2">
+                          {/* Sample pricing plans - this would come from API */}
+                          <div className="flex items-center justify-between p-3 bg-gaming-black rounded border border-gaming-green/20">
+                            <div>
+                              <span className="text-sm font-medium text-white">Starter Plan</span>
+                              <div className="text-xs text-gray-300 mt-1">
+                                10 players • 4GB RAM • 25GB SSD
+                              </div>
+                              <div className="text-xs text-gaming-green font-medium mt-1">
+                                $9.99/mo • $49.99/6mo <span className="text-gaming-green">(Save 16%)</span> • $89.99/year <span className="text-gaming-green">(Save 25%)</span>
+                              </div>
+                            </div>
+                            <div className="flex space-x-1">
+                              <Button size="sm" variant="outline" className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10">
+                                <Edit2 className="w-3 h-3" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center justify-between p-3 bg-gaming-black rounded border border-yellow-500/20">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-white">Pro Plan</span>
+                                <Badge className="text-xs bg-gaming-green/20 text-gaming-green">Popular</Badge>
+                              </div>
+                              <div className="text-xs text-gray-300 mt-1">
+                                25 players • 8GB RAM • 50GB SSD
+                              </div>
+                              <div className="text-xs text-gaming-green font-medium mt-1">
+                                $19.99/mo • $99.99/6mo <span className="text-gaming-green">(Save 17%)</span> • $179.99/year <span className="text-gaming-green">(Save 25%)</span>
+                              </div>
+                            </div>
+                            <div className="flex space-x-1">
+                              <Button size="sm" variant="outline" className="border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10">
+                                <Edit2 className="w-3 h-3" />
+                              </Button>
+                              <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                                <Trash2 className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          </div>
+
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            className="w-full text-gaming-green hover:bg-gaming-green/10"
+                          >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Plan for {game.name}
                           </Button>
                         </div>
                       </div>

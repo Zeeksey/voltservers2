@@ -387,9 +387,13 @@ export default function AdminGameCustomization() {
       });
     },
     onSuccess: () => {
+      // Invalidate all related game queries to ensure updates are reflected
       queryClient.invalidateQueries({ queryKey: ['/api/games', gameId] });
       queryClient.invalidateQueries({ queryKey: ['/api/games'] });
-      toast({ title: 'Page structure saved successfully!' });
+      queryClient.invalidateQueries({ queryKey: ['/api/games', game?.slug] }); 
+      // Refresh the current query immediately to show updated data
+      queryClient.refetchQueries({ queryKey: ['/api/games', gameId] });
+      toast({ title: 'Page structure saved successfully! Changes will appear on the game page.' });
     },
     onError: (error: Error) => {
       toast({ title: 'Failed to save page structure', description: error.message, variant: 'destructive' });
@@ -1126,11 +1130,435 @@ function SectionEditor({ section, onUpdate, onUpdateContent, onUpdateStyle, game
             </div>
           )}
 
-          {/* Fallback for other section types */}
-          {!['hero', 'features', 'pricing'].includes(section.type) && (
-            <div className="text-center py-8 text-gray-400">
-              <Settings className="w-12 h-12 mx-auto mb-3" />
-              <p>Content editing for {section.type} sections coming soon!</p>
+          {/* Gallery Section Editor */}
+          {section.type === 'gallery' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Game Screenshots"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="See what players are building..."
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Images</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newImages = [...(section.content.images || []), { url: '', title: 'New Image', description: 'Image description' }];
+                      updateContent({ images: newImages });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Image
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.images || []).map((image: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-1 gap-2 flex-1">
+                          <Input
+                            value={image.url || ''}
+                            onChange={(e) => {
+                              const newImages = [...section.content.images];
+                              newImages[index] = { ...image, url: e.target.value };
+                              updateContent({ images: newImages });
+                            }}
+                            placeholder="Image URL"
+                            className="admin-input"
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              value={image.title || ''}
+                              onChange={(e) => {
+                                const newImages = [...section.content.images];
+                                newImages[index] = { ...image, title: e.target.value };
+                                updateContent({ images: newImages });
+                              }}
+                              placeholder="Image title"
+                              className="admin-input"
+                            />
+                            <Input
+                              value={image.description || ''}
+                              onChange={(e) => {
+                                const newImages = [...section.content.images];
+                                newImages[index] = { ...image, description: e.target.value };
+                                updateContent({ images: newImages });
+                              }}
+                              placeholder="Image description"
+                              className="admin-input"
+                            />
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newImages = section.content.images.filter((_: any, i: number) => i !== index);
+                            updateContent({ images: newImages });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Testimonials Section Editor */}
+          {section.type === 'testimonials' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="What Players Say"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Join thousands of satisfied customers"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Testimonials</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newTestimonials = [...(section.content.testimonials || []), { name: 'New Customer', rating: 5, comment: 'Great service!', avatar: '', title: 'Server Owner' }];
+                      updateContent({ testimonials: newTestimonials });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Testimonial
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.testimonials || []).map((testimonial: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="grid grid-cols-2 gap-2 flex-1">
+                          <Input
+                            value={testimonial.name || ''}
+                            onChange={(e) => {
+                              const newTestimonials = [...section.content.testimonials];
+                              newTestimonials[index] = { ...testimonial, name: e.target.value };
+                              updateContent({ testimonials: newTestimonials });
+                            }}
+                            placeholder="Customer name"
+                            className="admin-input"
+                          />
+                          <Input
+                            value={testimonial.title || ''}
+                            onChange={(e) => {
+                              const newTestimonials = [...section.content.testimonials];
+                              newTestimonials[index] = { ...testimonial, title: e.target.value };
+                              updateContent({ testimonials: newTestimonials });
+                            }}
+                            placeholder="Customer title"
+                            className="admin-input"
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newTestimonials = section.content.testimonials.filter((_: any, i: number) => i !== index);
+                            updateContent({ testimonials: newTestimonials });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={testimonial.comment || ''}
+                        onChange={(e) => {
+                          const newTestimonials = [...section.content.testimonials];
+                          newTestimonials[index] = { ...testimonial, comment: e.target.value };
+                          updateContent({ testimonials: newTestimonials });
+                        }}
+                        placeholder="Customer testimonial..."
+                        className="admin-textarea mb-2"
+                        rows={2}
+                      />
+                      <Select
+                        value={testimonial.rating?.toString() || '5'}
+                        onValueChange={(value) => {
+                          const newTestimonials = [...section.content.testimonials];
+                          newTestimonials[index] = { ...testimonial, rating: parseInt(value) };
+                          updateContent({ testimonials: newTestimonials });
+                        }}
+                      >
+                        <SelectTrigger className="admin-input">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 Star</SelectItem>
+                          <SelectItem value="2">2 Stars</SelectItem>
+                          <SelectItem value="3">3 Stars</SelectItem>
+                          <SelectItem value="4">4 Stars</SelectItem>
+                          <SelectItem value="5">5 Stars</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* FAQ Section Editor */}
+          {section.type === 'faq' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Frequently Asked Questions"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Everything you need to know"
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">FAQs</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newFaqs = [...(section.content.faqs || []), { question: 'New Question', answer: 'Answer to the question...' }];
+                      updateContent({ faqs: newFaqs });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add FAQ
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.faqs || []).map((faq: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <Input
+                            value={faq.question || ''}
+                            onChange={(e) => {
+                              const newFaqs = [...section.content.faqs];
+                              newFaqs[index] = { ...faq, question: e.target.value };
+                              updateContent({ faqs: newFaqs });
+                            }}
+                            placeholder="Question"
+                            className="admin-input mb-2"
+                          />
+                          <Textarea
+                            value={faq.answer || ''}
+                            onChange={(e) => {
+                              const newFaqs = [...section.content.faqs];
+                              newFaqs[index] = { ...faq, answer: e.target.value };
+                              updateContent({ faqs: newFaqs });
+                            }}
+                            placeholder="Answer"
+                            className="admin-textarea"
+                            rows={3}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newFaqs = section.content.faqs.filter((_: any, i: number) => i !== index);
+                            updateContent({ faqs: newFaqs });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CTA Section Editor */}
+          {section.type === 'cta' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Ready to Start?"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Join thousands of players..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300">Primary Button Text</Label>
+                  <Input
+                    value={section.content.buttonText || ''}
+                    onChange={(e) => updateContent({ buttonText: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="Start Now"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-300">Primary Button URL</Label>
+                  <Input
+                    value={section.content.buttonUrl || ''}
+                    onChange={(e) => updateContent({ buttonUrl: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="/order"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300">Secondary Button Text</Label>
+                  <Input
+                    value={section.content.secondaryButtonText || ''}
+                    onChange={(e) => updateContent({ secondaryButtonText: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="View Plans"
+                  />
+                </div>
+                <div>
+                  <Label className="text-gray-300">Secondary Button URL</Label>
+                  <Input
+                    value={section.content.secondaryButtonUrl || ''}
+                    onChange={(e) => updateContent({ secondaryButtonUrl: e.target.value })}
+                    className="admin-input mt-1"
+                    placeholder="#pricing"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Server Specs Section Editor */}
+          {section.type === 'specs' && (
+            <div className="space-y-4">
+              <div>
+                <Label className="text-gray-300">Headline</Label>
+                <Input
+                  value={section.content.headline || ''}
+                  onChange={(e) => updateContent({ headline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Server Specifications"
+                />
+              </div>
+              <div>
+                <Label className="text-gray-300">Subheadline</Label>
+                <Input
+                  value={section.content.subheadline || ''}
+                  onChange={(e) => updateContent({ subheadline: e.target.value })}
+                  className="admin-input mt-1"
+                  placeholder="Enterprise-grade infrastructure..."
+                />
+              </div>
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-gray-300">Specifications</Label>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const newSpecs = [...(section.content.specs || []), { category: 'Hardware', items: ['Feature 1', 'Feature 2'] }];
+                      updateContent({ specs: newSpecs });
+                    }}
+                    className="bg-gaming-green/20 text-gaming-green hover:bg-gaming-green/30"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Spec Category
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {(section.content.specs || []).map((spec: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gaming-black border-gaming-green/20">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <Input
+                            value={spec.category || ''}
+                            onChange={(e) => {
+                              const newSpecs = [...section.content.specs];
+                              newSpecs[index] = { ...spec, category: e.target.value };
+                              updateContent({ specs: newSpecs });
+                            }}
+                            placeholder="Category (e.g., CPU, Memory)"
+                            className="admin-input mb-2"
+                          />
+                          <Textarea
+                            value={Array.isArray(spec.items) ? spec.items.join('\n') : ''}
+                            onChange={(e) => {
+                              const newSpecs = [...section.content.specs];
+                              newSpecs[index] = { ...spec, items: e.target.value.split('\n').filter(f => f.trim()) };
+                              updateContent({ specs: newSpecs });
+                            }}
+                            placeholder="Spec Item 1&#10;Spec Item 2&#10;Spec Item 3"
+                            className="admin-textarea"
+                            rows={3}
+                          />
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const newSpecs = section.content.specs.filter((_: any, i: number) => i !== index);
+                            updateContent({ specs: newSpecs });
+                          }}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/10 ml-2 px-3"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </TabsContent>

@@ -105,17 +105,17 @@ export default function GamePage() {
   const { data: customSections = [] } = useQuery({
     queryKey: [`/api/games/${game?.id}/sections`],
     enabled: !!game?.id,
-  });
+  }) as { data: any[] };
 
   const { data: customPricingTiers = [] } = useQuery({
     queryKey: [`/api/games/${game?.id}/pricing-tiers`],
     enabled: !!game?.id,
-  });
+  }) as { data: any[] };
 
   const { data: customFeatures = [] } = useQuery({
     queryKey: [`/api/games/${game?.id}/features`],
     enabled: !!game?.id,
-  });
+  }) as { data: any[] };
 
   // Fetch WHMCS pricing plans for Minecraft
   const { data: whmcsProducts, isLoading: whmcsLoading } = useQuery({
@@ -233,7 +233,7 @@ export default function GamePage() {
       popular: product.popular || false,
       whmcsProductId: product.whmcsProductId
     }));
-  } else if (customPricingTiers && customPricingTiers.length > 0) {
+  } else if (Array.isArray(customPricingTiers) && customPricingTiers.length > 0) {
     pricingPlans = customPricingTiers;
   } else if (game.pricingPlans && Array.isArray(game.pricingPlans) && game.pricingPlans.length > 0) {
     pricingPlans = game.pricingPlans as any[];

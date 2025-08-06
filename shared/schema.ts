@@ -358,7 +358,6 @@ export const insertPricingPlanSchema = createInsertSchema(pricingPlans).omit({
 
 export const insertServerStatusSchema = createInsertSchema(serverStatus).omit({
   id: true,
-  lastUpdated: true,
 });
 
 export const insertServerLocationSchema = createInsertSchema(serverLocations).omit({
