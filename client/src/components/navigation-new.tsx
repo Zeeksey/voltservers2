@@ -25,7 +25,7 @@ export default function NavigationNew() {
   return (
     <nav className="glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-3 lg:py-4">
+        <div className="flex justify-between items-center py-2 lg:py-2">
           <Link href="/">
             <div className="flex items-center space-x-3 cursor-pointer group">
               {logoUrl ? (
