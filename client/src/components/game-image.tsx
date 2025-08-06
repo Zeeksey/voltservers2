@@ -6,6 +6,7 @@ interface GameImageProps {
   className?: string;
   loading?: 'lazy' | 'eager';
   gameSlug?: string;
+  onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 
 // Map of game slugs to local SVG images
@@ -24,7 +25,7 @@ const LOCAL_GAME_IMAGES: Record<string, string> = {
   'satisfactory': '/images/games/satisfactory.svg'
 };
 
-export default function GameImage({ src, alt, className, loading = 'lazy', gameSlug }: GameImageProps) {
+export default function GameImage({ src, alt, className, loading = 'lazy', gameSlug, onError }: GameImageProps) {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -67,10 +68,13 @@ export default function GameImage({ src, alt, className, loading = 'lazy', gameS
     return src;
   };
 
-  const handleImageError = () => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     if (!imageError) {
       setImageError(true);
       setImageLoading(false);
+    }
+    if (onError) {
+      onError(e);
     }
   };
 

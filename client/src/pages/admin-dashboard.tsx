@@ -492,7 +492,10 @@ export default function AdminDashboard() {
   const createGameMutation = useMutation({
     mutationFn: (data: any) => apiRequest("/api/admin/games", { method: "POST", body: JSON.stringify(data) }),
     onSuccess: () => {
+      // Use proper cache invalidation to prevent flashing
       queryClient.invalidateQueries({ queryKey: ["/api/games"] });
+      // Immediately refetch to ensure smooth update
+      queryClient.refetchQueries({ queryKey: ["/api/games"] });
       resetGameForm();
       toast({ title: "Game created successfully!" });
     },
@@ -505,7 +508,10 @@ export default function AdminDashboard() {
     mutationFn: ({ id, data }: { id: string; data: any }) => 
       apiRequest(`/api/admin/games/${id}`, { method: "PUT", body: JSON.stringify(data) }),
     onSuccess: () => {
+      // Use proper cache invalidation to prevent flashing  
       queryClient.invalidateQueries({ queryKey: ["/api/games"] });
+      // Immediately refetch to ensure smooth update
+      queryClient.refetchQueries({ queryKey: ["/api/games"] });
       resetGameForm();
       toast({ title: "Game updated successfully!" });
     },
@@ -517,7 +523,10 @@ export default function AdminDashboard() {
   const deleteGameMutation = useMutation({
     mutationFn: (id: string) => apiRequest(`/api/admin/games/${id}`, { method: "DELETE" }),
     onSuccess: () => {
+      // Use proper cache invalidation to prevent flashing
       queryClient.invalidateQueries({ queryKey: ["/api/games"] });
+      // Immediately refetch to ensure smooth update
+      queryClient.refetchQueries({ queryKey: ["/api/games"] });
       toast({ title: "Game deleted successfully!" });
     },
     onError: (error: Error) => {
@@ -797,8 +806,20 @@ export default function AdminDashboard() {
 
   const handleGameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Ensure proper image URL fallback for new games
+    let imageUrl = gameForm.imageUrl;
+    if (!imageUrl && gameForm.slug) {
+      // Set default image based on game slug
+      imageUrl = `/images/games/${gameForm.slug}.svg`;
+    } else if (!imageUrl) {
+      // Ultimate fallback to default game icon
+      imageUrl = `/images/games/default.svg`;
+    }
+    
     const data = {
       ...gameForm,
+      imageUrl,
       basePrice: gameForm.basePrice,
       playerCount: parseInt(gameForm.playerCount),
     };

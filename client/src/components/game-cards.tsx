@@ -93,38 +93,20 @@ const staticGames = [
 ];
 
 export default function GameCards() {
-  // Query games from admin-managed API data
-  const { data: apiGames, isLoading, error } = useQuery({
+  // Query games from admin-managed API data with optimized settings to prevent flashing
+  const { data: apiGames, isLoading, error, isPlaceholderData } = useQuery({
     queryKey: ['/api/games'],
-    staleTime: 30000, // Consider data fresh for 30 seconds
-    refetchInterval: 60000, // Refetch every minute
+    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
+    cacheTime: 30 * 60 * 1000, // Cache for 30 minutes
+    refetchOnWindowFocus: false, // Don't refetch on window focus to prevent flashing
+    refetchOnMount: false, // Don't refetch on mount if we have cached data
+    placeholderData: staticGames, // Use static games as placeholder to prevent empty states
   });
 
-  // Use API data first, fallback to static data if API fails
+  // Always have games data - either from API or static fallback
   const games = apiGames && apiGames.length > 0 ? apiGames : staticGames;
 
-  // Show loading state only if we have no data at all
-  if (isLoading && !games?.length) {
-    return (
-      <section id="games" className="py-20 bg-gaming-black-light">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              <span className="text-gaming-green">Popular</span> Game Servers
-            </h2>
-            <p className="text-xl text-gaming-gray max-w-3xl mx-auto">
-              Choose from our extensive library of supported games. Each server comes with optimized configurations and mod support.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="h-80 bg-gaming-black-lighter border border-gaming-black-lighter rounded-lg animate-pulse" />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Never show loading state - always display games immediately
 
   return (
     <section id="games" className="py-20 bg-gaming-black-light">
@@ -144,11 +126,16 @@ export default function GameCards() {
               <Card className="group bg-gaming-black-lighter border-gaming-black-lighter hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col h-full cursor-pointer">
                 <div className="relative">
                   <GameImage 
-                    src={game.imageUrl} 
+                    src={game.imageUrl || `/images/games/${game.slug}.svg`} 
                     alt={`${game.name} server interface`} 
                     gameSlug={game.slug}
                     className="w-full h-48 object-cover" 
-                    loading="lazy"
+                    loading="eager"
+                    onError={(e) => {
+                      // Fallback to default game icon if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.src = `/images/games/default.svg`;
+                    }}
                   />
                   {game.isPopular && (
                     <Badge className="absolute top-4 right-4 bg-gaming-green text-gaming-black">
