@@ -1,5 +1,4 @@
-import PromoBanner from "@/components/promo-banner";
-import Navigation from "@/components/navigation";
+import StickyHeader from "@/components/sticky-header";
 import ProfessionalHero from "@/components/professional-hero";
 import TrustIndicators from "@/components/trust-indicators";
 import GameCards from "@/components/game-cards";
@@ -27,8 +26,7 @@ export default function Home() {
       <meta name="twitter:title" content="VoltServers - Premium Game Server Hosting" />
       <meta name="twitter:description" content="Professional game server hosting with 99.9% uptime guarantee. Deploy Minecraft, CS2, Rust servers instantly. Starting at $2.99/mo." />
       
-      <PromoBanner />
-      <Navigation />
+      <StickyHeader />
       <ProfessionalHero />
       <TrustIndicators />
       <GameCards />

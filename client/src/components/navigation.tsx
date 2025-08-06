@@ -37,7 +37,7 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 glass-effect border-b border-gaming-green/10">
+    <nav className="glass-effect border-b border-gaming-green/10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3 lg:py-4">
           <Link href="/">

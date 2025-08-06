@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, ChevronRight, Database, ChevronDown, Settings, Package, Wrench, Globe, Gamepad2, Hammer, Download, Upload } from "lucide-react";
-import Navigation from "@/components/navigation";
-import PromoBanner from "@/components/promo-banner";
+import StickyHeader from "@/components/sticky-header";
 import Footer from "@/components/footer";
 import { Game } from "@shared/schema";
 
@@ -430,8 +429,7 @@ export default function GamePage() {
       <meta name="twitter:description" content={`Professional ${game.name} server hosting with 99.9% uptime guarantee.`} />
       <meta name="twitter:image" content={game.imageUrl} />
       
-      <PromoBanner />
-      <Navigation />
+      <StickyHeader />
       
       {/* Hero Section - VoltServers Style */}
       <section className="relative py-20 overflow-hidden">
