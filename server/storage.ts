@@ -117,6 +117,11 @@ export interface IStorage {
   updateGame(id: string, updates: Partial<InsertGame>): Promise<Game>;
   deleteGame(id: string): Promise<void>;
   
+  // Game template methods
+  updateGameFeatures(gameId: string, features: string[]): Promise<GameFeature[]>;
+  updateGameSections(gameId: string, sections: any[]): Promise<GamePageSection[]>;
+  updateGamePricingTiers(gameId: string, pricingTiers: any[]): Promise<GamePricingTier[]>;
+  
   // Pricing methods
   getAllPricingPlans(): Promise<PricingPlan[]>;
   getPricingPlan(id: string): Promise<PricingPlan | undefined>;

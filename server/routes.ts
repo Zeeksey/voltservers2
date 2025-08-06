@@ -926,6 +926,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Template Editor API Endpoints
+  app.post("/api/games/:gameId/features", async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const { features } = req.body;
+      
+      const updatedFeatures = await storage.updateGameFeatures(gameId, features);
+      res.json(updatedFeatures);
+    } catch (error) {
+      console.error("Error updating game features:", error);
+      res.status(500).json({ message: "Failed to update game features" });
+    }
+  });
+
+  app.post("/api/games/:gameId/sections", async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const { sections } = req.body;
+      
+      const updatedSections = await storage.updateGameSections(gameId, sections);
+      res.json(updatedSections);
+    } catch (error) {
+      console.error("Error updating game sections:", error);
+      res.status(500).json({ message: "Failed to update game sections" });
+    }
+  });
+
+  app.post("/api/games/:gameId/pricing-tiers", async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const { pricingTiers } = req.body;
+      
+      const updatedTiers = await storage.updateGamePricingTiers(gameId, pricingTiers);
+      res.json(updatedTiers);
+    } catch (error) {
+      console.error("Error updating pricing tiers:", error);
+      res.status(500).json({ message: "Failed to update pricing tiers" });
+    }
+  });
+
+  // Update game via API (for template editor)
+  app.put("/api/games/:gameId", async (req, res) => {
+    try {
+      const { gameId } = req.params;
+      const updatedGame = await storage.updateGame(gameId, req.body);
+      res.json(updatedGame);
+    } catch (error) {
+      console.error("Error updating game:", error);
+      res.status(500).json({ message: "Failed to update game" });
+    }
+  });
+
   // Admin CRUD Routes for Games
   app.post("/api/admin/games", requireAdmin, async (req, res) => {
     try {

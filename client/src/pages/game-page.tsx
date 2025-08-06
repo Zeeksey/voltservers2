@@ -578,8 +578,8 @@ export default function GamePage() {
                 }`}
               >
                 {(plan.popular || plan.isPopular) && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gaming-green text-black font-medium">Most Popular</Badge>
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                    <Badge className="bg-gaming-green text-black font-medium px-3 py-1">Most Popular</Badge>
                   </div>
                 )}
                 <div className="text-center pb-8 pt-8 px-6">
