@@ -18,6 +18,7 @@ const AdminLogin = lazy(() => import("@/pages/admin-login"));
 const AdminDashboard = lazy(() => import("@/pages/admin-dashboard"));
 const AdminGameCustomization = lazy(() => import("@/pages/admin-game-customization"));
 const AdminGameTemplateEditor = lazy(() => import("@/pages/admin-game-template-editor"));
+const AdminGameEditor = lazy(() => import("@/pages/admin-game-editor"));
 const MinecraftToolPage = lazy(() => import("@/pages/minecraft-tool-page"));
 const MinecraftToolsPage = lazy(() => import("@/pages/minecraft-tools"));
 const MinecraftHosting = lazy(() => import("@/pages/minecraft-hosting"));
@@ -77,6 +78,8 @@ function Router() {
       <Route path="/admin/login" component={(props) => <LazyWrapper Component={AdminLogin} {...props} />} />
       <Route path="/admin/games/:gameId/customize" component={(props) => <LazyWrapper Component={AdminGameCustomization} {...props} />} />
       <Route path="/admin/games/:gameId/template" component={(props) => <LazyWrapper Component={AdminGameTemplateEditor} {...props} />} />
+      <Route path="/admin/games/:gameId/edit" component={(props) => <LazyWrapper Component={AdminGameEditor} {...props} />} />
+      <Route path="/admin/games/new" component={(props) => <LazyWrapper Component={AdminGameEditor} {...props} />} />
       <Route path="/admin" component={(props) => <LazyWrapper Component={AdminDashboard} {...props} />} />
       <Route path="/server-management" component={(props) => <LazyWrapper Component={ServerManagementPage} {...props} />} />
       <Route path="/billing-management" component={(props) => <LazyWrapper Component={BillingManagementPage} {...props} />} />

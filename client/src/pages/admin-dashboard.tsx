@@ -1534,9 +1534,12 @@ export default function AdminDashboard() {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-gaming-green">Existing Games ({games.length})</CardTitle>
-                    <div className="text-xs text-gray-400">
-                      Edit: Game details • Settings: Page content • Delete: Remove game
-                    </div>
+                    <Link href="/admin/games/new">
+                      <Button className="bg-gaming-green text-black hover:bg-gaming-green/90">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Create New Game
+                      </Button>
+                    </Link>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -1553,14 +1556,15 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                         <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 admin-button-group">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleEditGame(game)}
-                            className="touch-target admin-button border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
+                          <Link href={`/admin/games/${game.id}/edit`}>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="touch-target admin-button border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                          </Link>
                           <Link href={`/admin/games/${game.id}/customize`}>
                             <Button
                               size="sm"
