@@ -47,14 +47,15 @@ export const queryClient = new QueryClient({
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes for better performance
-      cacheTime: 10 * 60 * 1000, // 10 minutes cache
+      staleTime: 60 * 60 * 1000, // 1 hour - prevent frequent refetches that cause flashing
+      gcTime: 2 * 60 * 60 * 1000, // 2 hours cache to keep data longer
       retry: (failureCount, error) => {
         // Don't retry on 4xx errors for faster failure
         if (error.message.includes('4')) return false;
         return failureCount < 2; // Reduce retries for speed
       },
       retryDelay: attemptIndex => Math.min(500 * 2 ** attemptIndex, 10000), // Faster retry delays
+      notifyOnChangeProps: ['data', 'isLoading', 'error'], // Only notify on essential changes
     },
     mutations: {
       retry: 1,
