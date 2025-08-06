@@ -57,6 +57,20 @@ export default function AdminGameEditor() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Check admin authentication
+  React.useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in as admin to access this page",
+        variant: "destructive"
+      });
+      setLocation('/admin/login');
+      return;
+    }
+  }, [setLocation, toast]);
+
   const [gameData, setGameData] = useState<GameData>({
     id: '',
     name: '',
@@ -81,7 +95,12 @@ export default function AdminGameEditor() {
   // Fetch existing game data
   const { data: existingGame, isLoading } = useQuery({
     queryKey: ['/api/games', gameId],
-    enabled: !!gameId && gameId !== 'new'
+    enabled: !!gameId && gameId !== 'new',
+    queryFn: async () => {
+      const response = await fetch(`/api/games/${gameId}`);
+      if (!response.ok) throw new Error('Failed to fetch game');
+      return response.json();
+    }
   });
 
   // Load existing game data
@@ -102,29 +121,53 @@ export default function AdminGameEditor() {
       const method = gameId === 'new' ? 'POST' : 'PUT';
       const url = gameId === 'new' ? '/api/admin/games' : `/api/admin/games/${gameId}`;
       
+      // Get admin token
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        throw new Error('Admin authentication required');
+      }
+      
       const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(data)
       });
       
-      if (!response.ok) throw new Error('Failed to save game');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to save game');
+      }
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (savedGame) => {
       toast({
         title: "Success",
-        description: "Game saved successfully!"
+        description: gameId === 'new' ? "Game created successfully!" : "Game updated successfully!"
       });
       queryClient.invalidateQueries({ queryKey: ['/api/games'] });
-      setLocation('/admin');
+      
+      // If creating new game, redirect to edit mode with the new ID
+      if (gameId === 'new' && savedGame?.id) {
+        setLocation(`/admin/games/${savedGame.id}/edit`);
+      } else {
+        setLocation('/admin');
+      }
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Save game error:', error);
       toast({
         title: "Error",
-        description: "Failed to save game",
+        description: error.message || "Failed to save game",
         variant: "destructive"
       });
+      
+      // If authentication error, redirect to login
+      if (error.message?.includes('authentication') || error.message?.includes('token')) {
+        setLocation('/admin/login');
+      }
     }
   });
 
