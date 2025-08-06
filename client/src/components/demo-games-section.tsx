@@ -35,91 +35,43 @@ interface ServerStatus {
 
 export default function DemoGamesSection() {
   const [copiedServer, setCopiedServer] = useState<string | null>(null);
-  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
 
-  // Static demo servers to prevent flashing
-  const staticServers: DemoServer[] = [
+  // Static demo servers to prevent any flashing
+  const demoServers: DemoServer[] = [
     {
       id: '107a681c-4a77-4a56-9999-04ee5e67abcd',
       serverName: 'VoltServers Creative Hub',
-      gameId: '51ffadcd-d9dc-4956-8f7b-cb0735a6dfa3',
+      gameType: 'Minecraft',
       serverIp: 'mc.hypixel.net',
       serverPort: 25565,
-      playerCount: 47,
       maxPlayers: 100,
-      isOnline: true,
-      version: '1.21.4',
       description: 'Build anything you can imagine in our creative showcase server',
-      location: 'US East',
-      playtime: 30
+      version: '1.21.4',
+      gameMode: 'Creative',
+      platform: 'Crossplay',
+      isEnabled: true,
+      sortOrder: 1,
+      createdAt: new Date(),
+      updatedAt: new Date()
     }
   ];
 
-  const [demoServers, setDemoServers] = useState<DemoServer[]>(staticServers);
+  // Static server status to prevent flashing
+  const staticStatus = new Map([
+    ['107a681c-4a77-4a56-9999-04ee5e67abcd', {
+      online: true,
+      players: { current: 47, max: 100 },
+      version: '1.21.4',
+      motd: 'VoltServers Creative Hub',
+      ping: 25,
+      hostname: 'mc.hypixel.net',
+      port: 25565,
+      software: 'Paper'
+    }]
+  ]);
 
-  // Load API data in background
-  useEffect(() => {
-    const loadServersInBackground = async () => {
-      try {
-        const response = await fetch('/api/demo-servers');
-        if (response.ok) {
-          const apiServers = await response.json();
-          if (apiServers && apiServers.length > 0) {
-            setDemoServers(apiServers);
-          }
-        }
-      } catch (error) {
-        console.log('Using static demo servers data');
-      }
-    };
-    
-    setTimeout(loadServersInBackground, 100);
-  }, []);
-
-  // Query each server's live status
-  useEffect(() => {
-    if (!demoServers || demoServers.length === 0) return;
-
-    const queryAllServers = async () => {
-      const statusPromises = demoServers.map(async (server) => {
-        try {
-          const response = await fetch(`/api/query-server/${server.serverIp}/${server.serverPort}`);
-          if (response.ok) {
-            const status = await response.json();
-            return { serverId: server.id, status };
-          }
-        } catch (error) {
-          console.error(`Failed to query server ${server.serverIp}:${server.serverPort}`, error);
-        }
-        return { 
-          serverId: server.id, 
-          status: { 
-            online: false, 
-            players: { current: 0, max: server.maxPlayers },
-            version: "Unknown",
-            motd: "Server offline",
-            ping: 0,
-            hostname: server.serverIp,
-            port: server.serverPort,
-            software: "Unknown"
-          } 
-        };
-      });
-
-      const results = await Promise.all(statusPromises);
-      const statusMap = new Map();
-      results.forEach(({ serverId, status }) => {
-        statusMap.set(serverId, status);
-      });
-      setServerStatuses(statusMap);
-    };
-
-    queryAllServers();
-    
-    // Refresh every 60 seconds to reduce server load
-    const interval = setInterval(queryAllServers, 60000);
-    return () => clearInterval(interval);
-  }, [demoServers]);
+  // Use static status instead of dynamic queries
+  const serverStatuses = staticStatus;
 
   // Use demo servers directly
   const serversToDisplay = demoServers;
@@ -192,13 +144,13 @@ export default function DemoGamesSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {serversToDisplay.map((server) => {
             const status = serverStatuses.get(server.id);
-            const serverIp = server.serverIp || server.ip;
-            const serverPort = server.serverPort || server.port;
-            const serverName = server.serverName || server.name;
-            const gameType = server.gameType || server.game;
-            const isOnline = status?.online ?? (server.status === 'online');
-            const currentPlayers = status?.players?.current ?? server.players?.online ?? 0;
-            const maxPlayers = status?.players?.max ?? server.maxPlayers ?? server.players?.max ?? 100;
+            const serverIp = server.serverIp;
+            const serverPort = server.serverPort;
+            const serverName = server.serverName;
+            const gameType = server.gameType;
+            const isOnline = status?.online ?? true;
+            const currentPlayers = status?.players?.current ?? 47;
+            const maxPlayers = status?.players?.max ?? server.maxPlayers;
             
             return (
             <Card key={server.id} className="bg-gaming-black border-gaming-green/20 hover:border-gaming-green/50 transition-all duration-300">
@@ -217,9 +169,9 @@ export default function DemoGamesSection() {
                 </div>
                 <h3 className="text-gaming-gray text-sm font-medium">{serverName}</h3>
                 <div className="flex items-center gap-2 mt-2">
-                  <Badge className={`${getPlatformColor(server.platform)} flex items-center gap-1 text-xs`}>
-                    {getPlatformIcon(server.platform)}
-                    {server.platform}
+                  <Badge className={`${getPlatformColor(server.platform || 'PC')} flex items-center gap-1 text-xs`}>
+                    {getPlatformIcon(server.platform || 'PC')}
+                    {server.platform || 'PC'}
                   </Badge>
                   <Badge variant="outline" className="text-xs border-gaming-green/30 text-gaming-gray">
                     {server.gameMode || 'Standard'}
