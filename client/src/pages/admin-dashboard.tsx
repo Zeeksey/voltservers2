@@ -1406,6 +1406,7 @@ export default function AdminDashboard() {
                       <SelectContent>
                         <SelectItem value="none">None</SelectItem>
                         <SelectItem value="snow">Snow Effect</SelectItem>
+                        <SelectItem value="green-snow">🟢 Green Snow</SelectItem>
                         <SelectItem value="bolts">⚡ VoltServers Bolts</SelectItem>
                         <SelectItem value="halloween">Halloween</SelectItem>
                         <SelectItem value="christmas">Christmas</SelectItem>

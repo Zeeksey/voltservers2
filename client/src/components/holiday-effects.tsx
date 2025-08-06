@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import SnowAnimation from './snow-animation';
+import GreenSnowAnimation from './green-snow-animation';
 import BoltAnimation from './bolt-animation';
 
 interface HolidayEffectsProps {
-  theme?: 'none' | 'snow' | 'halloween' | 'easter' | 'christmas' | 'bolts';
+  theme?: 'none' | 'snow' | 'green-snow' | 'halloween' | 'easter' | 'christmas' | 'bolts';
 }
 
 export default function HolidayEffects({ theme: propTheme }: HolidayEffectsProps) {
@@ -39,6 +40,7 @@ export default function HolidayEffects({ theme: propTheme }: HolidayEffectsProps
   return (
     <>
       {theme === 'snow' && <SnowAnimation />}
+      {theme === 'green-snow' && <GreenSnowAnimation />}
       {theme === 'bolts' && <BoltAnimation />}
       
       {theme === 'halloween' && (

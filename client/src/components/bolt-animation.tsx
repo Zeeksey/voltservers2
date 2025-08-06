@@ -17,21 +17,21 @@ export default function BoltAnimation() {
   useEffect(() => {
     const createBolt = (id: number): Bolt => ({
       id,
-      x: Math.random() * window.innerWidth,
-      y: -20,
-      opacity: Math.random() * 0.8 + 0.3,
-      speed: Math.random() * 1.5 + 0.8,
-      size: Math.random() * 20 + 15,
+      x: Math.random() * (window.innerWidth || 1920),
+      y: -30,
+      opacity: Math.random() * 0.7 + 0.4,
+      speed: Math.random() * 1.2 + 0.6,
+      size: Math.random() * 18 + 12,
       rotation: Math.random() * 360,
-      rotationSpeed: Math.random() * 3 - 1.5,
+      rotationSpeed: Math.random() * 2 - 1,
     });
 
     const initBolts = () => {
       const initialBolts: Bolt[] = [];
-      for (let i = 0; i < 12; i++) {
+      for (let i = 0; i < 8; i++) {
         initialBolts.push({
           ...createBolt(i),
-          y: Math.random() * window.innerHeight,
+          y: Math.random() * (window.innerHeight || 1080),
         });
       }
       setBolts(initialBolts);
@@ -44,10 +44,10 @@ export default function BoltAnimation() {
           const newRotation = bolt.rotation + bolt.rotationSpeed;
           
           // Reset bolt when it goes off screen
-          if (newY > window.innerHeight + 20) {
+          if (newY > (window.innerHeight || 1080) + 50) {
             return {
               ...createBolt(bolt.id),
-              x: Math.random() * window.innerWidth,
+              x: Math.random() * (window.innerWidth || 1920),
             };
           }
           
@@ -60,10 +60,14 @@ export default function BoltAnimation() {
       );
     };
 
-    initBolts();
-    const interval = setInterval(animateBolts, 50);
+    // Wait for window to be available
+    const timer = setTimeout(() => {
+      initBolts();
+      const interval = setInterval(animateBolts, 60);
+      return () => clearInterval(interval);
+    }, 100);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
