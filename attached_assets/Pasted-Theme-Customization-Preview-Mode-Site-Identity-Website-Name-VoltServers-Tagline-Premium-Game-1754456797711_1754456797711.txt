@@ -1,0 +1,124 @@
+Theme Customization
+
+Preview Mode
+Site Identity
+Website Name
+VoltServers
+Tagline
+Premium Game Server Hosting
+Footer Text
+© 2025 VoltServers. All rights reserved.
+Hero Section Content
+Hero Title
+Deploy Your Game Server in Minutes
+Hero Subtitle
+Experience lightning-fast deployment with our premium game server hosting platform
+Hero Description
+Join thousands of gamers who trust our reliable infrastructure for their Minecraft, CS2, Rust, and other game servers.
+Button Text
+Get Started
+Button URL
+/pricing
+Brand Assets
+Logo
+No file chosen
+Upload
+Favicon
+No file chosen
+Upload
+Color Scheme
+Primary Color
+
+#00ff88
+Secondary Color
+
+#1a1a1a
+Accent Color
+
+#00cc6a
+Background Color
+
+#0a0a0a
+Holiday Themes
+Special Theme
+None
+
+Typography & Layout
+Font Family
+Inter
+
+Border Radius
+Medium (8px)
+
+SEO & Meta Tags
+Site Description
+Professional game server hosting with 24/7 support and premium hardware
+Meta Title Override
+Leave empty to use site name
+Meta Keywords
+gaming, servers, hosting, minecraft
+Meta Description
+Optimized description for search engines (150-160 characters)
+Social Media & Analytics
+Open Graph Title
+Title for social sharing
+Twitter Handle
+@yourgamingsite
+Google Analytics ID
+G-XXXXXXXXXX
+Facebook Pixel ID
+123456789012345
+Open Graph Description
+Description for social media sharing
+Open Graph Image URL
+https://example.com/og-image.jpg
+Site Management
+
+
+Maintenance Mode
+
+
+Show Announcement Banner
+Cookie Policy & GDPR
+
+
+Show Cookie Banner
+
+
+Require Cookie Consent
+Cookie Policy Text
+We use cookies to enhance your experience and analyze site traffic.
+Privacy Policy URL
+/privacy-policy
+Cookie Categories (JSON)
+[
+  {
+    "id": "necessary",
+    "name": "Necessary",
+    "description": "Essential for website functionality",
+    "required": true
+  },
+  {
+    "id": "analytics",
+    "name": "Analytics",
+    "description": "Help us understand how visitors use our site",
+    "required": false
+  },
+  {
+    "id": "marketing",
+    "name": "Marketing",
+    "description": "Used to deliver relevant advertisements",
+    "required": false
+  }
+]
+Define cookie categories with id, name, description, and required fields
+
+Advanced Customization
+Custom CSS
+/* Add your custom CSS here */
+.custom-class {
+  background: linear-gradient(45deg, #00ff88, #00cc6a);
+}
+Custom Head Code
+<!-- Additional meta tags, analytics, or custom scripts -->
+Custom Body Code

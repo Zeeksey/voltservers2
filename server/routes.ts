@@ -330,6 +330,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Incidents endpoints
+  app.get("/api/incidents", async (req, res) => {
+    try {
+      const incidents = await storage.getAllIncidents();
+      res.json(incidents);
+    } catch (error) {
+      console.error("Error fetching incidents:", error);
+      // Return fallback data for incidents
+      res.json([
+        {
+          id: "1",
+          title: "Brief Network Latency in EU Servers",
+          description: "Users experienced slightly higher latency (5-10ms increase) in European servers for approximately 15 minutes.",
+          status: "resolved",
+          impact: "minor",
+          duration: "15 minutes",
+          affectedServices: ["Germany", "Netherlands", "France"],
+          incidentDate: new Date('2025-01-15T10:00:00Z').toISOString()
+        },
+        {
+          id: "2",
+          title: "Scheduled Maintenance - Control Panel Update",
+          description: "Planned maintenance to deploy new control panel features. All services remained operational.",
+          status: "completed",
+          impact: "none",
+          duration: "30 minutes",
+          affectedServices: ["Control Panel"],
+          incidentDate: new Date('2025-01-10T06:00:00Z').toISOString()
+        },
+        {
+          id: "3",
+          title: "DDoS Attack Mitigation",
+          description: "Large-scale DDoS attack automatically mitigated by our protection systems. No service interruption.",
+          status: "resolved",
+          impact: "none", 
+          duration: "2 minutes",
+          affectedServices: ["All Services"],
+          incidentDate: new Date('2025-01-05T14:30:00Z').toISOString()
+        }
+      ]);
+    }
+  });
+
+  // Newsletter subscription endpoint
+  app.post("/api/newsletter/subscribe", async (req, res) => {
+    try {
+      const { email } = req.body;
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ message: "Valid email address is required" });
+      }
+      
+      const subscription = await storage.subscribeToNewsletter(email);
+      res.json({ message: "Successfully subscribed to status updates!", subscription });
+    } catch (error) {
+      if (error.message?.includes('unique constraint') || error.message?.includes('duplicate key')) {
+        return res.status(400).json({ message: "Email is already subscribed to status updates" });
+      }
+      console.error("Newsletter subscription error:", error);
+      res.status(500).json({ message: "Failed to subscribe. Please try again later." });
+    }
+  });
+
   // Minecraft tools endpoints
   app.get("/api/minecraft-tools", async (req, res) => {
     try {

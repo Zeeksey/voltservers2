@@ -57,6 +57,16 @@ export default function AdminDashboard() {
     borderRadius: "0.5rem",
     holidayTheme: "none",
     customCss: "",
+    // Hero Section
+    heroButtonText: "Get Started",
+    heroButtonUrl: "/pricing",
+    heroDemoButtonText: "Watch Demo",
+    heroDemoButtonUrl: "/demo",
+    // Call-to-Action Section
+    ctaTitle: "Ready to Start Gaming?",
+    ctaDescription: "Join thousands of gamers worldwide with our premium hosting services.",
+    ctaButtonText: "Get Started Now",
+    ctaButtonUrl: "/pricing",
     // SEO & Meta Tags
     metaTitle: "",
     metaDescription: "",
@@ -1236,6 +1246,109 @@ export default function AdminDashboard() {
                           placeholder="#ffffff"
                         />
                       </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Hero Section Settings */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Hero Section</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Customize the hero section buttons and links
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Primary Button Text</Label>
+                      <Input
+                        value={themeForm.heroButtonText || "Get Started"}
+                        onChange={(e) => setThemeForm({...themeForm, heroButtonText: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="Get Started"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Primary Button URL</Label>
+                      <Input
+                        value={themeForm.heroButtonUrl || "/pricing"}
+                        onChange={(e) => setThemeForm({...themeForm, heroButtonUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="/pricing"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">Demo Button Text</Label>
+                      <Input
+                        value={themeForm.heroDemoButtonText || "Watch Demo"}
+                        onChange={(e) => setThemeForm({...themeForm, heroDemoButtonText: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="Watch Demo"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">Demo Button URL</Label>
+                      <Input
+                        value={themeForm.heroDemoButtonUrl || "/demo"}
+                        onChange={(e) => setThemeForm({...themeForm, heroDemoButtonUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="/demo"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Call-to-Action Settings */}
+              <Card className="bg-gaming-black-light border-gaming-green/30">
+                <CardHeader>
+                  <CardTitle className="text-gaming-white">Call-to-Action Section</CardTitle>
+                  <CardDescription className="text-gaming-gray">
+                    Customize CTA section content and buttons
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-gaming-white">CTA Title</Label>
+                    <Input
+                      value={themeForm.ctaTitle || "Ready to Start Gaming?"}
+                      onChange={(e) => setThemeForm({...themeForm, ctaTitle: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Ready to Start Gaming?"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gaming-white">CTA Description</Label>
+                    <Textarea
+                      value={themeForm.ctaDescription || "Join thousands of gamers worldwide with our premium hosting services."}
+                      onChange={(e) => setThemeForm({...themeForm, ctaDescription: e.target.value})}
+                      className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                      placeholder="Join thousands of gamers worldwide with our premium hosting services."
+                      rows={3}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-gaming-white">CTA Button Text</Label>
+                      <Input
+                        value={themeForm.ctaButtonText || "Get Started Now"}
+                        onChange={(e) => setThemeForm({...themeForm, ctaButtonText: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="Get Started Now"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-gaming-white">CTA Button URL</Label>
+                      <Input
+                        value={themeForm.ctaButtonUrl || "/pricing"}
+                        onChange={(e) => setThemeForm({...themeForm, ctaButtonUrl: e.target.value})}
+                        className="bg-gaming-black border-gaming-green/30 text-gaming-white"
+                        placeholder="/pricing"
+                      />
                     </div>
                   </div>
                 </CardContent>

@@ -123,6 +123,37 @@ export const gamePricingTiers = pgTable("game_pricing_tiers", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const incidents = pgTable("incidents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  status: text("status").notNull().default("resolved"), // "resolved", "completed", "ongoing"
+  impact: text("impact").notNull().default("minor"), // "none", "minor", "major"
+  duration: text("duration").notNull(),
+  affectedServices: text("affected_services").array().default(sql`'{}'::text[]`),
+  incidentDate: timestamp("incident_date").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Types for incidents
+export type Incident = typeof incidents.$inferSelect;
+export type InsertIncident = typeof incidents.$inferInsert;
+export const insertIncidentSchema = createInsertSchema(incidents);
+
+// Newsletter subscriptions
+export const newsletterSubscriptions = pgTable("newsletter_subscriptions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").notNull().unique(),
+  isActive: boolean("is_active").notNull().default(true),
+  subscribedAt: timestamp("subscribed_at").notNull().defaultNow(),
+  unsubscribedAt: timestamp("unsubscribed_at"),
+});
+
+export type NewsletterSubscription = typeof newsletterSubscriptions.$inferSelect;
+export type InsertNewsletterSubscription = typeof newsletterSubscriptions.$inferInsert;
+export const insertNewsletterSubscriptionSchema = createInsertSchema(newsletterSubscriptions);
+
 // Game features for customization
 export const gameFeatures = pgTable("game_features", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
