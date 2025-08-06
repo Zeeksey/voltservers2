@@ -23,7 +23,7 @@ interface ServerStatus {
 
 export default function DemoServers() {
   const [copying, setCopying] = useState<string | null>(null);
-  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(() => new Map());
+  const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
   
   const { data: demoServers, isLoading } = useQuery<DemoServer[]>({
     queryKey: ['/api/demo-servers'],
@@ -60,7 +60,7 @@ export default function DemoServers() {
       });
 
       const results = await Promise.all(statusPromises);
-      const statusMap = new Map<string, ServerStatus>();
+      const statusMap = new Map();
       results.forEach(({ serverId, status }) => {
         statusMap.set(serverId, status);
       });
@@ -240,16 +240,7 @@ export default function DemoServers() {
                     </Button>
                   </div>
                   
-                  {server.playtime && (
-                    <div className="mt-4 p-3 bg-gaming-green/10 rounded-lg border border-gaming-green/20">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gaming-green text-sm font-medium">
-                          <Clock className="inline h-3 w-3 mr-1" />
-                          Demo Time Limit: {server.playtime} minutes
-                        </span>
-                      </div>
-                    </div>
-                  )}
+
               </CardContent>
             </Card>
             );

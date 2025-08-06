@@ -14,6 +14,7 @@ export default function Navigation() {
   
   const { data: themeSettings } = useQuery<ThemeSettings>({
     queryKey: ["/api/theme-settings"],
+    retry: false,
   });
 
   const scrollToSection = (sectionId: string) => {
@@ -21,9 +22,13 @@ export default function Navigation() {
       window.location.href = `/#${sectionId}`;
       return;
     }
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    try {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView();
+      }
+    } catch (error) {
+      console.error('Scroll error:', error);
     }
     setIsMenuOpen(false);
   };
