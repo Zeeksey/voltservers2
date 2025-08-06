@@ -8,8 +8,12 @@ export default function NavigationNew() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   
-  const { data: themeSettings } = useQuery({
-    queryKey: ['/api/theme-settings']
+  const { data: themeSettings } = useQuery<{
+    siteName?: string;
+    logoUrl?: string;
+  }>({
+    queryKey: ['/api/theme-settings'],
+    retry: false,
   });
   
   const siteName = themeSettings?.siteName || "VoltServers";
@@ -32,7 +36,7 @@ export default function NavigationNew() {
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-10 lg:h-12 max-w-40 lg:max-w-48 object-contain group-hover:scale-105 transition-transform"
+                  className="h-8 lg:h-10 max-w-32 lg:max-w-40 object-contain group-hover:scale-105 transition-transform"
                 />
               ) : (
                 <>
