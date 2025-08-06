@@ -21,7 +21,8 @@ export default function Footer() {
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-14 max-w-48 object-contain"
+                  className="h-16 w-auto max-w-none object-contain"
+                  style={{ minHeight: '64px', maxHeight: '64px' }}
                 />
               ) : (
                 <>

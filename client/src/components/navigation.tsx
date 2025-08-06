@@ -46,7 +46,8 @@ export default function Navigation() {
                 <img 
                   src={logoUrl} 
                   alt={siteName} 
-                  className="h-12 lg:h-16 max-w-48 lg:max-w-64 object-contain group-hover:scale-105 transition-transform"
+                  className="h-12 lg:h-20 w-auto max-w-none object-contain group-hover:scale-105 transition-transform"
+                  style={{ minHeight: '48px', maxHeight: '80px' }}
                 />
               ) : (
                 <>
