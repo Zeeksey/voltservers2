@@ -633,7 +633,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gaming-black">
+    <div className="min-h-screen bg-gaming-black admin-dashboard">
       <NavigationNew />
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8 admin-mobile-header">

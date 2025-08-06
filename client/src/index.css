@@ -756,8 +756,10 @@ textarea::placeholder {
       touch-action: auto;
     }
     
-    /* Better tab/dialog interaction on mobile */
-    [data-state="active"], [aria-selected="true"] {
+    /* Better tab/dialog interaction on mobile - ADMIN ONLY */
+    .admin-dashboard [data-state="active"], 
+    .admin-dashboard [aria-selected="true"],
+    .admin-mobile-tab-trigger[data-state="active"] {
       background-color: var(--gaming-green) !important;
       color: black !important;
     }
