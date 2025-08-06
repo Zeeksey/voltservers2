@@ -22,7 +22,7 @@ export default function MaintenancePage() {
               <img 
                 src={logoUrl} 
                 alt={siteName} 
-                className="w-16 h-16 object-contain"
+                className="h-16 max-w-32 object-contain"
               />
             ) : (
               <div className="w-16 h-16 bg-gradient-green rounded-lg flex items-center justify-center">

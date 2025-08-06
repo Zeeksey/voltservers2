@@ -19,16 +19,16 @@ export default function BoltAnimation() {
       id,
       x: Math.random() * window.innerWidth,
       y: -20,
-      opacity: Math.random() * 0.6 + 0.2,
-      speed: Math.random() * 2 + 1,
-      size: Math.random() * 15 + 10,
+      opacity: Math.random() * 0.8 + 0.3,
+      speed: Math.random() * 1.5 + 0.8,
+      size: Math.random() * 20 + 15,
       rotation: Math.random() * 360,
-      rotationSpeed: Math.random() * 4 - 2,
+      rotationSpeed: Math.random() * 3 - 1.5,
     });
 
     const initBolts = () => {
       const initialBolts: Bolt[] = [];
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < 12; i++) {
         initialBolts.push({
           ...createBolt(i),
           y: Math.random() * window.innerHeight,
@@ -71,7 +71,7 @@ export default function BoltAnimation() {
       {bolts.map(bolt => (
         <div
           key={bolt.id}
-          className="absolute transition-all duration-75 ease-linear"
+          className="absolute transition-all duration-75 ease-linear bolt-effect"
           style={{
             left: `${bolt.x}px`,
             top: `${bolt.y}px`,
@@ -79,10 +79,25 @@ export default function BoltAnimation() {
             transform: `rotate(${bolt.rotation}deg)`,
             fontSize: `${bolt.size}px`,
             color: '#00cc6a',
-            filter: 'drop-shadow(0 0 4px rgba(0, 204, 106, 0.3))',
-          }}
+            '--bolt-rotation': `${bolt.rotation}deg`,
+            textShadow: '0 0 10px rgba(0, 204, 106, 0.8), 0 0 20px rgba(0, 204, 106, 0.4), 0 0 30px rgba(0, 204, 106, 0.2)',
+          } as React.CSSProperties}
         >
-          ⚡
+          {/* Fallback to styled bolt if emoji doesn't render */}
+          <span style={{ display: 'inline-block' }}>
+            ⚡
+          </span>
+          {/* CSS-based bolt as backup */}
+          <div 
+            className="absolute inset-0 opacity-30"
+            style={{
+              width: '20px',
+              height: '20px',
+              background: 'linear-gradient(45deg, transparent 40%, #00cc6a 40%, #00cc6a 60%, transparent 60%)',
+              clipPath: 'polygon(20% 0%, 60% 50%, 40% 50%, 80% 100%, 40% 50%, 60% 50%)',
+              filter: 'blur(1px)',
+            }}
+          />
         </div>
       ))}
     </div>
