@@ -2,28 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap } from "lucide-react";
 import { Link, useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 
-interface ThemeSettings {
-  siteName?: string;
-}
-
-export default function Navigation() {
+export default function NavigationNew() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   
-  const { data: themeSettings } = useQuery<ThemeSettings>({
-    queryKey: ["/api/theme-settings"],
-    retry: false,
-  });
-
-  const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleMenuClose = () => {
-    setIsMenuOpen(false);
-  };
+  const siteName = "VoltServers";
 
   const mainNavLinks = [
     { href: "/games", label: "Games" },
@@ -41,7 +25,7 @@ export default function Navigation() {
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
                 <Zap className="text-gaming-black text-lg lg:text-xl" />
               </div>
-              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{themeSettings?.siteName || "VoltServers"}</span>
+              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
             </div>
           </Link>
           
@@ -56,15 +40,12 @@ export default function Navigation() {
                 </span>
               </Link>
             ))}
-          </div>
-          
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-2 lg:space-x-4">
+            
             <Link href="/client-portal">
               <Button 
                 variant="outline" 
                 size="sm"
-                className="hidden sm:inline-flex border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black transition-all duration-200"
+                className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black font-medium px-4 lg:px-6"
               >
                 Client Portal
               </Button>
@@ -81,7 +62,7 @@ export default function Navigation() {
               variant="ghost"
               size="icon"
               className="lg:hidden text-gaming-green hover:bg-gaming-green/10 w-9 h-9"
-              onClick={handleMenuToggle}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
@@ -98,7 +79,7 @@ export default function Navigation() {
                     className={`block px-4 py-3 text-gaming-white hover:text-gaming-green hover:bg-gaming-green/10 transition-colors cursor-pointer rounded-md ${
                       location === link.href ? 'text-gaming-green bg-gaming-green/10' : ''
                     }`}
-                    onClick={handleMenuClose}
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     {link.label}
                   </span>
@@ -106,17 +87,17 @@ export default function Navigation() {
               ))}
               <div className="px-4 py-2 border-t border-gaming-green/10 mt-4">
                 <Link href="/knowledgebase">
-                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={handleMenuClose}>
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                     Knowledge Base
                   </span>
                 </Link>
                 <Link href="/about">
-                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={handleMenuClose}>
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                     About
                   </span>
                 </Link>
                 <Link href="/contact">
-                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={handleMenuClose}>
+                  <span className="block py-2 text-gaming-gray hover:text-gaming-green transition-colors cursor-pointer" onClick={() => setIsMenuOpen(false)}>
                     Contact
                   </span>
                 </Link>
@@ -125,7 +106,7 @@ export default function Navigation() {
                     <Button 
                       variant="outline" 
                       className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black w-full"
-                      onClick={handleMenuClose}
+                      onClick={() => setIsMenuOpen(false)}
                     >
                       Client Portal
                     </Button>

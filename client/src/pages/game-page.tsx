@@ -9,6 +9,7 @@ import { Check, Users, Shield, Server, Zap, HeadphonesIcon, BookOpen, Clock, Che
 import StickyHeader from "@/components/sticky-header";
 import PromoBanner from "@/components/promo-banner";
 import Footer from "@/components/footer";
+import NavigationNew from "@/components/navigation-new";
 import { Game } from "@shared/schema";
 
 // Custom Section Component
@@ -294,7 +295,7 @@ export default function GamePage() {
     return (
       <div className="min-h-screen bg-gaming-black">
         <PromoBanner />
-        <Navigation />
+        <NavigationNew />
         <div className="container mx-auto px-4 py-16">
           <div className="flex justify-center items-center h-64">
             <div className="text-gaming-green">Loading...</div>
@@ -308,7 +309,7 @@ export default function GamePage() {
     return (
       <div className="min-h-screen bg-gaming-black">
         <PromoBanner />
-        <Navigation />
+        <NavigationNew />
         <div className="container mx-auto px-4 py-16">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gaming-white mb-4">Game Not Found</h1>
