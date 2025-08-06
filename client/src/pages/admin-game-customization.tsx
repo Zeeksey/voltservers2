@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Plus, Trash2, Save, ArrowLeft, Video, Package, Wrench, Eye, EyeOff,
   Layout, Type, Image as ImageIcon, FileText, Star, Users, DollarSign,
-  Move, Settings, Copy, ChevronUp, ChevronDown, Palette, Monitor
+  Move, Settings, Copy, ChevronUp, ChevronDown, Palette, Monitor,
+  HelpCircle, ArrowRight, Shield
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { useToast } from '@/hooks/use-toast';
@@ -22,7 +23,7 @@ import type { Game } from '@shared/schema';
 // Component types for the page builder
 interface PageSection {
   id: string;
-  type: 'hero' | 'features' | 'pricing' | 'gallery' | 'testimonials' | 'faq' | 'cta';
+  type: 'hero' | 'features' | 'pricing' | 'gallery' | 'testimonials' | 'faq' | 'cta' | 'specs';
   title: string;
   content: any;
   style: {
@@ -42,8 +43,16 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
       headline: 'Premium {{GAME_NAME}} Hosting',
       subheadline: 'Experience lag-free gaming with our high-performance servers',
       buttonText: 'Get Started',
+      buttonUrl: '/order',
       backgroundImage: '',
-      features: ['24/7 Support', 'DDoS Protection', 'Instant Setup']
+      videoUrl: '',
+      features: ['24/7 Support', 'DDoS Protection', 'Instant Setup'],
+      showStats: true,
+      stats: [
+        { label: 'Players Online', value: '{{PLAYER_COUNT}}' },
+        { label: 'Uptime', value: '99.9%' },
+        { label: 'Servers', value: '1000+' }
+      ]
     },
     style: {
       backgroundColor: '#0a0a0a',
@@ -57,10 +66,14 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
     title: 'Features Section',
     content: {
       headline: 'Why Choose Our {{GAME_NAME}} Servers?',
+      subheadline: 'Discover the advantages that set us apart',
       features: [
         { title: 'High Performance', description: 'Latest hardware for optimal gaming', icon: 'monitor' },
         { title: '24/7 Support', description: 'Expert support whenever you need it', icon: 'users' },
-        { title: 'Easy Setup', description: 'Get your server running in minutes', icon: 'settings' }
+        { title: 'Easy Setup', description: 'Get your server running in minutes', icon: 'settings' },
+        { title: 'DDoS Protection', description: 'Advanced security for uninterrupted gameplay', icon: 'shield' },
+        { title: 'Automatic Backups', description: 'Your data is safe with daily backups', icon: 'backup' },
+        { title: 'Plugin Support', description: 'Customize with thousands of plugins', icon: 'plugin' }
       ]
     },
     style: {
@@ -75,10 +88,11 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
     title: 'Pricing Section',
     content: {
       headline: '{{GAME_NAME}} Server Plans',
+      subheadline: 'Choose the perfect plan for your community',
       plans: [
-        { name: 'Starter', price: '{{BASE_PRICE}}', features: ['4GB RAM', '10 Players', 'Basic Support'] },
-        { name: 'Pro', price: '{{BASE_PRICE * 2}}', features: ['8GB RAM', '25 Players', 'Priority Support'] },
-        { name: 'Enterprise', price: '{{BASE_PRICE * 3}}', features: ['16GB RAM', 'Unlimited Players', '24/7 Support'] }
+        { name: 'Starter', price: '{{BASE_PRICE}}', originalPrice: '', features: ['4GB RAM', '10 Players', 'Basic Support', '10GB Storage'], highlight: false, buttonText: 'Get Started' },
+        { name: 'Pro', price: '{{BASE_PRICE * 2}}', originalPrice: '', features: ['8GB RAM', '25 Players', 'Priority Support', '25GB Storage', 'Plugin Support'], highlight: true, buttonText: 'Most Popular' },
+        { name: 'Enterprise', price: '{{BASE_PRICE * 3}}', originalPrice: '', features: ['16GB RAM', 'Unlimited Players', '24/7 Support', '100GB Storage', 'Full Management'], highlight: false, buttonText: 'Contact Us' }
       ]
     },
     style: {
@@ -86,6 +100,102 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
       textColor: '#ffffff',
       padding: '3rem',
       layout: 'cards'
+    }
+  },
+  gallery: {
+    type: 'gallery',
+    title: 'Screenshots Gallery',
+    content: {
+      headline: '{{GAME_NAME}} in Action',
+      subheadline: 'See what players are building on our servers',
+      images: [
+        { url: '/images/gallery/screenshot1.jpg', title: 'Epic Build', description: 'Amazing player creation' },
+        { url: '/images/gallery/screenshot2.jpg', title: 'Adventure Time', description: 'Exploring new worlds' },
+        { url: '/images/gallery/screenshot3.jpg', title: 'Community Event', description: 'Players having fun together' }
+      ]
+    },
+    style: {
+      backgroundColor: '#1a1a1a',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'masonry'
+    }
+  },
+  testimonials: {
+    type: 'testimonials',
+    title: 'Player Reviews',
+    content: {
+      headline: 'What Players Say About Us',
+      subheadline: 'Join thousands of satisfied customers',
+      testimonials: [
+        { name: 'Alex Johnson', rating: 5, comment: 'Best server hosting I\'ve used. Great performance and support!', avatar: '', title: 'Server Owner' },
+        { name: 'Sarah Chen', rating: 5, comment: 'Setup was incredibly easy. Had my server running in minutes!', avatar: '', title: 'Community Leader' },
+        { name: 'Mike Davis', rating: 5, comment: 'Outstanding uptime and customer service. Highly recommend!', avatar: '', title: 'Gaming Streamer' }
+      ]
+    },
+    style: {
+      backgroundColor: '#0a0a0a',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'carousel'
+    }
+  },
+  faq: {
+    type: 'faq',
+    title: 'Frequently Asked Questions',
+    content: {
+      headline: 'Common Questions About {{GAME_NAME}} Hosting',
+      subheadline: 'Everything you need to know',
+      faqs: [
+        { question: 'How quickly can I get my server online?', answer: 'Your server will be ready within minutes of completing your order. Our automated setup process ensures instant deployment.' },
+        { question: 'Do you provide technical support?', answer: 'Yes! We offer 24/7 technical support through live chat, tickets, and our knowledge base.' },
+        { question: 'Can I install plugins and mods?', answer: 'Absolutely! You have full control over your server and can install any compatible plugins or mods.' }
+      ]
+    },
+    style: {
+      backgroundColor: '#1a1a1a',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'accordion'
+    }
+  },
+  cta: {
+    type: 'cta',
+    title: 'Call to Action',
+    content: {
+      headline: 'Ready to Start Your {{GAME_NAME}} Server?',
+      subheadline: 'Join thousands of players already enjoying lag-free gaming',
+      buttonText: 'Start Now',
+      buttonUrl: '/order',
+      secondaryButtonText: 'View Plans',
+      secondaryButtonUrl: '#pricing',
+      backgroundImage: ''
+    },
+    style: {
+      backgroundColor: '#00ff88',
+      textColor: '#000000',
+      padding: '4rem',
+      layout: 'center'
+    }
+  },
+  specs: {
+    type: 'specs',
+    title: 'Server Specifications',
+    content: {
+      headline: 'Powerful Hardware for {{GAME_NAME}}',
+      subheadline: 'Enterprise-grade infrastructure for the best gaming experience',
+      specs: [
+        { category: 'CPU', items: ['Intel Xeon E5-2697 v3', '14 Cores @ 2.6GHz', 'Turbo Boost up to 3.6GHz'] },
+        { category: 'Memory', items: ['DDR4 ECC RAM', 'Up to 128GB per server', 'High-speed memory modules'] },
+        { category: 'Storage', items: ['NVMe SSD Storage', 'RAID 1 Configuration', 'Daily automated backups'] },
+        { category: 'Network', items: ['1Gbps dedicated bandwidth', 'DDoS protection included', 'Multiple datacenter locations'] }
+      ]
+    },
+    style: {
+      backgroundColor: '#0f0f0f',
+      textColor: '#ffffff',
+      padding: '3rem',
+      layout: 'table'
     }
   }
 };
@@ -321,6 +431,114 @@ export default function AdminGameCustomization() {
             </div>
           </div>
         );
+      case 'gallery':
+        return (
+          <div style={style}>
+            <h2 className="text-2xl font-bold mb-6 text-center">{section.content.headline}</h2>
+            <p className="text-center mb-8 opacity-80">{section.content.subheadline}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {section.content.images.map((img: any, index: number) => (
+                <div key={index} className="rounded-lg overflow-hidden bg-gaming-green/10 p-4">
+                  <div className="aspect-video bg-gaming-green/20 rounded mb-2 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-gaming-green/50" />
+                  </div>
+                  <h3 className="font-semibold">{img.title}</h3>
+                  <p className="text-sm opacity-70">{img.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'testimonials':
+        return (
+          <div style={style}>
+            <h2 className="text-2xl font-bold mb-6 text-center">{section.content.headline}</h2>
+            <p className="text-center mb-8 opacity-80">{section.content.subheadline}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {section.content.testimonials.map((testimonial: any, index: number) => (
+                <div key={index} className="border border-gaming-green/20 rounded-lg p-6">
+                  <div className="flex items-center mb-4">
+                    <div className="w-12 h-12 bg-gaming-green/20 rounded-full flex items-center justify-center mr-3">
+                      <Users className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold">{testimonial.name}</h4>
+                      <p className="text-sm opacity-70">{testimonial.title}</p>
+                    </div>
+                  </div>
+                  <div className="flex mb-2">
+                    {Array.from({length: testimonial.rating}).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-gaming-green text-gaming-green" />
+                    ))}
+                  </div>
+                  <p className="italic">"{testimonial.comment}"</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'faq':
+        return (
+          <div style={style}>
+            <h2 className="text-2xl font-bold mb-6 text-center">{section.content.headline}</h2>
+            <p className="text-center mb-8 opacity-80">{section.content.subheadline}</p>
+            <div className="max-w-3xl mx-auto space-y-4">
+              {section.content.faqs.map((faq: any, index: number) => (
+                <div key={index} className="border border-gaming-green/20 rounded-lg">
+                  <div className="p-4 border-b border-gaming-green/10">
+                    <h3 className="font-semibold flex items-center gap-2">
+                      <HelpCircle className="w-4 h-4 text-gaming-green" />
+                      {faq.question}
+                    </h3>
+                  </div>
+                  <div className="p-4">
+                    <p className="opacity-80">{faq.answer}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'cta':
+        return (
+          <div style={style} className="text-center">
+            <h2 className="text-3xl font-bold mb-4">{section.content.headline}</h2>
+            <p className="text-xl mb-8">{section.content.subheadline}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button className="bg-current text-black" size="lg">
+                {section.content.buttonText}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              {section.content.secondaryButtonText && (
+                <Button variant="outline" size="lg" className="border-current text-current">
+                  {section.content.secondaryButtonText}
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      case 'specs':
+        return (
+          <div style={style}>
+            <h2 className="text-2xl font-bold mb-6 text-center">{section.content.headline}</h2>
+            <p className="text-center mb-8 opacity-80">{section.content.subheadline}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {section.content.specs.map((spec: any, index: number) => (
+                <div key={index} className="border border-gaming-green/20 rounded-lg p-4">
+                  <h3 className="font-bold text-gaming-green mb-3 flex items-center gap-2">
+                    <Monitor className="w-5 h-5" />
+                    {spec.category}
+                  </h3>
+                  <ul className="space-y-2">
+                    {spec.items.map((item: string, i: number) => (
+                      <li key={i} className="text-sm opacity-80">• {item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       default:
         return (
           <div style={style} className="text-center py-8">
@@ -409,23 +627,28 @@ export default function AdminGameCustomization() {
               <Package className="w-5 h-5" />
               Components
             </h3>
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 gap-2">
               {Object.entries(defaultSections).map(([key, section]) => (
-                <div
+                <Button
                   key={key}
-                  className="draggable-component cursor-pointer"
                   onClick={() => addSection(key)}
+                  className="w-full justify-start bg-gaming-black-lighter border-gaming-green/30 text-gaming-green hover:bg-gaming-green/10 p-3 h-auto"
                 >
                   <div className="flex items-center gap-3">
                     {key === 'hero' && <Layout className="w-4 h-4" />}
                     {key === 'features' && <Star className="w-4 h-4" />}
                     {key === 'pricing' && <DollarSign className="w-4 h-4" />}
-                    <div>
+                    {key === 'gallery' && <ImageIcon className="w-4 h-4" />}
+                    {key === 'testimonials' && <Users className="w-4 h-4" />}
+                    {key === 'faq' && <HelpCircle className="w-4 h-4" />}
+                    {key === 'cta' && <ArrowRight className="w-4 h-4" />}
+                    {key === 'specs' && <Monitor className="w-4 h-4" />}
+                    <div className="text-left">
                       <div className="font-medium text-sm">{section.title}</div>
-                      <div className="text-xs text-gray-400 capitalize">{key} section</div>
+                      <div className="text-xs text-gray-400 capitalize">{key}</div>
                     </div>
                   </div>
-                </div>
+                </Button>
               ))}
             </div>
           </div>
