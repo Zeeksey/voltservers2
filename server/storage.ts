@@ -541,47 +541,7 @@ export class MemStorage implements IStorage {
 
     sampleServerLocations.forEach(location => this.serverLocations.set(location.id, location));
 
-    // Initialize blog posts
-    const samplePosts: BlogPost[] = [
-      {
-        id: randomUUID(),
-        title: "How to Optimize Your Minecraft Server for Better Performance",
-        slug: "optimize-minecraft-server-performance",
-        excerpt: "Learn essential tips and tricks to boost your Minecraft server performance and reduce lag for your players.",
-        content: "# Server Optimization Guide\n\nRunning a smooth Minecraft server requires careful configuration and regular maintenance. Here are the key steps to optimize your server...",
-        imageUrl: "/api/placeholder/600/400",
-        author: "GameHost Pro Team",
-        publishedAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-        tags: ["minecraft", "optimization", "performance"],
-        isPublished: true
-      },
-      {
-        id: randomUUID(),
-        title: "Best Rust Server Plugins for 2025",
-        slug: "best-rust-server-plugins-2025",
-        excerpt: "Discover the top Rust server plugins that will enhance gameplay and keep your community engaged.",
-        content: "# Top Rust Plugins\n\nRust servers can be greatly enhanced with the right plugins. Here are our top recommendations...",
-        imageUrl: "/api/placeholder/600/400",
-        author: "Sarah Johnson",
-        publishedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-        tags: ["rust", "plugins", "mods"],
-        isPublished: true
-      },
-      {
-        id: randomUUID(),
-        title: "Game Server Security Best Practices",
-        slug: "game-server-security-best-practices",
-        excerpt: "Protect your game server and players with these essential security measures and configuration tips.",
-        content: "# Security Best Practices\n\nKeeping your game server secure is crucial for maintaining player trust and preventing attacks...",
-        imageUrl: "/api/placeholder/600/400", 
-        author: "VoltServers Team",
-        publishedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
-        tags: ["security", "hosting", "best-practices"],
-        isPublished: true
-      }
-    ];
-
-    samplePosts.forEach(post => this.blogPosts.set(post.id, post));
+    // Blog posts will be initialized by initializeBlogPosts() method
 
     // Initialize demo servers with real Minecraft servers
     const gameIds = Array.from(this.games.keys());
