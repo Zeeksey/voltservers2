@@ -269,37 +269,62 @@ export default function GamePage() {
       <PromoBanner />
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-gaming">
-        <div className="container mx-auto px-4">
+      {/* Hero Section - VoltServers Style */}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gaming-black via-gaming-black-light to-gaming-black"></div>
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h1 className="text-5xl font-bold text-gaming-white mb-6">
-                {game.heroTitle || `Premium ${game.name} Server Hosting`}
+            <div className="text-left">
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                Lag-Free, High Performance <span className="text-gaming-green">{game.name} Servers</span>
               </h1>
-              <p className="text-xl text-gaming-gray mb-8">
-                {game.heroSubtitle || `Lag-free, high performance ${game.name} servers with instant setup and 24/7 expert support.`}
+              <p className="text-lg text-gray-300 mb-8 leading-relaxed">
+                {game.heroSubtitle || `Instant setup, mod support, automatic wipes, and 24/7 expert support with VoltServers premium ${game.name} hosting.`}
               </p>
-              <div className="flex flex-wrap gap-4 mb-8">
-                {features.slice(0, 4).map((feature, index) => (
-                  <Badge key={index} variant="secondary" className="bg-gaming-green/20 text-gaming-green">
-                    {feature}
-                  </Badge>
-                ))}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8">
+                <Button 
+                  size="lg" 
+                  className="bg-gaming-green hover:bg-gaming-green/90 text-black font-semibold px-8"
+                  onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })}
+                >
+                  Get Started
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black px-8"
+                >
+                  View Features
+                </Button>
               </div>
-              <Button 
-                size="lg" 
-                className="bg-gaming-green hover:bg-gaming-green-dark text-gaming-black font-semibold"
-              >
-                Get Started
-              </Button>
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Zap className="w-4 h-4 text-gaming-green" />
+                  <span>Instant Setup</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Shield className="w-4 h-4 text-gaming-green" />
+                  <span>DDoS Protection</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Server className="w-4 h-4 text-gaming-green" />
+                  <span>Mod Support</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Users className="w-4 h-4 text-gaming-green" />
+                  <span>Global Locations</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-center">
-              <img 
-                src={game.heroImageUrl || game.imageUrl} 
-                alt={game.name}
-                className="max-w-full h-auto rounded-lg shadow-2xl"
-              />
+            <div className="relative">
+              <div className="relative rounded-2xl overflow-hidden">
+                <img 
+                  src={game.heroImageUrl || game.imageUrl} 
+                  alt={game.name}
+                  className="w-full h-auto object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -333,29 +358,36 @@ export default function GamePage() {
               </div>
             )}
             
-            {/* Billing Period Selector */}
+            {/* Billing Period Selector - VoltServers Style */}
             <div className="flex justify-center mt-8 mb-8">
+              <p className="text-gray-400 mb-4">Select a billing cycle to see your discounted rate:</p>
+            </div>
+            <div className="flex justify-center mb-8">
               <Tabs value={billingPeriod} onValueChange={(value) => setBillingPeriod(value as "monthly" | "biannual" | "annual")} className="w-auto">
-                <TabsList className="grid w-full grid-cols-3 bg-gaming-gray-dark">
+                <TabsList className="grid w-full grid-cols-4 bg-black/20 border border-zinc-700">
                   <TabsTrigger 
                     value="monthly" 
-                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black"
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-black"
                   >
                     Monthly
                   </TabsTrigger>
                   <TabsTrigger 
                     value="biannual" 
-                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black relative"
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-black"
                   >
-                    Biannual
-                    <Badge className="absolute -top-2 -right-2 bg-gaming-green text-gaming-black text-xs">15% OFF</Badge>
+                    Quarterly <span className="text-xs text-gaming-green">-10% OFF</span>
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="biannual" 
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-black"
+                  >
+                    Semi-Annually <span className="text-xs text-gaming-green">-20% OFF</span>
                   </TabsTrigger>
                   <TabsTrigger 
                     value="annual" 
-                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-gaming-black relative"
+                    className="data-[state=active]:bg-gaming-green data-[state=active]:text-black"
                   >
-                    Annual
-                    <Badge className="absolute -top-2 -right-2 bg-gaming-green text-gaming-black text-xs">25% OFF</Badge>
+                    Annually <span className="text-xs text-gaming-green">-25% OFF</span>
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -452,11 +484,11 @@ export default function GamePage() {
       <section className="py-20 bg-gaming-black-light">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gaming-white mb-4">Exclusive Features</h2>
-            <p className="text-gaming-gray text-lg">Everything you need for the perfect {game.name} server</p>
+            <h2 className="text-4xl font-bold text-white mb-4">Exclusive Features</h2>
+            <p className="text-gray-400 text-lg">Everything you need for the perfect {game.name} server</p>
           </div>
           
-          <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {(customFeatures.length > 0 ? customFeatures : features).map((feature: any, index) => {
               const icons = [Users, Shield, Server, Zap, HeadphonesIcon];
               const IconComponent = feature.icon ? 
@@ -473,16 +505,18 @@ export default function GamePage() {
                 })() : icons[index % icons.length];
               
               return (
-                <div key={index} className="text-center">
-                  <div className="w-16 h-16 bg-gaming-green/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <IconComponent className="w-8 h-8 text-gaming-green" />
+                <div key={index} className="text-center group">
+                  <div className="w-14 h-14 bg-gaming-green/10 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-gaming-green/20 transition-colors">
+                    <IconComponent className="w-6 h-6 text-gaming-green" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gaming-white mb-2">
+                  <h3 className="text-sm font-semibold text-white mb-1">
                     {feature.title || feature}
                   </h3>
-                  <p className="text-gaming-gray text-sm">
-                    {feature.description || `Professional-grade ${(feature.title || feature).toLowerCase()} for your server`}
-                  </p>
+                  {feature.description && (
+                    <p className="text-gray-400 text-xs">
+                      {feature.description}
+                    </p>
+                  )}
                 </div>
               );
             })}

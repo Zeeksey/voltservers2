@@ -72,7 +72,11 @@ const defaultSections: Record<string, Omit<PageSection, 'id' | 'order'>> = {
         { title: '24/7 Support', description: 'Expert support whenever you need it', icon: 'users' },
         { title: 'Easy Setup', description: 'Get your server running in minutes', icon: 'settings' },
         { title: 'DDoS Protection', description: 'Advanced security for uninterrupted gameplay', icon: 'shield' },
-        { title: 'Automatic Backups', description: 'Your data is safe with daily backups', icon: 'backup' },
+        { title: 'Automatic Backups', description: 'Your data is safe with daily backups', icon: 'database' },
+        { title: 'Performance Monitoring', description: 'Real-time server metrics and alerts', icon: 'monitor' },
+        { title: 'One-Click Modpacks', description: 'Install popular modpacks instantly', icon: 'package' },
+        { title: 'Global Locations', description: 'Servers in multiple regions worldwide', icon: 'cloud' },
+        { title: 'Advanced Control Panel', description: 'User-friendly management interface', icon: 'wrench' },
         { title: 'Plugin Support', description: 'Customize with thousands of plugins', icon: 'plugin' }
       ]
     },
