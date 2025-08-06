@@ -340,20 +340,7 @@ export const gamePages = pgTable("game_pages", {
   lastUpdated: timestamp("last_updated").defaultNow(),
 });
 
-export const incidents = pgTable("incidents", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  status: text("status").notNull().default("investigating"), // investigating, identified, monitoring, resolved
-  severity: text("severity").notNull().default("minor"), // minor, major, critical
-  affectedServices: text("affected_services").array().default(sql`'{}'::text[]`),
-  startTime: timestamp("start_time").notNull().defaultNow(),
-  endTime: timestamp("end_time"),
-  isResolved: boolean("is_resolved").notNull().default(false),
-  updates: jsonb("updates").default(sql`'[]'::jsonb`), // Array of status updates
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+
 
 
 
@@ -387,11 +374,7 @@ export const insertPromoSettingSchema = createInsertSchema(promoSettings).omit({
   updatedAt: true,
 });
 
-export const insertIncidentSchema = createInsertSchema(incidents).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+
 
 export const insertFaqCategorySchema = createInsertSchema(faqCategories).omit({
   id: true,
