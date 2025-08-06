@@ -1513,6 +1513,17 @@ export default function AdminDashboard() {
                           Cancel
                         </Button>
                       )}
+{!editingGame && (
+                        <div className="bg-gaming-blue/10 border border-gaming-blue/20 rounded-lg p-3 mt-4">
+                          <h4 className="text-gaming-blue font-semibold text-sm mb-2">How to Create a Complete Game Page:</h4>
+                          <ol className="text-xs text-gray-300 space-y-1">
+                            <li>1. Fill out the form above and click "Create Game"</li>
+                            <li>2. Once created, click the Settings button (⚙️) next to your game</li>
+                            <li>3. Customize all page sections: Hero, Features, Pricing, FAQ, etc.</li>
+                            <li>4. Your game page will be live at /games/your-game-slug</li>
+                          </ol>
+                        </div>
+                      )}
                     </div>
                   </form>
                 </CardContent>
@@ -1521,7 +1532,12 @@ export default function AdminDashboard() {
               {/* Games List */}
               <Card className="bg-gaming-dark border-gaming-green/20 admin-card">
                 <CardHeader>
-                  <CardTitle className="text-gaming-green">Existing Games ({games.length})</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-gaming-green">Existing Games ({games.length})</CardTitle>
+                    <div className="text-xs text-gray-400">
+                      Edit: Game details • Settings: Page content • Delete: Remove game
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -1550,6 +1566,7 @@ export default function AdminDashboard() {
                               size="sm"
                               variant="outline"
                               className="touch-target admin-button border-gaming-blue/30 text-gaming-blue hover:bg-gaming-blue/10"
+                              title="Customize Game Page"
                             >
                               <Settings className="w-4 h-4" />
                             </Button>
