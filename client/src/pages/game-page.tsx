@@ -364,14 +364,21 @@ export default function GamePage() {
           
           <div className="grid md:grid-cols-3 gap-8">
             {(customPricingTiers.length > 0 ? customPricingTiers : pricingPlans).map((plan: any, index: number) => (
-              <Card key={index} className={`relative ${(plan.popular || plan.isPopular) ? 'border-gaming-green' : ''}`}>
+              <div 
+                key={index} 
+                className={`relative rounded-xl border overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
+                  (plan.popular || plan.isPopular) 
+                    ? 'border-gaming-green bg-black/60 scale-105' 
+                    : 'border-zinc-700 bg-black/40 hover:border-gaming-green'
+                }`}
+              >
                 {(plan.popular || plan.isPopular) && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-gaming-green text-gaming-black">Most Popular</Badge>
+                    <Badge className="bg-gaming-green text-black font-medium">Most Popular</Badge>
                   </div>
                 )}
-                <CardHeader className="text-center pb-8">
-                  <CardTitle className="text-2xl font-bold text-gaming-white">{plan.name}</CardTitle>
+                <div className="text-center pb-8 pt-8 px-6">
+                  <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
                   <div className="mt-4">
                     <div className="flex flex-col items-center gap-1">
                       <div className="flex items-center gap-2">
@@ -383,28 +390,28 @@ export default function GamePage() {
                             : (plan.annualPrice || (plan.price * pricingMultipliers.annual).toFixed(2))
                           }
                         </span>
-                        <span className="text-gaming-gray text-lg">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
+                        <span className="text-gray-400 text-lg">/{billingPeriod === 'monthly' ? 'mo' : billingPeriod === 'biannual' ? '6 mo' : 'year'}</span>
                       </div>
                       {billingPeriod !== 'monthly' && (
                         <div className="flex items-center gap-2 text-sm">
-                          <span className="text-gaming-gray line-through">${plan.originalPrice}</span>
+                          <span className="text-gray-500 line-through">${plan.originalPrice}</span>
                           <Badge className="bg-gaming-green/20 text-gaming-green text-xs">
                             {billingPeriod === 'biannual' ? 'Save 15%' : 'Save 25%'}
                           </Badge>
                         </div>
                       )}
                       {billingPeriod === 'monthly' && (
-                        <p className="text-gaming-gray text-sm">Billed monthly</p>
+                        <p className="text-gray-400 text-sm">Billed monthly</p>
                       )}
                       {billingPeriod === 'biannual' && (
-                        <p className="text-gaming-gray text-sm">Billed every 6 months</p>
+                        <p className="text-gray-400 text-sm">Billed every 6 months</p>
                       )}
                       {billingPeriod === 'annual' && (
-                        <p className="text-gaming-gray text-sm">Billed annually</p>
+                        <p className="text-gray-400 text-sm">Billed annually</p>
                       )}
                     </div>
                   </div>
-                  <p className="text-gaming-gray mt-2">
+                  <p className="text-gray-400 mt-2">
                     {plan.players && `Recommended Players: ${plan.players}`}
                     {plan.ram && plan.storage && (
                       <span className="block text-sm">
@@ -417,25 +424,25 @@ export default function GamePage() {
                       </span>
                     )}
                   </p>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-0">
+                </div>
+                <div className="space-y-4 pt-0 px-6 pb-6">
                   {plan.features.map((feature: string, featureIndex: number) => (
                     <div key={featureIndex} className="flex items-center gap-3">
                       <Check className="text-gaming-green w-5 h-5" />
-                      <span className="text-gaming-white">{feature}</span>
+                      <span className="text-gray-300">{feature}</span>
                     </div>
                   ))}
                   <Button 
                     className={`w-full mt-8 ${
-                      plan.popular 
-                        ? 'bg-gaming-green hover:bg-gaming-green-dark text-gaming-black' 
-                        : 'bg-gaming-black-lighter hover:bg-gaming-black-light text-gaming-white'
+                      (plan.popular || plan.isPopular)
+                        ? 'bg-gaming-green hover:bg-gaming-green/90 text-black' 
+                        : 'bg-transparent border border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-black'
                     }`}
                   >
                     Select Plan
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))}
           </div>
         </div>
