@@ -155,8 +155,8 @@ export default function HardwarePage() {
                       <Server className="w-8 h-8 text-gaming-green" />
                     </div>
                     <div>
-                      <h3 className="text-2xl font-bold text-gaming-white">{primaryServer.name}</h3>
-                      <p className="text-gaming-gray">by {primaryServer.provider}</p>
+                      <h3 className="text-2xl font-bold text-gaming-white">Primary Gaming Server</h3>
+                      <p className="text-gaming-gray">High-Performance Gaming Hardware</p>
                     </div>
                   </div>
                   

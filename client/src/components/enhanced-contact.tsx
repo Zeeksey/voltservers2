@@ -31,38 +31,20 @@ export default function EnhancedContact() {
   const contactMethods = [
     {
       icon: <MessageCircle className="w-8 h-8 text-gaming-green" />,
-      title: "Live Chat",
-      description: "Get instant support from our team",
-      details: "Average response: 30 seconds",
+      title: "Discord Community",
+      description: "Join our gaming community for support",
+      details: "Fast community support & updates",
       availability: "24/7",
-      action: "Start Chat",
+      action: "Join Discord",
       status: "online"
     },
     {
       icon: <Mail className="w-8 h-8 text-gaming-green" />,
       title: "Email Support",
       description: "Detailed technical assistance",
-      details: "support@gamehostpro.com",
+      details: "support@voltservers.com",
       availability: "Response within 2 hours",
       action: "Send Email",
-      status: "online"
-    },
-    {
-      icon: <Phone className="w-8 h-8 text-gaming-green" />,
-      title: "Phone Support",
-      description: "Direct line to our experts",
-      details: "+1 (555) 123-GAME",
-      availability: "9 AM - 9 PM EST",
-      action: "Call Now",
-      status: "online"
-    },
-    {
-      icon: <HeadphonesIcon className="w-8 h-8 text-gaming-green" />,
-      title: "Discord Community",
-      description: "Join 15,000+ gamers",
-      details: "Community support & updates",
-      availability: "24/7",
-      action: "Join Discord",
       status: "online"
     }
   ];

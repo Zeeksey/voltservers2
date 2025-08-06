@@ -2,12 +2,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Zap } from "lucide-react";
 import { Link, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function NavigationNew() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   
-  const siteName = "VoltServers";
+  const { data: themeSettings } = useQuery({
+    queryKey: ['/api/theme-settings']
+  });
+  
+  const siteName = themeSettings?.siteName || "VoltServers";
+  const logoUrl = themeSettings?.logoUrl;
 
   const mainNavLinks = [
     { href: "/games", label: "Games" },
@@ -22,10 +28,20 @@ export default function NavigationNew() {
         <div className="flex justify-between items-center py-3 lg:py-4">
           <Link href="/">
             <div className="flex items-center space-x-3 cursor-pointer group">
-              <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Zap className="text-gaming-black text-lg lg:text-xl" />
-              </div>
-              <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
+              {logoUrl ? (
+                <img 
+                  src={logoUrl} 
+                  alt={siteName} 
+                  className="h-10 lg:h-12 max-w-40 lg:max-w-48 object-contain group-hover:scale-105 transition-transform"
+                />
+              ) : (
+                <>
+                  <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-green rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                    <Zap className="text-gaming-black text-lg lg:text-xl" />
+                  </div>
+                  <span className="text-xl lg:text-2xl font-bold text-gaming-green">{siteName}</span>
+                </>
+              )}
             </div>
           </Link>
           
