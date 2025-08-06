@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,46 +7,121 @@ import { Link } from "wouter";
 import GameImage from "@/components/game-image";
 import type { Game } from "@shared/schema";
 
-export default function GameCards() {
-  const { data: games = [], isInitialLoading } = useQuery<Game[]>({
-    queryKey: ['/api/games'],
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchInterval: false,
-    refetchOnReconnect: false,
-    placeholderData: [],
-    retry: false,
-    structuralSharing: true,
-    notifyOnChangeProps: ['data'],
-  });
-
-  if (isInitialLoading) {
-    return (
-      <section id="games" className="py-20 bg-gaming-black-light">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              <span className="text-gaming-green">Popular</span> Game Servers
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-gaming-black-lighter rounded-xl overflow-hidden animate-pulse">
-                <div className="w-full h-48 bg-gaming-black" />
-                <div className="p-6">
-                  <div className="h-4 bg-gaming-black rounded mb-4" />
-                  <div className="h-3 bg-gaming-black rounded mb-4" />
-                  <div className="h-8 bg-gaming-black rounded" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+// Static games data to prevent flashing
+const staticGames: Game[] = [
+  {
+    id: "51ffadcd-d9dc-4956-8f7b-cb0735a6dfa3",
+    name: "Minecraft",
+    slug: "minecraft",
+    description: "Build, explore, and survive in blocky worlds with unlimited creativity and adventure.",
+    imageUrl: "/images/games/minecraft.svg",
+    basePrice: "$2.99",
+    playerCount: 100,
+    isPopular: true,
+    category: "Sandbox"
+  },
+  {
+    id: "a8b2c3d4-e5f6-7890-1234-567890abcdef",
+    name: "Counter-Strike 2",
+    slug: "cs2",
+    description: "Tactical FPS with competitive gameplay, precise shooting mechanics, and strategic team play.",
+    imageUrl: "/images/games/cs2.svg",
+    basePrice: "$4.99",
+    playerCount: 64,
+    isPopular: true,
+    category: "FPS"
+  },
+  {
+    id: "b9c3d4e5-f6g7-8901-2345-678901bcdefg",
+    name: "Rust",
+    slug: "rust",
+    description: "Survival multiplayer game where you gather resources, build bases, and fight other players.",
+    imageUrl: "/images/games/rust.svg",
+    basePrice: "$6.99",
+    playerCount: 200,
+    isPopular: true,
+    category: "Survival"
+  },
+  {
+    id: "c0d4e5f6-g7h8-9012-3456-789012cdefgh",
+    name: "Garry's Mod",
+    slug: "garrys-mod",
+    description: "Physics sandbox that lets you experiment with objects, create contraptions, and play game modes.",
+    imageUrl: "/images/games/gmod.svg",
+    basePrice: "$3.99",
+    playerCount: 128,
+    isPopular: true,
+    category: "Sandbox"
+  },
+  {
+    id: "d1e5f6g7-h8i9-0123-4567-890123defghi",
+    name: "ARK: Survival Evolved",
+    slug: "ark",
+    description: "Survive on an island full of dinosaurs, craft tools, build bases, and tame prehistoric creatures.",
+    imageUrl: "/images/games/ark.svg",
+    basePrice: "$8.99",
+    playerCount: 150,
+    isPopular: true,
+    category: "Survival"
+  },
+  {
+    id: "e2f6g7h8-i9j0-1234-5678-901234efghij",
+    name: "Valheim",
+    slug: "valheim",
+    description: "Viking survival game where you explore procedural worlds, craft weapons, and battle mythical creatures.",
+    imageUrl: "/images/games/valheim.svg",
+    basePrice: "$5.99",
+    playerCount: 10,
+    isPopular: false,
+    category: "Survival"
+  },
+  {
+    id: "f3g7h8i9-j0k1-2345-6789-012345fghijk",
+    name: "7 Days to Die",
+    slug: "7-days-to-die",
+    description: "Open-world survival horror where you craft, build, and fight zombies in a post-apocalyptic world.",
+    imageUrl: "/images/games/7dtd.svg",
+    basePrice: "$4.99",
+    playerCount: 8,
+    isPopular: false,
+    category: "Survival"
+  },
+  {
+    id: "g4h8i9j0-k1l2-3456-7890-123456ghijkl",
+    name: "Terraria",
+    slug: "terraria",
+    description: "2D action-adventure sandbox where you dig, fight, explore, and build in pixelated worlds.",
+    imageUrl: "/images/games/terraria.svg",
+    basePrice: "$3.99",
+    playerCount: 8,
+    isPopular: false,
+    category: "Sandbox"
   }
+];
+
+export default function GameCards() {
+  const [games, setGames] = useState<Game[]>(staticGames);
+
+  // Load API data in background without affecting display
+  useEffect(() => {
+    const loadGamesInBackground = async () => {
+      try {
+        const response = await fetch('/api/games');
+        if (response.ok) {
+          const apiGames = await response.json();
+          if (apiGames && apiGames.length > 0) {
+            setGames(apiGames);
+          }
+        }
+      } catch (error) {
+        // Keep static games if API fails
+        console.log('Using static games data');
+      }
+    };
+    
+    // Load after component mounts to prevent flashing
+    setTimeout(loadGamesInBackground, 100);
+  }, []);
 
   return (
     <section id="games" className="py-20 bg-gaming-black-light">

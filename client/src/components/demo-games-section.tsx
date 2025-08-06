@@ -37,20 +37,44 @@ export default function DemoGamesSection() {
   const [copiedServer, setCopiedServer] = useState<string | null>(null);
   const [serverStatuses, setServerStatuses] = useState<Map<string, ServerStatus>>(new Map());
 
-  // Fetch demo servers from API
-  const { data: demoServers = [], isInitialLoading } = useQuery<DemoServer[]>({
-    queryKey: ['/api/demo-servers'],
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchInterval: false,
-    refetchOnReconnect: false,
-    placeholderData: [],
-    retry: false,
-    structuralSharing: true,
-    notifyOnChangeProps: ['data'],
-  });
+  // Static demo servers to prevent flashing
+  const staticServers: DemoServer[] = [
+    {
+      id: '107a681c-4a77-4a56-9999-04ee5e67abcd',
+      serverName: 'VoltServers Creative Hub',
+      gameId: '51ffadcd-d9dc-4956-8f7b-cb0735a6dfa3',
+      serverIp: 'mc.hypixel.net',
+      serverPort: 25565,
+      playerCount: 47,
+      maxPlayers: 100,
+      isOnline: true,
+      version: '1.21.4',
+      description: 'Build anything you can imagine in our creative showcase server',
+      location: 'US East',
+      playtime: 30
+    }
+  ];
+
+  const [demoServers, setDemoServers] = useState<DemoServer[]>(staticServers);
+
+  // Load API data in background
+  useEffect(() => {
+    const loadServersInBackground = async () => {
+      try {
+        const response = await fetch('/api/demo-servers');
+        if (response.ok) {
+          const apiServers = await response.json();
+          if (apiServers && apiServers.length > 0) {
+            setDemoServers(apiServers);
+          }
+        }
+      } catch (error) {
+        console.log('Using static demo servers data');
+      }
+    };
+    
+    setTimeout(loadServersInBackground, 100);
+  }, []);
 
   // Query each server's live status
   useEffect(() => {
@@ -97,76 +121,8 @@ export default function DemoGamesSection() {
     return () => clearInterval(interval);
   }, [demoServers]);
 
-  if (isInitialLoading) {
-    return (
-      <section className="py-20 bg-gaming-black">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="text-gaming-green">Loading demo servers...</div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Fallback demo servers if API fails
-  const fallbackServers = [
-  {
-    id: '1',
-    name: 'VoltServers Creative Hub',
-    game: 'Minecraft',
-    ip: 'demo.voltservers.com',
-    port: '25565',
-    version: '1.21.4',
-    players: { online: 47, max: 100 },
-    status: 'online',
-    platform: 'Crossplay',
-    gameMode: 'Creative',
-    description: 'Build anything you can imagine in our creative showcase server'
-  },
-  {
-    id: '2',
-    name: 'VoltServers Deathmatch',
-    game: 'CS2',
-    ip: 'cs2-demo.voltservers.com',
-    port: '27015',
-    version: '2.1.9',
-    players: { online: 18, max: 32 },
-    status: 'online',
-    platform: 'PC',
-    gameMode: 'Deathmatch',
-    description: 'Fast-paced deathmatch with custom maps and weapons'
-  },
-  {
-    id: '3',
-    name: 'VoltServers Survival',
-    game: 'Rust',
-    ip: 'rust-demo.voltservers.com',
-    port: '28015',
-    version: '2024.12.10',
-    players: { online: 134, max: 200 },
-    status: 'online',
-    platform: 'PC',
-    gameMode: 'Vanilla',
-    description: 'Classic Rust survival experience on a fresh-wiped server'
-  },
-  {
-    id: '4',
-    name: 'VoltServers PvE Island',
-    game: 'ARK: Survival',
-    ip: 'ark-demo.voltservers.com',
-    port: '7777',
-    version: '359.38',
-    players: { online: 23, max: 50 },
-    status: 'online',
-    platform: 'Crossplay',
-    gameMode: 'PvE',
-    description: 'Cooperative survival with tamed dinosaurs and friendly community'
-  }
-];
-
-  // Use database demo servers or fallback
-  const serversToDisplay = demoServers.length > 0 ? demoServers : fallbackServers;
+  // Use demo servers directly
+  const serversToDisplay = demoServers;
 
   const copyToClipboard = async (text: string, serverId: string) => {
     try {
