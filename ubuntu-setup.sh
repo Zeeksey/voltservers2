@@ -1,171 +1,131 @@
 #!/bin/bash
 
-# VoltServers Ubuntu Server Setup Script
-# This script automates the deployment process for Ubuntu servers
+# Complete VoltServers Ubuntu Server Setup Script
+# For deployment on 135.148.137.158
 
-set -e  # Exit on any error
+set -e
 
-# Colors for output
+echo "🚀 VoltServers Complete Ubuntu Server Setup"
+echo "=========================================="
+
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Function to print colored output
-print_status() {
-    echo -e "${BLUE}[INFO]${NC} $1"
-}
+print_status() { echo -e "${BLUE}[INFO]${NC} $1"; }
+print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
+print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-print_success() {
-    echo -e "${GREEN}[SUCCESS]${NC} $1"
-}
+# Variables
+APP_USER="ubuntu"
+APP_DIR="/home/$APP_USER/voltservers"
+REPO_URL="https://github.com/Zeeksey/voltservers2"
+NODE_VERSION="20"
 
-print_warning() {
-    echo -e "${YELLOW}[WARNING]${NC} $1"
-}
+print_status "Starting complete VoltServers deployment..."
 
-print_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+# Check if running as correct user
+if [[ $USER != "$APP_USER" ]]; then
+    print_error "This script must be run as the $APP_USER user"
+    exit 1
+fi
 
-# Function to check if running as root
-check_root() {
-    if [[ $EUID -eq 0 ]]; then
-        print_error "This script should not be run as root. Please run as a regular user with sudo privileges."
-        exit 1
-    fi
-}
+# Step 1: System Updates and Dependencies
+print_status "Updating system packages..."
+sudo apt update
+sudo apt upgrade -y
 
-# Function to check Ubuntu version
-check_ubuntu() {
-    if ! grep -q "Ubuntu" /etc/os-release; then
-        print_error "This script is designed for Ubuntu. Your system may not be compatible."
-        read -p "Do you want to continue anyway? (y/N): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            exit 1
-        fi
-    fi
-}
+print_status "Installing system dependencies..."
+sudo apt install -y curl wget git build-essential software-properties-common
 
-# Function to update system
-update_system() {
-    print_status "Updating system packages..."
-    sudo apt update && sudo apt upgrade -y
-    print_success "System updated successfully"
-}
+# Step 2: Install Node.js 20.x
+if ! command -v node &> /dev/null || [[ $(node -v | cut -d'v' -f2 | cut -d'.' -f1) -lt 20 ]]; then
+    print_status "Installing Node.js $NODE_VERSION..."
+    curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | sudo -E bash -
+    sudo apt install -y nodejs
+    print_success "Node.js $(node -v) installed"
+else
+    print_success "Node.js $(node -v) already installed"
+fi
 
-# Function to install essential packages
-install_essentials() {
-    print_status "Installing essential packages..."
-    sudo apt install -y curl wget git ufw fail2ban nginx certbot python3-certbot-nginx htop
-    print_success "Essential packages installed"
-}
+# Step 3: Install PM2
+if ! command -v pm2 &> /dev/null; then
+    print_status "Installing PM2..."
+    sudo npm install -g pm2
+    print_success "PM2 installed"
+else
+    print_success "PM2 already installed"
+fi
 
-# Function to configure firewall
-setup_firewall() {
-    print_status "Configuring firewall..."
-    sudo ufw --force reset
-    sudo ufw default deny incoming
-    sudo ufw default allow outgoing
-    sudo ufw allow ssh
-    sudo ufw allow 80
-    sudo ufw allow 443
-    sudo ufw --force enable
-    print_success "Firewall configured"
-}
-
-# Function to install Node.js
-install_nodejs() {
-    print_status "Installing Node.js 20.x..."
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-    
-    # Verify installation
-    NODE_VERSION=$(node --version)
-    NPM_VERSION=$(npm --version)
-    print_success "Node.js $NODE_VERSION and npm $NPM_VERSION installed"
-}
-
-# Function to install PostgreSQL
-install_postgresql() {
+# Step 4: Install and Configure PostgreSQL
+if ! command -v psql &> /dev/null; then
     print_status "Installing PostgreSQL..."
     sudo apt install -y postgresql postgresql-contrib
     sudo systemctl start postgresql
     sudo systemctl enable postgresql
     print_success "PostgreSQL installed and started"
-}
+else
+    print_success "PostgreSQL already installed"
+    sudo systemctl start postgresql || true
+fi
 
-# Function to configure PostgreSQL
-setup_database() {
-    print_status "Setting up database..."
-    
-    echo "Please enter a secure password for the database user:"
-    read -s DB_PASSWORD
-    echo
-    
-    # Create database and user
-    sudo -u postgres psql -c "CREATE DATABASE voltservers;" || print_warning "Database might already exist"
-    sudo -u postgres psql -c "DROP USER IF EXISTS voltservers;"
-    sudo -u postgres psql -c "CREATE USER voltservers WITH PASSWORD '$DB_PASSWORD';"
-    sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE voltservers TO voltservers;"
-    sudo -u postgres psql -c "ALTER USER voltservers CREATEDB;"
-    
-    print_success "Database configured"
-    
-    # Store database URL for later use
-    export DATABASE_URL="postgresql://voltservers:$DB_PASSWORD@localhost:5432/voltservers"
-}
+# Step 5: Setup Database
+print_status "Setting up PostgreSQL database..."
+DB_PASSWORD=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-25)
 
-# Function to install PM2
-install_pm2() {
-    print_status "Installing PM2 process manager..."
-    sudo npm install -g pm2
-    print_success "PM2 installed"
-}
+# Create database and user
+sudo -u postgres psql -c "DROP DATABASE IF EXISTS voltservers;" 2>/dev/null || true
+sudo -u postgres psql -c "DROP USER IF EXISTS voltservers;" 2>/dev/null || true
+sudo -u postgres psql -c "CREATE DATABASE voltservers;"
+sudo -u postgres psql -c "CREATE USER voltservers WITH PASSWORD '$DB_PASSWORD';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE voltservers TO voltservers;"
+sudo -u postgres psql -c "ALTER USER voltservers CREATEDB;"
 
-# Function to setup application
-setup_application() {
-    print_status "Setting up application..."
-    
-    # Get repository URL
-    echo "Please enter your GitHub repository URL (e.g., https://github.com/username/voltservers):"
-    read REPO_URL
-    
-    # Clone repository
-    if [ -d "voltservers" ]; then
-        print_warning "Directory 'voltservers' already exists. Removing..."
-        rm -rf voltservers
-    fi
-    
-    git clone "$REPO_URL" voltservers
-    cd voltservers
-    
-    # Verify critical files exist
-    REQUIRED_FILES=("package.json" "server/index.ts" "shared/schema.ts" "drizzle.config.ts")
-    for file in "${REQUIRED_FILES[@]}"; do
-        if [[ ! -f "$file" ]]; then
-            print_error "Critical file missing: $file"
-            print_error "This doesn't appear to be a VoltServers repository"
-            exit 1
-        fi
-    done
-    print_success "Repository structure verified"
-    
-    # Install dependencies
-    print_status "Installing dependencies..."
-    npm install
-    
-    # Create environment file
-    print_status "Creating environment configuration..."
-    cat > .env << EOF
+DATABASE_URL="postgresql://voltservers:$DB_PASSWORD@localhost:5432/voltservers"
+print_success "Database configured"
+
+# Step 6: Install and Configure Nginx
+if ! command -v nginx &> /dev/null; then
+    print_status "Installing Nginx..."
+    sudo apt install -y nginx
+    print_success "Nginx installed"
+else
+    print_success "Nginx already installed"
+fi
+
+# Step 7: Setup Application Directory
+print_status "Setting up VoltServers application..."
+
+# Remove existing directory if it exists
+if [[ -d "$APP_DIR" ]]; then
+    print_warning "Removing existing application directory..."
+    rm -rf "$APP_DIR"
+fi
+
+# Clone repository
+git clone "$REPO_URL" "$APP_DIR"
+cd "$APP_DIR"
+
+# Step 8: Create Environment Configuration
+print_status "Creating environment configuration..."
+SESSION_SECRET=$(openssl rand -base64 64 | tr -d "=+/" | cut -c1-64)
+
+cat > .env << EOF
+# VoltServers Production Configuration
 NODE_ENV=production
-DATABASE_URL=$DATABASE_URL
 PORT=5000
-SESSION_SECRET=$(openssl rand -base64 32)
 
-# Optional: Add your API keys below
+# Database Configuration
+DATABASE_URL=$DATABASE_URL
+
+# Session Security
+SESSION_SECRET=$SESSION_SECRET
+
+# Optional Integrations (configure as needed)
 # WHMCS_API_IDENTIFIER=your_whmcs_api_identifier
 # WHMCS_API_SECRET=your_whmcs_api_secret
 # WHMCS_URL=https://your-whmcs-domain.com
@@ -173,271 +133,221 @@ SESSION_SECRET=$(openssl rand -base64 32)
 # WISP_API_URL=https://game.voltservers.com
 # WISP_API_KEY=your_wisp_api_key
 EOF
-    
-    # Run database migrations
-    print_status "Running database migrations..."
-    npm run db:push
-    
-    # Build application
-    print_status "Building application..."
-    npm run build
-    
-    # Verify build output
-    if [[ ! -f "dist/index.js" ]]; then
-        print_error "Build failed - dist/index.js not found"
-        exit 1
-    fi
-    print_success "Application built successfully"
-    
-    # Run production verification
-    if [[ -f "production-verify.sh" ]]; then
-        print_status "Running production verification..."
-        chmod +x production-verify.sh
-        ./production-verify.sh
-    fi
-    
-    print_success "Application setup complete"
-}
 
-# Function to configure PM2
-setup_pm2() {
-    print_status "Configuring PM2..."
+print_success "Environment file created"
+
+# Step 9: Install Dependencies and Build
+print_status "Installing application dependencies..."
+npm install
+
+print_status "Building application..."
+npm run build
+
+# Verify build
+if [[ ! -f "dist/index.js" ]]; then
+    print_error "Build failed - dist/index.js not found"
+    exit 1
+fi
+print_success "Application built successfully"
+
+# Step 10: Setup Database Schema
+print_status "Setting up database schema..."
+npm run db:push
+print_success "Database schema configured"
+
+# Step 11: Configure Nginx
+print_status "Configuring Nginx..."
+
+# Stop services first
+sudo systemctl stop nginx 2>/dev/null || true
+
+# Handle Apache conflict (move to port 8080)
+if systemctl is-active --quiet apache2; then
+    print_status "Moving Apache to port 8080 to avoid conflict..."
+    sudo sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf 2>/dev/null || true
+    sudo sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf 2>/dev/null || true
+    sudo systemctl restart apache2
+    sudo ufw allow 8080 2>/dev/null || true
+    print_success "Apache moved to port 8080"
+fi
+
+# Remove default nginx sites
+sudo rm -f /etc/nginx/sites-enabled/*
+sudo rm -f /etc/nginx/sites-available/default
+
+# Create VoltServers nginx configuration
+sudo tee /etc/nginx/sites-available/voltservers > /dev/null << 'EOF'
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name 135.148.137.158 _;
     
-    # Create logs directory
-    mkdir -p logs
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+    add_header X-XSS-Protection "1; mode=block";
     
-    # Create PM2 ecosystem file
-    cat > ecosystem.config.js << 'EOF'
+    # Main application proxy
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 75;
+        proxy_send_timeout 300;
+        
+        # Handle timeouts gracefully
+        proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    }
+    
+    # Handle static files if needed
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        proxy_pass http://127.0.0.1:5000;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+EOF
+
+# Enable site
+sudo ln -sf /etc/nginx/sites-available/voltservers /etc/nginx/sites-enabled/
+
+# Test nginx configuration
+if sudo nginx -t; then
+    print_success "Nginx configuration is valid"
+else
+    print_error "Nginx configuration invalid"
+    sudo nginx -t
+    exit 1
+fi
+
+# Step 12: Configure Firewall
+print_status "Configuring firewall..."
+sudo ufw allow 22 2>/dev/null || true    # SSH
+sudo ufw allow 80 2>/dev/null || true    # HTTP
+sudo ufw allow 443 2>/dev/null || true   # HTTPS
+sudo ufw allow 8080 2>/dev/null || true  # Apache/phpMyAdmin
+sudo ufw --force enable 2>/dev/null || true
+print_success "Firewall configured"
+
+# Step 13: Create PM2 Configuration
+print_status "Creating PM2 configuration..."
+mkdir -p logs
+
+cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
     name: 'voltservers',
     script: './dist/index.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'development'
-    },
+    instances: 1,
+    exec_mode: 'fork',
     env_production: {
-      NODE_ENV: 'production'
+      NODE_ENV: 'production',
+      PORT: 5000
     },
-    error_file: './logs/err.log',
+    error_file: './logs/error.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',
-    time: true
+    time: true,
+    watch: false,
+    max_memory_restart: '1G',
+    min_uptime: '10s',
+    max_restarts: 10,
+    autorestart: true,
+    restart_delay: 5000
   }]
-}
+};
 EOF
-    
-    # Start application
-    pm2 start ecosystem.config.js --env production
-    pm2 save
-    pm2 startup | tail -n 1 | bash
-    
-    print_success "PM2 configured and application started"
-}
 
-# Function to configure Nginx
-setup_nginx() {
-    print_status "Configuring Nginx..."
-    
-    echo "Enter your domain name (or press Enter to use server IP):"
-    read DOMAIN
-    
-    if [ -z "$DOMAIN" ]; then
-        DOMAIN=$(curl -s http://checkip.amazonaws.com)
-        print_warning "No domain provided, using server IP: $DOMAIN"
-    fi
-    
-    # Create Nginx configuration
-    sudo tee /etc/nginx/sites-available/voltservers > /dev/null << EOF
-server {
-    listen 80;
-    server_name $DOMAIN www.$DOMAIN;
+# Step 14: Start VoltServers Application
+print_status "Starting VoltServers application..."
 
-    location / {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
-        proxy_cache_bypass \$http_upgrade;
-        proxy_read_timeout 86400;
-    }
-}
-EOF
-    
-    # Enable site
-    sudo ln -sf /etc/nginx/sites-available/voltservers /etc/nginx/sites-enabled/
-    sudo rm -f /etc/nginx/sites-enabled/default
-    
-    # Test and restart Nginx
-    sudo nginx -t
-    if [[ $? -ne 0 ]]; then
-        print_error "Nginx configuration test failed"
-        exit 1
-    fi
-    sudo systemctl restart nginx
-    
-    # Wait for services to start
-    sleep 3
-    
-    # Test if application is accessible
-    if curl -f -s http://localhost > /dev/null; then
-        print_success "Application is accessible via Nginx"
-    else
-        print_warning "Application may not be accessible - check logs"
-    fi
-    
-    print_success "Nginx configured for domain: $DOMAIN"
-    
-    # Offer SSL setup
-    if [ "$DOMAIN" != "$(curl -s http://checkip.amazonaws.com)" ]; then
-        echo "Would you like to set up SSL certificate with Let's Encrypt? (y/N):"
-        read -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            setup_ssl "$DOMAIN"
-        fi
-    fi
-}
+# Stop any existing processes
+pm2 delete voltservers 2>/dev/null || true
 
-# Function to setup SSL
-setup_ssl() {
-    local domain=$1
-    print_status "Setting up SSL certificate..."
-    
-    echo "Enter your email address for Let's Encrypt:"
-    read EMAIL
-    
-    sudo certbot --nginx -d "$domain" -d "www.$domain" --email "$EMAIL" --agree-tos --no-eff-email
-    
-    # Setup auto-renewal
-    (crontab -l 2>/dev/null; echo "0 12 * * * /usr/bin/certbot renew --quiet") | crontab -
-    
-    print_success "SSL certificate configured"
-}
+# Start application
+pm2 start ecosystem.config.cjs --env production
 
-# Function to setup monitoring
-setup_monitoring() {
-    print_status "Setting up monitoring and backups..."
-    
-    # Create backup script
-    cat > ~/backup-db.sh << 'EOF'
-#!/bin/bash
-DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="$HOME/backups"
-mkdir -p $BACKUP_DIR
+# Save PM2 configuration
+pm2 save
+pm2 startup ubuntu -u "$APP_USER" --hp "/home/$APP_USER" | grep -v "sudo env PATH" | sudo bash
 
-# Database backup
-pg_dump -h localhost -U voltservers -d voltservers > $BACKUP_DIR/voltservers_db_$DATE.sql
+print_success "VoltServers application started"
 
-# Keep only last 7 days of backups
-find $BACKUP_DIR -name "voltservers_db_*.sql" -mtime +7 -delete
+# Step 15: Start Nginx
+print_status "Starting Nginx..."
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
-echo "Database backup completed: voltservers_db_$DATE.sql"
-EOF
-    
-    chmod +x ~/backup-db.sh
-    
-    # Add to crontab
-    (crontab -l 2>/dev/null; echo "0 2 * * * $HOME/backup-db.sh") | crontab -
-    
-    # Create deployment script
-    cat > ~/deploy.sh << 'EOF'
-#!/bin/bash
-cd voltservers
+if sudo systemctl is-active --quiet nginx; then
+    print_success "Nginx started successfully"
+else
+    print_error "Nginx failed to start"
+    exit 1
+fi
 
-echo "Pulling latest changes..."
-git pull origin main
+# Step 16: Comprehensive Testing
+print_status "Testing deployment..."
+sleep 10
 
-echo "Installing dependencies..."
-npm install
+# Test application directly
+if curl -f -s --connect-timeout 10 http://localhost:5000 > /dev/null; then
+    print_success "VoltServers app responding on port 5000"
+else
+    print_error "VoltServers app not responding on port 5000"
+    print_status "Checking PM2 logs..."
+    pm2 logs voltservers --lines 10
+fi
 
-echo "Building application..."
-npm run build
+# Test nginx proxy
+if curl -f -s --connect-timeout 10 http://localhost > /dev/null; then
+    print_success "Nginx proxy working"
+else
+    print_warning "Nginx proxy may have issues"
+fi
 
-echo "Running database migrations..."
-npm run db:push
+# Test external access
+if curl -f -s --connect-timeout 10 http://135.148.137.158 > /dev/null; then
+    print_success "External access working"
+else
+    print_warning "External access may need DNS propagation"
+fi
 
-echo "Restarting application..."
-pm2 restart voltservers
+# Step 17: Display Final Status
+print_status "Final deployment status:"
+pm2 status
 
-echo "Deployment completed successfully!"
-EOF
-    
-    chmod +x ~/deploy.sh
-    
-    print_success "Monitoring and backup scripts created"
-}
-
-# Function to show final status
-show_status() {
-    print_status "Deployment completed! Here's your system status:"
-    echo
-    echo "🚀 Application Status:"
-    pm2 status
-    echo
-    echo "🌐 Nginx Status:"
-    sudo systemctl status nginx --no-pager -l
-    echo
-    echo "🗄️ PostgreSQL Status:"
-    sudo systemctl status postgresql --no-pager -l
-    echo
-    echo "📊 Server Resources:"
-    echo "Memory Usage:"
-    free -h
-    echo "Disk Usage:"
-    df -h
-    echo
-    echo "🔗 Your application should be available at:"
-    echo "   http://$(curl -s http://checkip.amazonaws.com)"
-    if [ -n "$DOMAIN" ] && [ "$DOMAIN" != "$(curl -s http://checkip.amazonaws.com)" ]; then
-        echo "   http://$DOMAIN"
-    fi
-    echo
-    echo "📋 Useful commands:"
-    echo "   View logs: pm2 logs voltservers"
-    echo "   Restart app: pm2 restart voltservers"
-    echo "   Monitor: pm2 monit"
-    echo "   Deploy updates: ~/deploy.sh"
-    echo "   Backup database: ~/backup-db.sh"
-    echo
-    print_success "VoltServers is now running on your Ubuntu server!"
-}
-
-# Main execution
-main() {
-    clear
-    echo "=================================================="
-    echo "🎮 VoltServers Ubuntu Deployment Script"
-    echo "=================================================="
-    echo
-    
-    check_root
-    check_ubuntu
-    
-    print_status "Starting VoltServers deployment..."
-    
-    update_system
-    install_essentials
-    setup_firewall
-    install_nodejs
-    install_postgresql
-    setup_database
-    install_pm2
-    setup_application
-    setup_pm2
-    setup_nginx
-    setup_monitoring
-    
-    echo
-    print_success "🎉 Deployment completed successfully!"
-    echo
-    show_status
-}
-
-# Run main function
-main "$@"
+echo ""
+print_success "🎉 VoltServers deployment completed successfully!"
+echo ""
+echo "🌐 Access URLs:"
+echo "   VoltServers:    http://135.148.137.158"
+echo "   phpMyAdmin:     http://135.148.137.158:8080/phpmyadmin (if Apache was present)"
+echo ""
+echo "🔧 Management Commands:"
+echo "   pm2 status              - Check application status"
+echo "   pm2 logs voltservers    - View application logs"
+echo "   pm2 restart voltservers - Restart application"
+echo "   sudo systemctl status nginx - Check web server"
+echo ""
+echo "📁 Important Files:"
+echo "   Application: $APP_DIR"
+echo "   Logs:        $APP_DIR/logs/"
+echo "   Config:      $APP_DIR/.env"
+echo ""
+echo "🔐 Database Info:"
+echo "   Database: voltservers"
+echo "   User:     voltservers"
+echo "   Password: $DB_PASSWORD"
+echo ""
+echo "📊 Next Steps:"
+echo "   1. Test your website at http://135.148.137.158"
+echo "   2. Configure SSL: sudo certbot --nginx"
+echo "   3. Set up domain DNS if needed"
+echo "   4. Configure API integrations in .env file"
