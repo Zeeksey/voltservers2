@@ -53,6 +53,7 @@ sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw allow 80
 sudo ufw allow 443
+sudo ufw allow 8080/tcp comment "Apache/phpMyAdmin"
 sudo ufw --force enable
 print_success "Firewall configured"
 
@@ -177,29 +178,47 @@ print_success "Database schema configured"
 print_header "STEP 7: Web Server Configuration"
 print_status "Configuring Nginx..."
 
+# First, stop nginx to avoid conflicts
+sudo systemctl stop nginx 2>/dev/null || true
+
+# Check if port 80 is in use by Apache/phpMyAdmin
+if netstat -tlnp | grep -q ":80 "; then
+    print_warning "Port 80 is in use (likely Apache/phpMyAdmin)"
+    
+    # Check if Apache is running
+    if sudo systemctl is-active --quiet apache2 2>/dev/null; then
+        print_status "Configuring Apache to work with phpMyAdmin on port 8080..."
+        
+        # Change Apache to port 8080
+        sudo sed -i 's/Listen 80/Listen 8080/' /etc/apache2/ports.conf
+        sudo sed -i 's/<VirtualHost \*:80>/<VirtualHost *:8080>/' /etc/apache2/sites-available/000-default.conf
+        
+        # Restart Apache on new port
+        sudo systemctl restart apache2
+        
+        print_success "Apache/phpMyAdmin moved to port 8080"
+        print_status "Access phpMyAdmin at: http://135.148.137.158:8080/phpmyadmin"
+    fi
+fi
+
+# Remove default nginx sites that might conflict
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo rm -f /etc/nginx/sites-available/default
+
+# Create a simple, working configuration
 sudo tee /etc/nginx/sites-available/voltservers > /dev/null << 'EOF'
 server {
-    listen 80;
-    server_name 135.148.137.158;
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name 135.148.137.158 _;
     
-    # Security headers
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header Referrer-Policy "no-referrer-when-downgrade" always;
-    add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+    # Basic security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
     
-    # Gzip compression
-    gzip on;
-    gzip_vary on;
-    gzip_min_length 1024;
-    gzip_proxied any;
-    gzip_comp_level 6;
-    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
-    
-    # Main application
+    # Main application proxy
     location / {
-        proxy_pass http://localhost:5000;
+        proxy_pass http://127.0.0.1:5000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -208,35 +227,35 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
-        proxy_read_timeout 300s;
-        proxy_connect_timeout 75s;
-    }
-    
-    # Static files caching
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
-        proxy_pass http://localhost:5000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        expires 1y;
-        add_header Cache-Control "public, immutable";
+        proxy_read_timeout 300;
+        proxy_connect_timeout 75;
     }
 }
 EOF
 
-# Enable site
+# Enable the site
 sudo ln -sf /etc/nginx/sites-available/voltservers /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default
 
-# Test and restart Nginx
+# Test configuration before starting
 print_status "Testing Nginx configuration..."
 if sudo nginx -t; then
-    print_success "Nginx configuration valid"
-    sudo systemctl restart nginx
+    print_success "Nginx configuration is valid"
+    
+    # Start nginx
+    sudo systemctl start nginx
     sudo systemctl enable nginx
+    
+    # Verify it's running
+    if sudo systemctl is-active --quiet nginx; then
+        print_success "Nginx started successfully"
+    else
+        print_error "Nginx failed to start"
+        sudo journalctl -u nginx --no-pager -l
+        exit 1
+    fi
 else
-    print_error "Nginx configuration invalid"
+    print_error "Nginx configuration test failed"
+    sudo nginx -t
     exit 1
 fi
 
@@ -285,7 +304,8 @@ echo ""
 print_success "VoltServers is now running on your server!"
 echo ""
 echo "🌐 Access your application at:"
-echo "   http://$SERVER_IP"
+echo "   VoltServers:    http://$SERVER_IP"
+echo "   phpMyAdmin:     http://$SERVER_IP:8080/phpmyadmin"
 echo ""
 echo "🔧 Useful commands:"
 echo "   pm2 status              - Check app status"
@@ -298,6 +318,7 @@ echo "   1. Configure your domain DNS to point to $SERVER_IP"
 echo "   2. Set up SSL certificate with: sudo certbot --nginx"
 echo "   3. Configure your WHMCS/API integrations in .env"
 echo "   4. Set up monitoring and backups"
+echo "   5. Use phpMyAdmin at port 8080 for database management"
 echo ""
 print_status "Deployment log saved to: /tmp/voltservers-deploy.log"
 
