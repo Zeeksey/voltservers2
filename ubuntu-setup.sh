@@ -142,6 +142,17 @@ setup_application() {
     git clone "$REPO_URL" voltservers
     cd voltservers
     
+    # Verify critical files exist
+    REQUIRED_FILES=("package.json" "server/index.ts" "shared/schema.ts" "drizzle.config.ts")
+    for file in "${REQUIRED_FILES[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            print_error "Critical file missing: $file"
+            print_error "This doesn't appear to be a VoltServers repository"
+            exit 1
+        fi
+    done
+    print_success "Repository structure verified"
+    
     # Install dependencies
     print_status "Installing dependencies..."
     npm install
@@ -170,6 +181,20 @@ EOF
     # Build application
     print_status "Building application..."
     npm run build
+    
+    # Verify build output
+    if [[ ! -f "dist/index.js" ]]; then
+        print_error "Build failed - dist/index.js not found"
+        exit 1
+    fi
+    print_success "Application built successfully"
+    
+    # Run production verification
+    if [[ -f "production-verify.sh" ]]; then
+        print_status "Running production verification..."
+        chmod +x production-verify.sh
+        ./production-verify.sh
+    fi
     
     print_success "Application setup complete"
 }
@@ -250,7 +275,21 @@ EOF
     
     # Test and restart Nginx
     sudo nginx -t
+    if [[ $? -ne 0 ]]; then
+        print_error "Nginx configuration test failed"
+        exit 1
+    fi
     sudo systemctl restart nginx
+    
+    # Wait for services to start
+    sleep 3
+    
+    # Test if application is accessible
+    if curl -f -s http://localhost > /dev/null; then
+        print_success "Application is accessible via Nginx"
+    else
+        print_warning "Application may not be accessible - check logs"
+    fi
     
     print_success "Nginx configured for domain: $DOMAIN"
     
