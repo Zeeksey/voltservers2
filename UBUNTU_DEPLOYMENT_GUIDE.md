@@ -1,177 +1,102 @@
-# Ubuntu Server Deployment Guide for VoltServers
+# VoltServers Ubuntu Setup Guide
 
-This guide will help you deploy your VoltServers game hosting platform on a dedicated Ubuntu server.
+Complete deployment guide for your game hosting platform on Ubuntu server.
 
-## Prerequisites
+---
 
-- Ubuntu Server 20.04 LTS or later
-- Root or sudo access to the server
-- Domain name (optional, but recommended)
+## 🚀 AUTOMATED SETUP (RECOMMENDED)
+
+**Single Command Installation:**
+```bash
+curl -sSL https://raw.githubusercontent.com/yourusername/voltservers/main/ubuntu-setup.sh | bash
+```
+
+This will automatically handle everything below. **Skip to the bottom for post-installation steps.**
+
+---
+
+## 📋 MANUAL SETUP INSTRUCTIONS
+
+### Prerequisites
+- Ubuntu 20.04+ server with sudo access
 - At least 2GB RAM and 20GB storage
+- Domain name (optional but recommended)
 
-## Step 1: Initial Server Setup
-
-### 1.1 Update System
+### 1. System Setup
 ```bash
+# Update system
 sudo apt update && sudo apt upgrade -y
-```
 
-### 1.2 Install Essential Packages
-```bash
+# Install essentials
 sudo apt install -y curl wget git ufw fail2ban nginx certbot python3-certbot-nginx
+
+# Configure firewall
+sudo ufw allow ssh && sudo ufw allow 80 && sudo ufw allow 443 && sudo ufw --force enable
 ```
 
-### 1.3 Create Application User
-```bash
-sudo adduser voltservers
-sudo usermod -aG sudo voltservers
-```
-
-### 1.4 Configure Firewall
-```bash
-sudo ufw allow ssh
-sudo ufw allow 80
-sudo ufw allow 443
-sudo ufw enable
-```
-
-## Step 2: Install Node.js and npm
-
-### 2.1 Install Node.js (v20.x)
+### 2. Install Node.js 20.x
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-### 2.2 Verify Installation
+### 3. Install PostgreSQL
 ```bash
-node --version
-npm --version
+# Install PostgreSQL
+sudo apt install -y postgresql postgresql-contrib
+sudo systemctl start postgresql && sudo systemctl enable postgresql
+
+# Create database (replace 'SECURE_PASSWORD' with your password)
+sudo -u postgres psql -c "CREATE DATABASE voltservers;"
+sudo -u postgres psql -c "CREATE USER voltservers WITH PASSWORD 'SECURE_PASSWORD';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE voltservers TO voltservers;"
+sudo -u postgres psql -c "ALTER USER voltservers CREATEDB;"
 ```
 
-## Step 3: Install and Configure PostgreSQL
-
-### 3.1 Install PostgreSQL
-```bash
-sudo apt install postgresql postgresql-contrib -y
-```
-
-### 3.2 Configure PostgreSQL
-```bash
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-```
-
-### 3.3 Create Database and User
-```bash
-sudo -u postgres psql
-```
-
-In PostgreSQL shell:
-```sql
-CREATE DATABASE voltservers;
-CREATE USER voltservers WITH PASSWORD 'your_secure_password_here';
-GRANT ALL PRIVILEGES ON DATABASE voltservers TO voltservers;
-ALTER USER voltservers CREATEDB;
-\q
-```
-
-### 3.4 Configure PostgreSQL for Remote Connections (if needed)
-Edit PostgreSQL configuration:
-```bash
-sudo nano /etc/postgresql/14/main/postgresql.conf
-```
-
-Find and modify:
-```
-listen_addresses = 'localhost'  # or '*' for all interfaces
-```
-
-Edit pg_hba.conf:
-```bash
-sudo nano /etc/postgresql/14/main/pg_hba.conf
-```
-
-Add at the end:
-```
-local   voltservers     voltservers                     md5
-host    voltservers     voltservers     127.0.0.1/32    md5
-```
-
-Restart PostgreSQL:
-```bash
-sudo systemctl restart postgresql
-```
-
-## Step 4: Deploy Your Application
-
-### 4.1 Clone Your Repository
-```bash
-su - voltservers
-git clone https://github.com/yourusername/voltservers.git
-cd voltservers
-```
-
-### 4.2 Install Dependencies
-```bash
-npm install
-```
-
-### 4.3 Create Environment File
-```bash
-nano .env
-```
-
-Add the following environment variables:
-```env
-NODE_ENV=production
-DATABASE_URL=postgresql://voltservers:your_secure_password_here@localhost:5432/voltservers
-PORT=5000
-SESSION_SECRET=your_very_long_random_session_secret_here
-
-# Optional: WHMCS Integration
-WHMCS_API_IDENTIFIER=your_whmcs_api_identifier
-WHMCS_API_SECRET=your_whmcs_api_secret
-WHMCS_URL=https://your-whmcs-domain.com
-
-# Optional: SendGrid for Email
-SENDGRID_API_KEY=your_sendgrid_api_key
-
-# Optional: Wisp Integration
-WISP_API_URL=https://game.voltservers.com
-WISP_API_KEY=your_wisp_api_key
-```
-
-### 4.4 Run Database Migrations
-```bash
-npm run db:push
-```
-
-### 4.5 Build the Application
-```bash
-npm run build
-```
-
-### 4.6 Test the Application
-```bash
-npm start
-```
-
-If everything works, stop the application with Ctrl+C.
-
-## Step 5: Configure Process Manager (PM2)
-
-### 5.1 Install PM2 Globally
+### 4. Install PM2 Process Manager
 ```bash
 sudo npm install -g pm2
 ```
 
-### 5.2 Create PM2 Ecosystem File
+### 5. Deploy Application
 ```bash
+# Clone your repository (replace with your GitHub URL)
+git clone https://github.com/yourusername/voltservers.git
+cd voltservers
+
+# Install dependencies
+npm install
+
+# Create environment file
+nano .env
+```
+
+**Add to .env file:**
+```env
+NODE_ENV=production
+DATABASE_URL=postgresql://voltservers:SECURE_PASSWORD@localhost:5432/voltservers
+PORT=5000
+SESSION_SECRET=your_very_long_random_session_secret_here
+
+# Optional integrations
+WHMCS_API_IDENTIFIER=your_whmcs_api_identifier
+WHMCS_API_SECRET=your_whmcs_api_secret
+WHMCS_URL=https://your-whmcs-domain.com
+SENDGRID_API_KEY=your_sendgrid_api_key
+WISP_API_URL=https://game.voltservers.com
+WISP_API_KEY=your_wisp_api_key
+```
+
+```bash
+# Setup database and build
+npm run db:push
+npm run build
+
+# Create PM2 config
 nano ecosystem.config.js
 ```
 
-Add the following:
+**Add to ecosystem.config.js:**
 ```javascript
 module.exports = {
   apps: [{
@@ -179,12 +104,7 @@ module.exports = {
     script: './dist/index.js',
     instances: 'max',
     exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'development'
-    },
-    env_production: {
-      NODE_ENV: 'production'
-    },
+    env_production: { NODE_ENV: 'production' },
     error_file: './logs/err.log',
     out_file: './logs/out.log',
     log_file: './logs/combined.log',
@@ -193,32 +113,24 @@ module.exports = {
 }
 ```
 
-### 5.3 Create Logs Directory
 ```bash
+# Start with PM2
 mkdir logs
-```
-
-### 5.4 Start Application with PM2
-```bash
 pm2 start ecosystem.config.js --env production
-pm2 save
-pm2 startup
+pm2 save && pm2 startup
 ```
 
-Copy and run the command that PM2 outputs.
-
-## Step 6: Configure Nginx Reverse Proxy
-
-### 6.1 Create Nginx Configuration
+### 6. Configure Nginx
 ```bash
+# Create Nginx config (replace YOUR-DOMAIN.com with your domain)
 sudo nano /etc/nginx/sites-available/voltservers
 ```
 
-Add the following configuration:
+**Add to Nginx config:**
 ```nginx
 server {
     listen 80;
-    server_name your-domain.com www.your-domain.com;  # Replace with your domain
+    server_name YOUR-DOMAIN.com www.YOUR-DOMAIN.com;
 
     location / {
         proxy_pass http://localhost:5000;
@@ -230,272 +142,143 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
-        proxy_read_timeout 86400;
     }
 }
 ```
 
-### 6.2 Enable the Site
 ```bash
+# Enable site
 sudo ln -s /etc/nginx/sites-available/voltservers /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl restart nginx
 ```
 
-## Step 7: SSL Certificate Setup (Optional but Recommended)
-
-### 7.1 Install SSL Certificate with Let's Encrypt
+### 7. SSL Certificate (Optional)
 ```bash
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+sudo certbot --nginx -d YOUR-DOMAIN.com -d www.YOUR-DOMAIN.com
 ```
 
-### 7.2 Auto-renewal Setup
+### 8. Setup Backups
 ```bash
-sudo crontab -e
-```
-
-Add this line:
-```
-0 12 * * * /usr/bin/certbot renew --quiet
-```
-
-## Step 8: Configure Monitoring and Logs
-
-### 8.1 Install Log Rotation
-```bash
-sudo nano /etc/logrotate.d/voltservers
-```
-
-Add:
-```
-/home/voltservers/voltservers/logs/*.log {
-    daily
-    missingok
-    rotate 7
-    compress
-    notifempty
-    create 0640 voltservers voltservers
-    postrotate
-        pm2 reloadLogs
-    endscript
-}
-```
-
-### 8.2 Monitor Application Status
-```bash
-# Check PM2 status
-pm2 status
-
-# View logs
-pm2 logs voltservers
-
-# Monitor real-time
-pm2 monit
-```
-
-## Step 9: Security Hardening
-
-### 9.1 Configure Fail2Ban for Nginx
-```bash
-sudo nano /etc/fail2ban/jail.local
-```
-
-Add:
-```ini
-[nginx-http-auth]
-enabled = true
-
-[nginx-limit-req]
-enabled = true
-```
-
-### 9.2 Update System Regularly
-Create auto-update script:
-```bash
-sudo nano /etc/cron.weekly/system-update
-```
-
-Add:
-```bash
-#!/bin/bash
-apt update && apt upgrade -y
-apt autoremove -y
-```
-
-Make executable:
-```bash
-sudo chmod +x /etc/cron.weekly/system-update
-```
-
-## Step 10: Backup Strategy
-
-### 10.1 Database Backup Script
-```bash
-nano ~/backup-db.sh
-```
-
-Add:
-```bash
+# Create backup script
+cat > ~/backup-db.sh << 'EOF'
 #!/bin/bash
 DATE=$(date +%Y%m%d_%H%M%S)
-BACKUP_DIR="/home/voltservers/backups"
+BACKUP_DIR="$HOME/backups"
 mkdir -p $BACKUP_DIR
-
-# Database backup
 pg_dump -h localhost -U voltservers -d voltservers > $BACKUP_DIR/voltservers_db_$DATE.sql
-
-# Keep only last 7 days of backups
 find $BACKUP_DIR -name "voltservers_db_*.sql" -mtime +7 -delete
+echo "Backup completed: voltservers_db_$DATE.sql"
+EOF
 
-echo "Database backup completed: voltservers_db_$DATE.sql"
-```
-
-Make executable and add to cron:
-```bash
 chmod +x ~/backup-db.sh
-crontab -e
+
+# Schedule daily backups at 2 AM
+(crontab -l 2>/dev/null; echo "0 2 * * * $HOME/backup-db.sh") | crontab -
 ```
 
-Add daily backup at 2 AM:
-```
-0 2 * * * /home/voltservers/backup-db.sh
-```
-
-## Step 11: Deployment Automation
-
-### 11.1 Create Deployment Script
+### 9. Create Deployment Script
 ```bash
-nano ~/deploy.sh
-```
-
-Add:
-```bash
+cat > ~/deploy.sh << 'EOF'
 #!/bin/bash
-cd /home/voltservers/voltservers
-
+cd voltservers
 echo "Pulling latest changes..."
 git pull origin main
-
 echo "Installing dependencies..."
 npm install
-
 echo "Building application..."
 npm run build
-
-echo "Running database migrations..."
+echo "Running migrations..."
 npm run db:push
-
 echo "Restarting application..."
 pm2 restart voltservers
+echo "Deployment completed!"
+EOF
 
-echo "Deployment completed successfully!"
-```
-
-Make executable:
-```bash
 chmod +x ~/deploy.sh
 ```
 
-## Troubleshooting
+---
 
-### Common Issues and Solutions
+## ✅ POST-INSTALLATION
 
-1. **Port 5000 already in use**
-   ```bash
-   sudo lsof -i :5000
-   sudo kill -9 <PID>
-   ```
+### Verify Everything is Working
+```bash
+# Check services status
+pm2 status                              # Application status
+sudo systemctl status nginx             # Web server
+sudo systemctl status postgresql        # Database
 
-2. **PostgreSQL connection issues**
-   ```bash
-   sudo systemctl status postgresql
-   sudo -u postgres psql -c "SELECT version();"
-   ```
+# Monitor logs
+pm2 logs voltservers                     # Application logs
+sudo tail -f /var/log/nginx/access.log   # Web access logs
+```
 
-3. **PM2 not starting**
-   ```bash
-   pm2 logs voltservers --lines 50
-   pm2 delete voltservers
-   pm2 start ecosystem.config.js --env production
-   ```
+### Access Your Site
+- **Without domain:** `http://YOUR_SERVER_IP`
+- **With domain:** `http://YOUR-DOMAIN.com`
 
-4. **Nginx configuration errors**
-   ```bash
-   sudo nginx -t
-   sudo systemctl status nginx
-   ```
+### Domain Setup
+Point your domain's DNS records to your server:
+- `A` record: `@` → `YOUR_SERVER_IP`
+- `A` record: `www` → `YOUR_SERVER_IP`
 
-5. **SSL certificate issues**
-   ```bash
-   sudo certbot certificates
-   sudo certbot renew --dry-run
-   ```
+### Future Updates
+```bash
+# Deploy new changes
+~/deploy.sh
 
-## Monitoring Your Application
+# Check application health
+pm2 monit
+```
 
-### Performance Monitoring
+---
+
+## 🔧 TROUBLESHOOTING
+
+**Port already in use:**
+```bash
+sudo lsof -i :5000
+sudo kill -9 <PID>
+```
+
+**Database connection issues:**
+```bash
+sudo systemctl status postgresql
+sudo -u postgres psql -c "SELECT version();"
+```
+
+**Application not starting:**
+```bash
+pm2 logs voltservers --lines 50
+pm2 restart voltservers
+```
+
+**Nginx errors:**
+```bash
+sudo nginx -t
+sudo systemctl status nginx
+```
+
+---
+
+## 📊 MONITORING COMMANDS
+
 ```bash
 # System resources
 htop
 
-# Disk usage
+# Disk space
 df -h
 
 # Memory usage
 free -h
 
-# PM2 monitoring
+# Real-time monitoring
 pm2 monit
 
-# Nginx access logs
-sudo tail -f /var/log/nginx/access.log
-
-# Application logs
-pm2 logs voltservers --lines 100
+# View all logs
+pm2 logs
 ```
 
-## Updates and Maintenance
-
-To update your application:
-```bash
-cd /home/voltservers/voltservers
-./deploy.sh
-```
-
-To update Node.js dependencies:
-```bash
-npm audit
-npm update
-npm run build
-pm2 restart voltservers
-```
-
-## Domain Configuration
-
-Once your server is running, point your domain's A record to your server's IP address:
-- `A` record: `@` → `your_server_ip`
-- `A` record: `www` → `your_server_ip`
-
-## Final Security Checklist
-
-- [ ] Firewall configured (UFW)
-- [ ] SSH keys configured (disable password auth)
-- [ ] Fail2Ban configured
-- [ ] SSL certificate installed
-- [ ] Database secured with strong passwords
-- [ ] Environment variables secured
-- [ ] Regular backups configured
-- [ ] Log rotation configured
-- [ ] Monitoring in place
-
-Your VoltServers platform should now be fully deployed and running on your Ubuntu server!
-
-## Getting Help
-
-If you encounter issues during deployment:
-1. Check the application logs: `pm2 logs voltservers`
-2. Check system logs: `sudo journalctl -u nginx -f`
-3. Verify all services are running: `pm2 status` and `sudo systemctl status nginx postgresql`
-4. Test database connection: `npm run db:push`
-
-For additional support, refer to the other deployment guides in your project directory.
+Your VoltServers platform is now running with enterprise-grade reliability on Ubuntu!
