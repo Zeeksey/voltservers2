@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   apps: [{
     name: 'voltservers',
     script: './dist/index.js',
@@ -38,13 +38,13 @@ export default {
   deploy: {
     production: {
       user: 'ubuntu',
-      host: 'your-server-ip',
+      host: '135.148.137.158',
       ref: 'origin/main',
-      repo: 'https://github.com/yourusername/voltservers.git',
+      repo: 'https://github.com/Zeeksey/voltservers2.git',
       path: '/home/ubuntu/voltservers',
       'pre-deploy-local': '',
-      'post-deploy': 'npm install && npm run build && npm run db:push && pm2 reload ecosystem.config.js --env production && pm2 save',
+      'post-deploy': 'npm install && npm run build && npm run db:push && pm2 reload ecosystem.config.cjs --env production && pm2 save',
       'pre-setup': ''
     }
   }
-};
+}

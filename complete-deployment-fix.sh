@@ -170,8 +170,8 @@ print_status "Starting VoltServers application..."
 # Stop any existing PM2 processes
 pm2 delete voltservers 2>/dev/null || true
 
-# Start the application
-pm2 start ecosystem.config.js --env production
+# Start the application (use .cjs for CommonJS)
+pm2 start ecosystem.config.cjs --env production
 
 # Save PM2 configuration
 pm2 save
