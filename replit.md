@@ -28,7 +28,7 @@ VoltServers is a full-stack game server hosting platform providing a comprehensi
 
 Preferred communication style: Simple, everyday language.
 Server Management Style: Simple server overview with direct link to Wisp.gg game panel - no complex controls or tabs interface.
-Deployment Platform: Vercel (switched from Render for better build support)
+Deployment Platform: Multiple options - Ubuntu dedicated servers, Vercel, Namecheap Node.js hosting
 Development Environment: Windows with VS Code and GitHub integration
 
 # System Architecture
