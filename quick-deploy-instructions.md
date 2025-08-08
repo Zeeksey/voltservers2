@@ -9,7 +9,7 @@
 ssh ubuntu@135.148.137.158
 
 # Download and run the deployment script
-curl -sSL https://raw.githubusercontent.com/your-username/voltservers/main/deploy-to-server.sh | bash
+curl -sSL https://raw.githubusercontent.com/Zeeksey/voltservers2/main/deploy-to-server.sh | bash
 ```
 
 ## What the Script Does:
@@ -70,7 +70,7 @@ sudo npm install -g pm2
 
 ### 7. Deploy App
 ```bash
-git clone https://github.com/your-username/voltservers.git
+git clone https://github.com/Zeeksey/voltservers2.git
 cd voltservers
 cp .env.example .env
 # Edit .env with your database URL

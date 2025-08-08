@@ -104,14 +104,8 @@ fi
 
 # Step 6: Deploy Application
 print_header "STEP 6: Application Deployment"
-print_status "Enter your GitHub repository URL:"
-echo "Example: https://github.com/username/voltservers"
-read -p "Repository URL: " REPO_URL
-
-if [[ -z "$REPO_URL" ]]; then
-    print_error "Repository URL is required"
-    exit 1
-fi
+REPO_URL="https://github.com/Zeeksey/voltservers2"
+print_status "Deploying from: $REPO_URL"
 
 # Remove existing directory
 if [[ -d "$APP_DIR" ]]; then
