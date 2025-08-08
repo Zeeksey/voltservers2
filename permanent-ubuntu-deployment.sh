@@ -228,8 +228,7 @@ print_success "Environment configuration created"
 
 # Step 9: Install dependencies and build
 print_step "Installing dependencies"
-npm ci --only=production
-npm install --only=dev  # Install dev dependencies for build
+npm install  # Install all dependencies including dev dependencies for build
 
 print_step "Building application"
 npm run build
