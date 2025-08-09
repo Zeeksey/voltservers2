@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameHost Pro - Premium Game Server Hosting | 2025</title>
+    <meta name="description" content="Professional game server hosting with 99.9% uptime. Minecraft, CS2, Rust, and more. Get your game server online in minutes with our modern hosting platform.">
+    <meta name="keywords" content="game server hosting, minecraft hosting, rust server, cs2 server, gaming servers">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gaming-green': '#00FF88',
+                        'gaming-green-dark': '#00CC6A',
+                        'gaming-black': '#0D1117',
+                        'gaming-black-light': '#161B22',
+                        'gaming-black-lighter': '#21262D',
+                        'gaming-gray': '#8B949E',
+                        'gaming-white': '#F0F6FC'
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif']
+                    },
+                    animation: {
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-green': 'pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px #00FF88, 0 0 10px #00FF88, 0 0 15px #00FF88' },
+                            '100%': { boxShadow: '0 0 10px #00FF88, 0 0 20px #00FF88, 0 0 30px #00FF88' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        'pulse-green': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: .7 }
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .bg-gradient-gaming {
+            background: linear-gradient(135deg, #0D1117 0%, #161B22 50%, #21262D 100%);
+        }
+        .bg-gradient-green {
+            background: linear-gradient(135deg, #00FF88 0%, #00CC6A 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(33, 38, 45, 0.3);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+        .server-online {
+            animation: pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-gaming-black text-gaming-white font-inter">
+    <!-- @COMPONENT: Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-effect">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gamepad text-gaming-black text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gaming-green">GameHost Pro</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#games" class="hover:text-gaming-green transition-colors">Games</a>
+                    <a href="#pricing" class="hover:text-gaming-green transition-colors">Pricing</a>
+                    <a href="#tools" class="hover:text-gaming-green transition-colors">MC Tools</a>
+                    <a href="#status" class="hover:text-gaming-green transition-colors">Server Status</a>
+                    <a href="#support" class="hover:text-gaming-green transition-colors">Support</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button data-event="click:handleLogin" class="hidden sm:inline-flex items-center px-4 py-2 border border-gaming-green text-gaming-green hover:bg-gaming-green hover:text-gaming-black transition-all duration-300 rounded-lg">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Login
+                    </button>
+                    <button data-event="click:handleSignup" class="bg-gradient-green text-gaming-black px-6 py-2 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/25 transition-all duration-300">
+                        Get Started
+                    </button>
+                    <button class="md:hidden text-gaming-green">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- @COMPONENT: Hero Section with Promo Banner -->
+    <section class="relative pt-20 pb-16 overflow-hidden">
+        <!-- Gaming server hosting promotional banner background -->
+        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080');"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-gaming-black via-gaming-black/90 to-gaming-black/70"></div>
+        
+        <div class="relative container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
+                <div class="space-y-8">
+                    <div class="inline-flex items-center px-4 py-2 bg-gaming-green/10 border border-gaming-green/20 rounded-full text-gaming-green text-sm font-medium">
+                        <span class="w-2 h-2 bg-gaming-green rounded-full mr-2 server-online"></span>
+                        99.9% Uptime Guaranteed
+                    </div>
+                    
+                    <h1 class="text-5xl lg:text-7xl font-bold leading-tight">
+                        <span class="text-gaming-white">Premium</span><br>
+                        <span class="text-gaming-green">Game Server</span><br>
+                        <span class="text-gaming-white">Hosting</span>
+                    </h1>
+                    
+                    <p class="text-xl text-gaming-gray max-w-xl">
+                        Deploy your game servers in seconds with our cutting-edge infrastructure. 
+                        From Minecraft to CS2, we've got you covered with enterprise-grade performance.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button data-event="click:handleStartNow" class="bg-gradient-green text-gaming-black px-8 py-4 rounded-lg font-bold text-lg hover:shadow-xl hover:shadow-gaming-green/30 transition-all duration-300 animate-glow">
+                            <i class="fas fa-rocket mr-2"></i>
+                            Start Now - From $2.99/mo
+                        </button>
+                        <button data-event="click:handleViewDemo" class="border-2 border-gaming-green text-gaming-green px-8 py-4 rounded-lg font-bold text-lg hover:bg-gaming-green hover:text-gaming-black transition-all duration-300">
+                            <i class="fas fa-play mr-2"></i>
+                            View Demo
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center space-x-8 pt-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-shield-alt text-gaming-green text-xl"></i>
+                            <span class="text-gaming-gray">DDoS Protection</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-clock text-gaming-green text-xl"></i>
+                            <span class="text-gaming-gray">Instant Setup</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-headset text-gaming-green text-xl"></i>
+                            <span class="text-gaming-gray">24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <!-- Modern gaming setup with multiple monitors showing server interfaces -->
+                    <img src="https://images.unsplash.com/photo-1593305841991-05c297ba4575?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" alt="Modern gaming setup with server interfaces" class="rounded-2xl shadow-2xl shadow-gaming-green/20 animate-float" />
+                    <div class="absolute -bottom-6 -right-6 bg-gaming-green text-gaming-black p-4 rounded-xl font-bold shadow-lg">
+                        <div class="text-2xl">50K+</div>
+                        <div class="text-sm">Active Servers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Hero Section -->
+
+    <!-- @COMPONENT: Game Cards Section -->
+    <section id="games" class="py-20 bg-gaming-black-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="text-gaming-green">Popular</span> Game Servers
+                </h2>
+                <p class="text-xl text-gaming-gray max-w-3xl mx-auto">
+                    Choose from our extensive library of supported games. Each server comes with optimized configurations and mod support.
+                </p>
+            </div>
+            
+            <!-- @MAP: gameCards.map(card => ( -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Minecraft Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- Minecraft server interface screenshot -->
+                        <img src="https://pixabay.com/get/g0f2a95e2a858acb44e5d404e612a684317375d9652e4fff2b2923d96673c86b933d76959bb030775cb48e79fb4a1b88692657d6eb50405ad040ba1f2dd006e09_1280.jpg" alt="Minecraft server interface" class="w-full h-48 object-cover" />
+                        <div class="absolute top-4 right-4 bg-gaming-green text-gaming-black px-3 py-1 rounded-full text-sm font-bold">
+                            Popular
+                        </div>
+                        <div class="absolute inset-0 bg-gaming-green/0 group-hover:bg-gaming-green/10 transition-colors duration-300"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">Minecraft</h3>
+                            <span class="text-gaming-green font-semibold">From $2.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Java & Bedrock support, unlimited mods, automatic backups</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">2,847 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CS2 Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- Counter-Strike 2 gaming action scene -->
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Counter-Strike 2 gaming scene" class="w-full h-48 object-cover" />
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">CS2</h3>
+                            <span class="text-gaming-green font-semibold">From $4.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Counter-Strike 2 servers with custom maps and plugins</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">1,234 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rust Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- Rust survival game environment -->
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Rust survival gaming environment" class="w-full h-48 object-cover" />
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">Rust</h3>
+                            <span class="text-gaming-green font-semibold">From $6.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Survival servers with oxide plugins and custom maps</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">892 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ARK Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- ARK survival evolved dinosaur game scene -->
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="ARK survival gaming with dinosaurs" class="w-full h-48 object-cover" />
+                        <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                            New
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">ARK: Survival</h3>
+                            <span class="text-gaming-green font-semibold">From $8.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Dinosaur survival with clusters and mod support</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">445 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Valheim Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- Valheim viking survival game forest scene -->
+                        <img src="https://pixabay.com/get/g33c7bac813749618f16afdca5ee0feed251e74f4603a0fa395097d3bd61a82d70e151d59a5c90442f5cbea5228a4406bbed95fcbcb903ccd663509f00d72e42c_1280.jpg" alt="Valheim viking survival forest scene" class="w-full h-48 object-cover" />
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">Valheim</h3>
+                            <span class="text-gaming-green font-semibold">From $5.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Viking survival servers with dedicated worlds</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">678 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7 Days to Die Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- 7 Days to Die zombie apocalypse survival scene -->
+                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="7 Days to Die zombie survival scene" class="w-full h-48 object-cover" />
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">7 Days to Die</h3>
+                            <span class="text-gaming-green font-semibold">From $7.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Zombie survival with custom mods and maps</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">223 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Palworld Game Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2" data-mock="true">
+                    <div class="relative">
+                        <!-- Palworld creature collection game scene -->
+                        <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=250" alt="Palworld creature collection game" class="w-full h-48 object-cover" />
+                        <div class="absolute top-4 right-4 bg-yellow-500 text-gaming-black px-3 py-1 rounded-full text-sm font-bold">
+                            Trending
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gaming-white">Palworld</h3>
+                            <span class="text-gaming-green font-semibold">From $9.99/mo</span>
+                        </div>
+                        <p class="text-gaming-gray mb-4">Creature collection servers with multiplayer support</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-1">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-sm text-gaming-gray" data-bind="server.playerCount">1,567 players</span>
+                            </div>
+                            <button data-event="click:selectGame" class="bg-gaming-green text-gaming-black px-4 py-2 rounded-lg font-semibold hover:bg-gaming-green-dark transition-colors">
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- More Games Card -->
+                <div class="group bg-gaming-black-lighter rounded-xl overflow-hidden hover:shadow-xl hover:shadow-gaming-green/20 transition-all duration-300 hover:-translate-y-2 border-2 border-dashed border-gaming-green/30" data-mock="true">
+                    <div class="p-6 h-full flex flex-col items-center justify-center text-center">
+                        <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-plus text-gaming-green text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gaming-white mb-2">More Games</h3>
+                        <p class="text-gaming-gray mb-4">Don't see your game? We support 50+ games with custom installations.</p>
+                        <button data-event="click:viewAllGames" class="text-gaming-green font-semibold hover:text-gaming-green-dark transition-colors">
+                            View All Games <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_MAP )) -->
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Game Cards Section -->
+
+    <!-- @COMPONENT: Pricing Section -->
+    <section id="pricing" class="py-20 bg-gaming-black">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="text-gaming-green">Simple</span> Pricing Plans
+                </h2>
+                <p class="text-xl text-gaming-gray max-w-3xl mx-auto">
+                    Choose the perfect plan for your gaming community. All plans include DDoS protection, SSD storage, and 24/7 support.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Starter Plan -->
+                <div class="bg-gaming-black-lighter rounded-2xl p-8 border border-gaming-black-lighter hover:border-gaming-green/30 transition-all duration-300" data-mock="true">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gaming-white mb-2">Starter</h3>
+                        <p class="text-gaming-gray mb-6">Perfect for small communities</p>
+                        <div class="text-5xl font-bold text-gaming-green mb-2">$2.99</div>
+                        <div class="text-gaming-gray">/month</div>
+                    </div>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Up to 10 players</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">2GB RAM</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">20GB SSD Storage</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">DDoS Protection</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Basic Support</span>
+                        </li>
+                    </ul>
+                    
+                    <button data-event="click:selectPlan" class="w-full border-2 border-gaming-green text-gaming-green py-3 rounded-lg font-semibold hover:bg-gaming-green hover:text-gaming-black transition-all duration-300">
+                        Choose Starter
+                    </button>
+                </div>
+
+                <!-- Pro Plan (Most Popular) -->
+                <div class="bg-gaming-black-lighter rounded-2xl p-8 border-2 border-gaming-green relative transform lg:scale-105" data-mock="true">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <div class="bg-gradient-green text-gaming-black px-6 py-2 rounded-full text-sm font-bold">
+                            Most Popular
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mb-8 pt-4">
+                        <h3 class="text-2xl font-bold text-gaming-white mb-2">Pro</h3>
+                        <p class="text-gaming-gray mb-6">Best for growing communities</p>
+                        <div class="text-5xl font-bold text-gaming-green mb-2">$7.99</div>
+                        <div class="text-gaming-gray">/month</div>
+                    </div>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">Up to 50 players</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">6GB RAM</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">100GB SSD Storage</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">Advanced DDoS Protection</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">Priority Support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">Mod Support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-white">Daily Backups</span>
+                        </li>
+                    </ul>
+                    
+                    <button data-event="click:selectPlan" class="w-full bg-gradient-green text-gaming-black py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/30 transition-all duration-300">
+                        Choose Pro
+                    </button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-gaming-black-lighter rounded-2xl p-8 border border-gaming-black-lighter hover:border-gaming-green/30 transition-all duration-300" data-mock="true">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gaming-white mb-2">Enterprise</h3>
+                        <p class="text-gaming-gray mb-6">For large communities</p>
+                        <div class="text-5xl font-bold text-gaming-green mb-2">$19.99</div>
+                        <div class="text-gaming-gray">/month</div>
+                    </div>
+                    
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Unlimited players</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">16GB RAM</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">500GB SSD Storage</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Enterprise DDoS Protection</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">24/7 Dedicated Support</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Custom Plugins</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Hourly Backups</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-gaming-green mr-3"></i>
+                            <span class="text-gaming-gray">Multi-Server Management</span>
+                        </li>
+                    </ul>
+                    
+                    <button data-event="click:selectPlan" class="w-full border-2 border-gaming-green text-gaming-green py-3 rounded-lg font-semibold hover:bg-gaming-green hover:text-gaming-black transition-all duration-300">
+                        Choose Enterprise
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Pricing Section -->
+
+    <!-- @COMPONENT: Server Status Dashboard -->
+    <section id="status" class="py-20 bg-gaming-black-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="text-gaming-green">Server</span> Status
+                </h2>
+                <p class="text-xl text-gaming-gray max-w-3xl mx-auto">
+                    Real-time monitoring of our infrastructure. All systems operational with 99.9% uptime.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <!-- Overall Status -->
+                <div class="bg-gaming-black-lighter rounded-xl p-6" data-mock="true">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-gaming-white">Overall Status</h3>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 bg-gaming-green rounded-full server-online"></span>
+                            <span class="text-gaming-green font-semibold">All Systems Operational</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <span class="text-gaming-gray">Game Servers</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-gaming-green text-sm">Operational</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gaming-gray">Control Panel</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-gaming-green text-sm">Operational</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gaming-gray">API Services</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-gaming-green text-sm">Operational</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gaming-gray">Billing System</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-gaming-green text-sm">Operational</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="bg-gaming-black-lighter rounded-xl p-6" data-mock="true">
+                    <h3 class="text-xl font-bold text-gaming-white mb-6">Performance Metrics</h3>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gaming-gray">Average Response Time</span>
+                                <span class="text-gaming-green font-semibold" data-bind="metrics.responseTime">12ms</span>
+                            </div>
+                            <div class="w-full bg-gaming-black rounded-full h-2">
+                                <div class="bg-gradient-green h-2 rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gaming-gray">Server Uptime</span>
+                                <span class="text-gaming-green font-semibold" data-bind="metrics.uptime">99.97%</span>
+                            </div>
+                            <div class="w-full bg-gaming-black rounded-full h-2">
+                                <div class="bg-gradient-green h-2 rounded-full" style="width: 99.97%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-gaming-gray">Network Quality</span>
+                                <span class="text-gaming-green font-semibold" data-bind="metrics.networkQuality">Excellent</span>
+                            </div>
+                            <div class="w-full bg-gaming-black rounded-full h-2">
+                                <div class="bg-gradient-green h-2 rounded-full" style="width: 98%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Server Locations -->
+            <div class="bg-gaming-black-lighter rounded-xl p-6">
+                <h3 class="text-xl font-bold text-gaming-white mb-6">Server Locations</h3>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-gaming-black rounded-lg" data-mock="true">
+                        <i class="fas fa-globe-americas text-gaming-green text-2xl mb-2"></i>
+                        <div class="text-gaming-white font-semibold">North America</div>
+                        <div class="text-gaming-gray text-sm">US East, US West</div>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="w-2 h-2 bg-gaming-green rounded-full server-online mr-2"></span>
+                            <span class="text-gaming-green text-sm">Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gaming-black rounded-lg" data-mock="true">
+                        <i class="fas fa-globe-europe text-gaming-green text-2xl mb-2"></i>
+                        <div class="text-gaming-white font-semibold">Europe</div>
+                        <div class="text-gaming-gray text-sm">London, Frankfurt</div>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="w-2 h-2 bg-gaming-green rounded-full server-online mr-2"></span>
+                            <span class="text-gaming-green text-sm">Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gaming-black rounded-lg" data-mock="true">
+                        <i class="fas fa-globe-asia text-gaming-green text-2xl mb-2"></i>
+                        <div class="text-gaming-white font-semibold">Asia Pacific</div>
+                        <div class="text-gaming-gray text-sm">Singapore, Tokyo</div>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="w-2 h-2 bg-gaming-green rounded-full server-online mr-2"></span>
+                            <span class="text-gaming-green text-sm">Online</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-gaming-black rounded-lg" data-mock="true">
+                        <i class="fas fa-globe text-gaming-green text-2xl mb-2"></i>
+                        <div class="text-gaming-white font-semibold">Australia</div>
+                        <div class="text-gaming-gray text-sm">Sydney, Melbourne</div>
+                        <div class="flex items-center justify-center mt-2">
+                            <span class="w-2 h-2 bg-gaming-green rounded-full server-online mr-2"></span>
+                            <span class="text-gaming-green text-sm">Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Server Status Dashboard -->
+
+    <!-- @COMPONENT: Minecraft Tools Section -->
+    <section id="tools" class="py-20 bg-gaming-black">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    <span class="text-gaming-green">Minecraft</span> Tools
+                </h2>
+                <p class="text-xl text-gaming-gray max-w-3xl mx-auto">
+                    Essential tools for Minecraft server administrators. Manage your server with ease using our integrated tools.
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <!-- Server Query Tool -->
+                <div class="bg-gaming-black-lighter rounded-xl p-8" data-mock="true">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gaming-green/10 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-search text-gaming-green text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gaming-white">Server Query</h3>
+                    </div>
+                    
+                    <p class="text-gaming-gray mb-6">Check any Minecraft server's status, player count, and version information.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gaming-white text-sm font-medium mb-2">Server IP</label>
+                            <input data-mock="true" type="text" placeholder="play.hypixel.net" class="w-full bg-gaming-black border border-gaming-black-lighter rounded-lg px-4 py-3 text-gaming-white placeholder-gaming-gray focus:border-gaming-green focus:outline-none transition-colors">
+                        </div>
+                        <button data-event="click:queryServer" class="w-full bg-gradient-green text-gaming-black py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/30 transition-all duration-300">
+                            <i class="fas fa-search mr-2"></i>
+                            Query Server
+                        </button>
+                    </div>
+                    
+                    <!-- Mock Query Results -->
+                    <div class="mt-6 p-4 bg-gaming-black rounded-lg border border-gaming-green/20" data-mock="true">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-gaming-white font-semibold">Server Status</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2 h-2 bg-gaming-green rounded-full server-online"></span>
+                                <span class="text-gaming-green text-sm">Online</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-gaming-gray">Players:</span>
+                                <span class="text-gaming-white ml-2" data-bind="query.players">47,582/100,000</span>
+                            </div>
+                            <div>
+                                <span class="text-gaming-gray">Version:</span>
+                                <span class="text-gaming-white ml-2" data-bind="query.version">1.20.4</span>
+                            </div>
+                            <div>
+                                <span class="text-gaming-gray">Ping:</span>
+                                <span class="text-gaming-green ml-2" data-bind="query.ping">23ms</span>
+                            </div>
+                            <div>
+                                <span class="text-gaming-gray">MOTD:</span>
+                                <span class="text-gaming-white ml-2" data-bind="query.motd">Hypixel Network</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skin Viewer -->
+                <div class="bg-gaming-black-lighter rounded-xl p-8" data-mock="true">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gaming-green/10 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-gaming-green text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gaming-white">Skin Viewer</h3>
+                    </div>
+                    
+                    <p class="text-gaming-gray mb-6">View any Minecraft player's skin and get download links.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gaming-white text-sm font-medium mb-2">Player Username</label>
+                            <input data-mock="true" type="text" placeholder="Notch" class="w-full bg-gaming-black border border-gaming-black-lighter rounded-lg px-4 py-3 text-gaming-white placeholder-gaming-gray focus:border-gaming-green focus:outline-none transition-colors">
+                        </div>
+                        <button data-event="click:loadSkin" class="w-full bg-gradient-green text-gaming-black py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/30 transition-all duration-300">
+                            <i class="fas fa-download mr-2"></i>
+                            Load Skin
+                        </button>
+                    </div>
+                    
+                    <!-- Mock Skin Preview -->
+                    <div class="mt-6 text-center" data-mock="true">
+                        <!-- Minecraft player skin preview -->
+                        <img src="https://pixabay.com/get/gcfdf7f457424a656d31aa90de24a5e8d05a090893b7d6558486b1e72ae13104f5dd95e54c045db1ead1428a2a730b25030d7304e0a300d48e4686376830a072f_1280.jpg" alt="Minecraft player skin preview" class="w-24 h-24 mx-auto rounded-lg mb-4 pixelated" style="image-rendering: pixelated;" />
+                        <div class="text-gaming-white font-semibold mb-2" data-bind="skin.username">Notch</div>
+                        <div class="flex justify-center space-x-2">
+                            <button data-event="click:downloadSkin" class="text-gaming-green hover:text-gaming-green-dark text-sm transition-colors">
+                                <i class="fas fa-download mr-1"></i>Download
+                            </button>
+                            <button data-event="click:copySkinUrl" class="text-gaming-green hover:text-gaming-green-dark text-sm transition-colors">
+                                <i class="fas fa-link mr-1"></i>Copy URL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- UUID Converter -->
+                <div class="bg-gaming-black-lighter rounded-xl p-8" data-mock="true">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gaming-green/10 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-exchange-alt text-gaming-green text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gaming-white">UUID Converter</h3>
+                    </div>
+                    
+                    <p class="text-gaming-gray mb-6">Convert between Minecraft usernames and UUIDs for server administration.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gaming-white text-sm font-medium mb-2">Username or UUID</label>
+                            <input data-mock="true" type="text" placeholder="069a79f4-44e9-4726-a5be-fca90e38aaf5" class="w-full bg-gaming-black border border-gaming-black-lighter rounded-lg px-4 py-3 text-gaming-white placeholder-gaming-gray focus:border-gaming-green focus:outline-none transition-colors">
+                        </div>
+                        <button data-event="click:convertUUID" class="w-full bg-gradient-green text-gaming-black py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/30 transition-all duration-300">
+                            <i class="fas fa-sync mr-2"></i>
+                            Convert
+                        </button>
+                    </div>
+                    
+                    <!-- Mock Conversion Results -->
+                    <div class="mt-6 space-y-3" data-mock="true">
+                        <div class="p-3 bg-gaming-black rounded-lg">
+                            <div class="text-gaming-gray text-sm mb-1">Username:</div>
+                            <div class="text-gaming-white font-mono" data-bind="uuid.username">Notch</div>
+                        </div>
+                        <div class="p-3 bg-gaming-black rounded-lg">
+                            <div class="text-gaming-gray text-sm mb-1">UUID:</div>
+                            <div class="text-gaming-white font-mono text-sm" data-bind="uuid.value">069a79f4-44e9-4726-a5be-fca90e38aaf5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Code Generator -->
+                <div class="bg-gaming-black-lighter rounded-xl p-8" data-mock="true">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-gaming-green/10 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-palette text-gaming-green text-xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gaming-white">Color Code Generator</h3>
+                    </div>
+                    
+                    <p class="text-gaming-gray mb-6">Generate Minecraft color codes for chat messages and signs.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-gaming-white text-sm font-medium mb-2">Message Text</label>
+                            <input data-mock="true" type="text" placeholder="Welcome to our server!" class="w-full bg-gaming-black border border-gaming-black-lighter rounded-lg px-4 py-3 text-gaming-white placeholder-gaming-gray focus:border-gaming-green focus:outline-none transition-colors">
+                        </div>
+                        
+                        <div class="grid grid-cols-4 gap-2">
+                            <button data-event="click:addColor" class="p-2 bg-red-500 rounded text-white text-sm hover:opacity-80 transition-opacity" data-color="§c">Red</button>
+                            <button data-event="click:addColor" class="p-2 bg-blue-500 rounded text-white text-sm hover:opacity-80 transition-opacity" data-color="§9">Blue</button>
+                            <button data-event="click:addColor" class="p-2 bg-green-500 rounded text-white text-sm hover:opacity-80 transition-opacity" data-color="§a">Green</button>
+                            <button data-event="click:addColor" class="p-2 bg-yellow-500 rounded text-white text-sm hover:opacity-80 transition-opacity" data-color="§e">Yellow</button>
+                        </div>
+                        
+                        <button data-event="click:generateColors" class="w-full bg-gradient-green text-gaming-black py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-gaming-green/30 transition-all duration-300">
+                            <i class="fas fa-magic mr-2"></i>
+                            Generate
+                        </button>
+                    </div>
+                    
+                    <!-- Mock Generated Output -->
+                    <div class="mt-6 p-4 bg-gaming-black rounded-lg" data-mock="true">
+                        <div class="text-gaming-gray text-sm mb-2">Generated Code:</div>
+                        <div class="text-gaming-white font-mono text-sm bg-gaming-black-lighter p-2 rounded" data-bind="colorCode.output">§a§lWelcome §r§bto our §c§lserver!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Minecraft Tools Section -->
+
+    <!-- @COMPONENT: Features Section -->
+    <section class="py-20 bg-gaming-black-light">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl lg:text-5xl font-bold mb-6">
+                    Why Choose <span class="text-gaming-green">GameHost Pro</span>?
+                </h2>
+                <p class="text-xl text-gaming-gray max-w-3xl mx-auto">
+                    We provide enterprise-grade infrastructure with gaming-focused optimizations to deliver the best possible experience for your players.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-bolt text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">Instant Setup</h3>
+                    <p class="text-gaming-gray">Your server is ready in under 60 seconds. No waiting, no complex configuration required.</p>
+                </div>
+                
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">DDoS Protection</h3>
+                    <p class="text-gaming-gray">Enterprise-grade DDoS protection keeps your server online even during attacks.</p>
+                </div>
+                
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-headset text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">24/7 Support</h3>
+                    <p class="text-gaming-gray">Our gaming experts are available around the clock to help with any issues.</p>
+                </div>
+                
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-hdd text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">NVMe SSD Storage</h3>
+                    <p class="text-gaming-gray">Ultra-fast NVMe SSDs ensure lightning-quick world loading and chunk generation.</p>
+                </div>
+                
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-cloud-upload-alt text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">Automatic Backups</h3>
+                    <p class="text-gaming-gray">Daily automated backups keep your worlds safe. Restore with one click anytime.</p>
+                </div>
+                
+                <div class="text-center p-6" data-mock="true">
+                    <div class="w-16 h-16 bg-gaming-green/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-globe text-gaming-green text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gaming-white mb-4">Global Network</h3>
+                    <p class="text-gaming-gray">Servers in 8+ locations worldwide for optimal latency no matter where you are.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: Features Section -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-gaming-black-lighter py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-4 gap-8 mb-12">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-10 h-10 bg-gradient-green rounded-lg flex items-center justify-center">
+                            <i class="fas fa-gamepad text-gaming-black text-xl"></i>
+                        </div>
+                        <span class="text-2xl font-bold text-gaming-green">GameHost Pro</span>
+                    </div>
+                    <p class="text-gaming-gray mb-6 max-w-md">
+                        The premier game server hosting platform trusted by thousands of gaming communities worldwide. 
+                        Experience the difference with enterprise-grade infrastructure.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" data-event="click:socialLink" class="w-10 h-10 bg-gaming-black rounded-lg flex items-center justify-center text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10 transition-all duration-300">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" data-event="click:socialLink" class="w-10 h-10 bg-gaming-black rounded-lg flex items-center justify-center text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10 transition-all duration-300">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" data-event="click:socialLink" class="w-10 h-10 bg-gaming-black rounded-lg flex items-center justify-center text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10 transition-all duration-300">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="#" data-event="click:socialLink" class="w-10 h-10 bg-gaming-black rounded-lg flex items-center justify-center text-gaming-gray hover:text-gaming-green hover:bg-gaming-green/10 transition-all duration-300">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-gaming-white font-bold mb-4">Services</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Minecraft Hosting</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">CS2 Servers</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Rust Hosting</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">ARK Servers</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Dedicated Servers</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-gaming-white font-bold mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Knowledge Base</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Submit Ticket</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Live Chat</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Server Status</a></li>
+                        <li><a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Community Forum</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gaming-black pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gaming-gray text-sm mb-4 md:mb-0">
+                    © 2025 GameHost Pro. All rights reserved.
+                </div>
+                <div class="flex space-x-6 text-sm">
+                    <a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gaming-gray hover:text-gaming-green transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        (function() {
+            // TODO: Implement business logic, API calls, and state management
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Mock interactive elements
+            document.addEventListener('click', function(e) {
+                const element = e.target.closest('[data-event]');
+                if (element) {
+                    const event = element.getAttribute('data-event');
+                    console.log(`Event triggered: ${event}`);
+                    // TODO: Implement actual event handlers
+                }
+            });
+
+            // Loading state simulation for demo
+            function simulateLoading(button) {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+                button.disabled = true;
+                
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+            }
+
+            // Add loading states to action buttons
+            document.querySelectorAll('[data-event*="select"], [data-event*="query"], [data-event*="load"], [data-event*="convert"], [data-event*="generate"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    simulateLoading(this);
+                });
+            });
+        })();
+    </script>
+</body>
+</html>
