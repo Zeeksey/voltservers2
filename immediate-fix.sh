@@ -1,48 +1,92 @@
 #!/bin/bash
 
-# Immediate fix for 502 Bad Gateway - VoltServers not responding on port 5000
+# Immediate fix for VoltServers deployment
+# This will get your application running on port 5000
 
-echo "🔧 Fixing 502 Bad Gateway - Starting VoltServers Application"
-echo "=========================================================="
+echo "🔧 VoltServers Immediate Fix"
+echo "==========================="
 
-APP_DIR="/home/ubuntu/voltservers"
-cd "$APP_DIR" || exit 1
+cd /home/ubuntu/voltservers || { echo "❌ Directory not found"; exit 1; }
 
-# Colors
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+# Stop everything
+pm2 delete all 2>/dev/null || true
 
-print_status() { echo -e "${BLUE}[INFO]${NC} $1"; }
-print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+# Set up clean environment
+DB_PASSWORD="VoltPass2025!"
+DATABASE_URL="postgresql://voltservers:$DB_PASSWORD@localhost:5432/voltservers"
 
-# Check if we're in the right directory
-if [[ ! -f "package.json" ]]; then
-    print_error "Not in VoltServers directory. Run: cd /home/ubuntu/voltservers"
+# Ensure PostgreSQL is running
+sudo systemctl start postgresql
+
+# Recreate database user with proper permissions
+sudo -u postgres psql >/dev/null 2>&1 << EOF
+DROP DATABASE IF EXISTS voltservers;
+DROP USER IF EXISTS voltservers;
+CREATE DATABASE voltservers;
+CREATE USER voltservers WITH PASSWORD '$DB_PASSWORD';
+GRANT ALL PRIVILEGES ON DATABASE voltservers TO voltservers;
+ALTER USER voltservers CREATEDB;
+ALTER USER voltservers SUPERUSER;
+EOF
+
+echo "✅ Database configured"
+
+# Test database connection
+if ! PGPASSWORD="$DB_PASSWORD" psql -h localhost -U voltservers -d voltservers -c "SELECT 1;" >/dev/null 2>&1; then
+    echo "❌ Database connection failed"
     exit 1
 fi
 
-# Stop any existing processes
-print_status "Stopping existing processes..."
-pm2 delete all 2>/dev/null || true
-pkill -f "node.*dist/index.js" 2>/dev/null || true
+echo "✅ Database connection verified"
 
-# Check if app is built
+# Clean install dependencies
+rm -rf node_modules package-lock.json
+npm install --production
+
+# Build application
+npm run build
+
 if [[ ! -f "dist/index.js" ]]; then
-    print_status "Building application..."
-    npm run build
-    
-    if [[ ! -f "dist/index.js" ]]; then
-        print_error "Build failed"
-        exit 1
-    fi
+    echo "❌ Build failed"
+    exit 1
 fi
 
-# Create simple PM2 config
-print_status "Creating PM2 configuration..."
-cat > ecosystem.production.js << 'EOF'
+echo "✅ Application built"
+
+# Set up database schema
+DATABASE_URL="$DATABASE_URL" npm run db:push
+
+echo "✅ Database schema set up"
+
+# Create environment file
+cat > .env << EOF
+NODE_ENV=production
+PORT=5000
+DATABASE_URL=$DATABASE_URL
+SESSION_SECRET=VoltServers2025SecretKey
+EOF
+
+# Test application directly first
+echo "Testing application startup..."
+timeout 10s env NODE_ENV=production PORT=5000 DATABASE_URL="$DATABASE_URL" SESSION_SECRET="VoltServers2025SecretKey" node dist/index.js &
+APP_PID=$!
+sleep 5
+
+if curl -f -s http://localhost:5000 >/dev/null 2>&1; then
+    echo "✅ Application works directly"
+    kill $APP_PID 2>/dev/null || true
+else
+    echo "❌ Application fails to start"
+    kill $APP_PID 2>/dev/null || true
+    
+    # Show the actual error
+    echo "Running with full error output:"
+    NODE_ENV=production PORT=5000 DATABASE_URL="$DATABASE_URL" SESSION_SECRET="VoltServers2025SecretKey" node dist/index.js
+    exit 1
+fi
+
+# Create PM2 config
+cat > ecosystem.config.cjs << 'EOF'
 module.exports = {
   apps: [{
     name: 'voltservers',
@@ -51,59 +95,38 @@ module.exports = {
     exec_mode: 'fork',
     env: {
       NODE_ENV: 'production',
-      PORT: 5000
+      PORT: 5000,
+      DATABASE_URL: process.env.DATABASE_URL || 'postgresql://voltservers:VoltPass2025!@localhost:5432/voltservers',
+      SESSION_SECRET: 'VoltServers2025SecretKey'
     },
-    error_file: './logs/error.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true
+    autorestart: true,
+    max_restarts: 10,
+    min_uptime: '10s'
   }]
 };
 EOF
 
-# Create logs directory
-mkdir -p logs
+# Start with PM2
+echo "Starting with PM2..."
+pm2 start ecosystem.config.cjs
 
-# Start application
-print_status "Starting VoltServers application..."
-pm2 start ecosystem.production.js
-
-# Wait for startup
 sleep 5
 
-# Check if application is responding
-print_status "Testing application..."
-if curl -f -s http://localhost:5000 > /dev/null; then
-    print_success "VoltServers is responding on port 5000"
+if curl -f -s http://localhost:5000 >/dev/null 2>&1; then
+    echo "✅ VoltServers running on port 5000"
+    
+    # Save PM2 configuration
+    pm2 save
+    
+    echo "✅ SUCCESS! VoltServers is now running"
+    echo ""
+    echo "🌐 Access: http://135.148.137.158"
+    echo "🔧 Status: pm2 status"
+    echo "📋 Logs: pm2 logs voltservers"
+    
+    pm2 status
 else
-    print_error "VoltServers is not responding on port 5000"
-    print_status "Checking PM2 logs..."
+    echo "❌ PM2 start failed"
     pm2 logs voltservers --lines 10
     exit 1
 fi
-
-# Test external access
-if curl -f -s http://135.148.137.158 > /dev/null; then
-    print_success "External access working - 502 error fixed!"
-else
-    print_status "Nginx may need restart..."
-    sudo systemctl restart nginx
-    sleep 3
-    
-    if curl -f -s http://135.148.137.158 > /dev/null; then
-        print_success "External access working after nginx restart!"
-    else
-        print_error "Still having issues - check nginx configuration"
-    fi
-fi
-
-# Save PM2 configuration
-pm2 save
-
-# Show status
-print_status "Application status:"
-pm2 status
-
-echo ""
-print_success "Fix completed!"
-echo "VoltServers should now be accessible at: http://135.148.137.158"
